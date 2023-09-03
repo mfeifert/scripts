@@ -1,0 +1,5 @@
+#!/bin/sh
+
+SINK=$(pamixer --list-sinks | grep Running | awk '{print $1}');
+#pamixer -i 5 --sink $SINK
+pactl set-sink-mute $SINK toggle

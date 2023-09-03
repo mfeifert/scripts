@@ -1,0 +1,13 @@
+#!/bin/bash
+##!/usr/bin/awk -f
+
+# this script prints the contents of /etc/passwd in a more readable, column-aligned format
+
+awk 'BEGIN {FS=":"}; {printf "%-22s %2s %6s %6s %s %-48s %-30s %-20s\n", $1, $2, $3, $4, "", $5, $6, $7};' /etc/passwd 
+
+
+# trying to run it directly from awk instead of bash.  unsuccessful so far
+
+#BEGIN {FS=":"}; {printf "%-22s %2s %6s %6s %s %-48s %-30s %-20s\n", $1, $2, $3, $4, "", $5, $6, $7}; /etc/passwd 
+
+#BEGIN {FS=":"}; {printf "%-22s %2s %6s %6s %s %-48s %-30s %-20s", $1, $2, $3, $4, "", $5, $6, $7}; /etc/passwd 
