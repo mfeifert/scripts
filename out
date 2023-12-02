@@ -1,0 +1,9 @@
+#!/usr/bin/sh
+
+# Turn off stuff that is unnecessary while away from home
+
+sudo systemctl stop syncthing@maf.service
+sudo systemctl stop bluetooth.service
+sudo systemctl stop sshd.service
+
+sudo ufw deny syncthing

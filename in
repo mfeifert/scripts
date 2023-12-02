@@ -1,0 +1,9 @@
+#!/usr/bin/sh
+
+# Turn everything on when back at home!
+
+sudo systemctl start syncthing@maf.service
+# sudo systemctl start bluetooth.service
+sudo systemctl start sshd.service
+
+sudo ufw allow syncthing
