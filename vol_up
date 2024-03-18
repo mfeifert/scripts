@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Increase audio volume. Originally designed for use with dwm.
+
 SINK=$(pamixer --list-sinks | grep Running | awk '{print $1}');
-#pamixer -i 5 --sink $SINK
+
 pactl set-sink-volume $SINK +5%

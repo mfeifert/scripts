@@ -1,9 +1,9 @@
 #!/usr/bin/sh
 
-# Turn everything on when back at home!
+# Enable wireless and remote access services.
 
 sudo systemctl start syncthing@maf.service
-# sudo systemctl start bluetooth.service
+sudo systemctl start bluetooth.service
 sudo systemctl start sshd.service
 
 sudo ufw allow syncthing
