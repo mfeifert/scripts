@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Print a report summarizing auto expenses and mileage.
+
+hledger_report=$(hledger -f ~/Sync/finance/2020.ledger -f ~/Sync/finance/2021.ledger \
+                         -f ~/Sync/finance/2022.ledger -f ~/Sync/finance/2023.ledger \
+                         -f ~/Sync/finance/2024.ledger -f ~/Sync/finance/auto.ledger \
+                         bal auto --drop 2 --sort)
+
+miles=$(sqlite3 -column ~/Sync/db/auto.db "select Miles from fuel order by Date desc limit 1;")
+total=$(echo "$hledger_report" | awk 'END {print $1}')
+dpm=$(echo "scale=2; $total / $miles" | bc -l)
+mpd=$(echo "scale=2; $miles / $total" | bc -l | awk '{printf "%.2f", $0}')
+
+echo "$hledger_report"
+echo "        $miles    Miles"
+echo "--------------------"
+echo "            $dpm USD per Mile"
+echo "            $mpd Miles per USD"
