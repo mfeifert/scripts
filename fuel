@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Insert records including details of fuel refills into database.
+
+db=~/Sync/db/test.db
+table=fuel
+
+echo -n "Total price: "
+read amount
+echo -n "Price per gallon: "
+read ppg
+echo -n "Gallons: "
+read gallons
+echo -n "Miles per gallon: "
+read mpg
+echo -n "Odometer: "
+read miles
+
+sqlite3 $db "INSERT INTO $table VALUES (date('now', 'localtime'), $amount, $ppg, $gallons, $mpg, $miles);"
+
+sqlite3 -box $db "SELECT * FROM $table ORDER BY Date DESC LIMIT 5;"
