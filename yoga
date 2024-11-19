@@ -3,7 +3,7 @@
 # Insert records including date and minutes of yoga sessions into database.
 
 minutes=${1-10}
-db=~/Sync/db/test.db
+db=~/Sync/db/health.db
 table=yoga
 
 sqlite3 $db "INSERT INTO $table VALUES (date('now', 'localtime'), $minutes);"
