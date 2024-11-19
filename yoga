@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Insert records including date and minutes of yoga sessions into database.
+
+minutes=${1-10}
+db=~/Sync/db/test.db
+table=yoga
+
+sqlite3 $db "INSERT INTO $table VALUES (date('now', 'localtime'), $minutes);"
+sqlite3 -box $db "SELECT * FROM $table ORDER BY Date DESC LIMIT 5;"
