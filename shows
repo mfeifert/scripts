@@ -9,11 +9,11 @@ shows_csv=~/Sync/db/shows.csv
 function main ()
 {
     echo ""
-    awk --csv '{ print NR ".", $2 }' $shows_csv
+    awk -F, '{ print NR ".", $2 }' $shows_csv
     echo ""
     echo -n "> "
     read selection
-    table=$(awk --csv -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
+    table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
     actions
 }
 
