@@ -14,6 +14,7 @@ function main ()
     echo -n "> "
     read selection
     table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
+    title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $shows_csv)
     actions
 }
 
@@ -28,7 +29,7 @@ function actions ()
     echo "m. Main menu"
     echo ""
     while true; do
-	echo -n "> "
+	echo -n "${title}> "
 	read action
 	case $action in
 	    1) sqlite3 $db -box "SELECT * from $table" ;;
