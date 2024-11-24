@@ -6,45 +6,44 @@
 db=~/Sync/db/media.db
 shows_csv=~/Sync/db/shows.csv
 
-function main ()
-{
-    echo ""
-    awk -F, '{ print NR ".", $2 }' $shows_csv
-    echo ""
-    echo -n "> "
-    read selection
-    table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
-    title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $shows_csv)
-    actions
+function main() {
+  echo ""
+  awk -F, '{ print NR ".", $2 }' $shows_csv
+  echo ""
+  echo -n "> "
+  read selection
+  table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
+  title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $shows_csv)
+  actions
 }
 
-function actions ()
-{
-    echo ""
-    echo "1. List episodes"
-    echo "2. Next episode"
-    echo "3. Random episode"
-    echo "4. Mark episode as watched"
-    [[ $table = "xfiles" ]] && echo "a. List mythology arc"
-    echo "m. Main menu"
-    echo ""
-    while true; do
-	echo -n "${title}> "
-	read action
-	case $action in
-	    1) sqlite3 $db -box "SELECT * from $table" ;;
-	    2) sqlite3 $db -box "SELECT * FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1" ;;
-	    3) sqlite3 $db -box "SELECT * FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1" ;;
-	    4) 
-		echo ""
-		echo -n "Episode: "
-		read episode
-		sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode"
-		echo "" ;;
-	    a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
-	    m) main ;;
-	esac
-    done
+function actions() {
+  echo ""
+  echo "1. List episodes"
+  echo "2. Next episode"
+  echo "3. Random episode"
+  echo "4. Mark episode as watched"
+  [[ $table = "xfiles" ]] && echo "a. List mythology arc"
+  echo "m. Main menu"
+  echo ""
+  while true; do
+    echo -n "${title}> "
+    read action
+    case $action in
+    1) sqlite3 $db -box "SELECT * from $table" ;;
+    2) sqlite3 $db -box "SELECT * FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1" ;;
+    3) sqlite3 $db -box "SELECT * FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1" ;;
+    4)
+      echo ""
+      echo -n "Episode: "
+      read episode
+      sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode"
+      echo ""
+      ;;
+    a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
+    m) main ;;
+    esac
+  done
 }
 
 main
