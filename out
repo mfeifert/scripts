@@ -5,5 +5,6 @@
 sudo systemctl stop syncthing@maf.service
 sudo systemctl stop bluetooth.service
 sudo systemctl stop sshd.service
-
-sudo ufw deny syncthing
+sudo systemctl stop avahi-daemon
+sudo systemctl stop passim
+sudo systemctl stop wsdd

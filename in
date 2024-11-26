@@ -4,6 +4,5 @@
 
 sudo systemctl start syncthing@maf.service
 sudo systemctl start bluetooth.service
-sudo systemctl start sshd.service
-
-sudo ufw allow syncthing
+sudo systemctl start avahi-daemon
+sudo systemctl start passim
