@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Disable wireless and remote access services.
+# Disable services while away from home.
 
 sudo systemctl stop syncthing@maf.service
 sudo systemctl stop bluetooth.service

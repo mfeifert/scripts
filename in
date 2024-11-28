@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Enable wireless and remote access services.
+# Enable services while at home.
 
 sudo systemctl start syncthing@maf.service
 sudo systemctl start bluetooth.service
