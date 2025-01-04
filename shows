@@ -3,8 +3,8 @@
 # Print lists of show episodes from a local database
 # and track which episodes have been watched.
 
-db=~/Sync/db/media.db
-shows_csv=~/Sync/db/shows.csv
+db=$DB_DIR/media.db
+shows_csv=$DB_DIR/shows.csv
 
 function main() {
   echo ""

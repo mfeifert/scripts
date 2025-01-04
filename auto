@@ -7,7 +7,7 @@ hledger_report=$(hledger -f ~/sync/finance/2020.ledger -f ~/sync/finance/2021.le
                          -f ~/sync/finance/2024.ledger -f ~/sync/finance/auto.ledger \
                          bal auto --drop 2 --sort)
 
-miles=$(sqlite3 -column ~/Sync/db/auto.db "select Miles from fuel order by Date desc limit 1;")
+miles=$(sqlite3 -column $DB_DIR/auto.db "select Miles from fuel order by Date desc limit 1;")
 total=$(echo "$hledger_report" | awk 'END {print $1}')
 dpm=$(echo "scale=2; $total / $miles" | bc -l)
 mpd=$(echo "scale=2; $miles / $total" | bc -l | awk '{printf "%.2f", $0}')

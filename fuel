@@ -2,7 +2,7 @@
 
 # Insert records including details of fuel refills into database.
 
-db=~/Sync/db/auto.db
+db=$DB_DIR/auto.db
 table=fuel
 
 echo -n "Total price: "
