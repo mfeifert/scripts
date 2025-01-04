@@ -8,7 +8,7 @@ shows_csv=~/Sync/db/shows.csv
 
 function main() {
   echo ""
-  awk -F, '{ print NR ".", $2 }' $shows_csv
+  awk -F, '{ printf "%2d. %s\n", NR, $2 }' $shows_csv
   echo ""
   echo -n "> "
   read selection
