@@ -2,9 +2,9 @@
 
 # Print a report summarizing auto expenses and mileage.
 
-hledger_report=$(hledger -f ~/Sync/finance/2020.ledger -f ~/Sync/finance/2021.ledger \
-                         -f ~/Sync/finance/2022.ledger -f ~/Sync/finance/2023.ledger \
-                         -f ~/Sync/finance/2024.ledger -f ~/Sync/finance/auto.ledger \
+hledger_report=$(hledger -f ~/sync/finance/2020.ledger -f ~/sync/finance/2021.ledger \
+                         -f ~/sync/finance/2022.ledger -f ~/sync/finance/2023.ledger \
+                         -f ~/sync/finance/2024.ledger -f ~/sync/finance/auto.ledger \
                          bal auto --drop 2 --sort)
 
 miles=$(sqlite3 -column ~/Sync/db/auto.db "select Miles from fuel order by Date desc limit 1;")
