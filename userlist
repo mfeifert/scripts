@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Print the contents of /etc/passwd in a more readable, column-aligned format.
-# The column command shipped with macOS is inferior and lacks the "-t" table features,
+# The column command shipped with macOS lacks the "-t" table features,
 # so awk is used instead.
 
 case $(uname -s) in
