@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Display the value of $PATH, one item per line.
+
+echo $PATH | tr ':' '\n'
