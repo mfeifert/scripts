@@ -17,7 +17,22 @@ function main() {
   actions
 }
 
+function get_next_episode() {
+  episode_to_watch=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+  sqlite3 $db -box "SELECT * FROM $table WHERE NumOverall == $episode_to_watch"
+  echo ""
+  [[ -z $episode_to_watch ]] || echo "w. Mark episode $episode_to_watch as watched"
+}
+
+function get_random_episode() {
+  episode_to_watch=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
+  sqlite3 $db -box "SELECT * FROM $table WHERE NumOverall == $episode_to_watch"
+  echo ""
+  [[ -z $episode_to_watch ]] || echo "w. Mark episode $episode_to_watch as watched"
+}
+
 function actions() {
+  episode_to_watch=""
   echo ""
   echo "1. List episodes"
   echo "2. Next episode"
@@ -32,14 +47,15 @@ function actions() {
     echo ""
     case $action in
       1) sqlite3 $db -box "SELECT * from $table" ;;
-      2) sqlite3 $db -box "SELECT * FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1" ;;
-      3) sqlite3 $db -box "SELECT * FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1" ;;
+      2) get_next_episode ;;
+      3) get_random_episode ;;
       4)
         echo -n "Episode: "
         read episode
         sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode"
         ;;
       a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
+      w) sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_to_watch"; actions ;;
       m) main ;;
     esac
   done
