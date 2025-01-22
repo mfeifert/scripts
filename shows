@@ -18,24 +18,16 @@ function main() {
   actions
 }
 
-function get_next_episode() {
-  episode_num_to_watch=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+function get_episode() {
+  case $1 in
+    "next") episode_num_to_watch=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1") ;;
+    "random") episode_num_to_watch=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1") ;;
+  esac
   episode_title_to_watch=$(sqlite3 $db "SELECT Title FROM $table WHERE NumOverall == $episode_num_to_watch")
   sqlite3 $db -box "SELECT * FROM $table WHERE NumOverall == $episode_num_to_watch"
   echo ""
-  [[ -z $episode_num_to_watch ]] || \
-	  echo "p. Play episode"
-	  echo "w. Mark episode $episode_num_to_watch as watched"
-}
-
-function get_random_episode() {
-  episode_num_to_watch=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
-  episode_title_to_watch=$(sqlite3 $db "SELECT Title FROM $table WHERE NumOverall == $episode_num_to_watch")
-  sqlite3 $db -box "SELECT * FROM $table WHERE NumOverall == $episode_num_to_watch"
-  echo ""
-  [[ -z $episode_num_to_watch ]] || \
-    echo "p. Play episode"
-    echo "w. Mark episode $episode_num_to_watch as watched"
+  [[ -z $show_dir ]] || echo "p. Play episode"
+  [[ -z $episode_num_to_watch ]] || echo "w. Mark episode $episode_num_to_watch as watched"
 }
 
 function actions() {
@@ -54,19 +46,22 @@ function actions() {
     echo ""
     case $action in
       1) sqlite3 $db -box "SELECT * from $table" ;;
-      2) get_next_episode ;;
-      3) get_random_episode ;;
+      2) get_episode "next" ;;
+      3) get_episode "random" ;;
       4)
         echo -n "Episode: "
         read episode
         sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode"
         ;;
       a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
-	  p) 
+      p)
         episode_title_formatted=$(echo $episode_title_to_watch | sed "s/[ \'.]//g")
-	    mpv "$(find "$SHOWS_DIR"/"$show_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
+        mpv "$(find "$SHOWS_DIR"/"$show_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
         ;;
-      w) sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num_to_watch"; actions ;;
+      w)
+        sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num_to_watch"
+        actions
+        ;;
       m) main ;;
     esac
   done
