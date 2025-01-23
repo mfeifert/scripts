@@ -56,7 +56,7 @@ function actions() {
         ;;
       a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
       p)
-        episode_title_formatted=$(echo $episode_title | sed "s/[ \',.:\-]//g")
+        episode_title_formatted=$(echo $episode_title | sed "s/\W//g")
         xdg-open "$(find "$SHOWS_DIR"/"$show_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
         ;;
       w)
