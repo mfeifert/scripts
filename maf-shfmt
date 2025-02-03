@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Preferred format style for shell code.
+
+shfmt \
+	-w \
+	-ci \
+	$1

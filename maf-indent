@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Preferred indentation style for C code.
+# Preferred format style for C code.
 
 indent \
 	-linux \
