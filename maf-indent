@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Preferred indentation style for C code.
+
+indent \
+	-linux \
+	-bad \
+	-bl \
+	-bli0 \
+	-bls \
+	-nce \
+	-sar \
+	$1
