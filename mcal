@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Display and modify calendar events stored in local text files
+
+cal_dir=~/sync/cal
+
+case $1 in
+	"e")
+		(cd $cal_dir && vim -c FZF)
+		;;
+	"")
+		cat "$cal_dir"/* | sort
+		;;
+esac
