@@ -6,7 +6,7 @@ cal_dir=~/sync/cal
 
 case $1 in
 	"e") (cd $cal_dir && vim -c FZF) ;;
-	"t") cat "$cal_dir"/* | grep $(date +%Y-%m-%d) | sort ;;
-	"m") cat "$cal_dir"/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | grep $(date +%Y-%m) | sort ;;
-	"") cat "$cal_dir"/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | sort ;;
+	"t") cat $cal_dir/* | grep $(date +%Y-%m-%d) | sort ;;
+	"m") cat $cal_dir/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | grep $(date +%Y-%m) | sort ;;
+	"")  cat $cal_dir/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | sort ;;
 esac
