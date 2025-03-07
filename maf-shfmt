@@ -5,4 +5,5 @@
 shfmt \
 	-w \
 	-ci \
+	-sr \
 	$1
