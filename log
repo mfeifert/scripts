@@ -8,8 +8,8 @@ case $1 in
 		;;
 	"i")
 		while IFS= read -r line; do
-			echo "$(date +'%Y-%m-%d %a') [ ] $line: " >>$log_dir/log
-		done <$log_dir/tasks
+			echo "$(date +'%Y-%m-%d %a') [ ] $line: " >> $log_dir/log
+		done < $log_dir/tasks
 		;;
 	"t")
 		cat $log_dir/log | grep $(date +%Y-%m-%d)
