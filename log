@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+log_dir=~/sync/log
+
+case $1 in
+	"e")
+		(nvim $log_dir/log +)
+		;;
+	"i")
+		while IFS= read -r line; do
+			echo "$(date +'%Y-%m-%d %a') [ ] $line: " >>$log_dir/log
+		done <$log_dir/tasks
+		;;
+	"t")
+		cat $log_dir/log | grep $(date +%Y-%m-%d)
+		;;
+	"")
+		cat $log_dir/log | sort
+		;;
+	*)
+		description=${@:2}
+		sed -i "/$(date +%Y-%m-%d).*$1/ s/\[ \]/[X]/" $log_dir/log
+		sed -i "/$(date +%Y-%m-%d).*$1/ s/$/$description/" $log_dir/log
+		;;
+
+esac
