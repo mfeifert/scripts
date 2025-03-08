@@ -12,10 +12,10 @@ case $1 in
 		done < $log_dir/tasks
 		;;
 	"t")
-		cat $log_dir/log | grep $(date +%Y-%m-%d)
+		grep $(date +%Y-%m-%d) $log_dir/log
 		;;
 	"")
-		cat $log_dir/log | sort
+		sort $log_dir/log
 		;;
 	*)
 		description=${@:2}
