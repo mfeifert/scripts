@@ -19,8 +19,9 @@ case $1 in
 		;;
 	*)
 		description=${@:2}
-		sed -i "/$(date +%Y-%m-%d).*$1/ s/\[ \]/[X]/" $log_dir/log
-		sed -i "/$(date +%Y-%m-%d).*$1/ s/$/$description/" $log_dir/log
+		date=$(date +%Y-%m-%d)
+		sed -i "/$date.*$1/ s/\[ \]/[X]/" $log_dir/log
+		sed -i "/$date.*$1/ s/$/$description/" $log_dir/log
 		;;
 
 esac
