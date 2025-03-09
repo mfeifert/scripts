@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Display and modify daily task tracker log stored in local text files.
+
 log_dir=~/sync/log
 
 case $1 in
