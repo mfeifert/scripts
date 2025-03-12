@@ -6,7 +6,7 @@ log_dir=~/sync/log
 
 case $1 in
 	"e")
-		(nvim $log_dir/log +)
+		(cd $log_dir && nvim -c FZF)
 		;;
 	"i")
 		while IFS= read -r line; do
