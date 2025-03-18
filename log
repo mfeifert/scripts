@@ -2,28 +2,28 @@
 
 # Display and modify daily task tracker log stored in local text files.
 
-log_dir=~/sync/log
+log_dir="$HOME/sync/log"
 
 case $1 in
 	"e")
-		(cd $log_dir && nvim -c FZF)
+		(cd ${log_dir} && nvim -c FZF)
 		;;
 	"i")
 		while IFS= read -r line; do
-			echo "$(date +'%Y-%m-%d %a') [ ] $line: " >> $log_dir/log
-		done < $log_dir/tasks
+			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> ${log_dir}/log
+		done < ${log_dir}/tasks
 		;;
 	"t")
-		grep $(date +%Y-%m-%d) $log_dir/log
+		grep $(date +%Y-%m-%d) ${log_dir}/log
 		;;
 	"")
-		cat $log_dir/log
+		cat ${log_dir}/log
 		;;
 	*)
-		description=${@:2}
-		date=$(date +%Y-%m-%d)
-		sed -i "/$date.*$1/ s/\[ \]/[X]/" $log_dir/log
-		sed -i "/$date.*$1/ s/$/$description/" $log_dir/log
+		description="${@:2}"
+		date="$(date +%Y-%m-%d)"
+		sed -i "/${date}.*$1/ s/\[ \]/[X]/" ${log_dir}/log
+		sed -i "/${date}.*$1/ s/$/${description}/" ${log_dir}/log
 		;;
 
 esac
