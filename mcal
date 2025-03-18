@@ -2,11 +2,11 @@
 
 # Display and modify calendar events stored in local text files.
 
-cal_dir=~/sync/cal
+cal_dir="$HOME/sync/cal"
 
 case $1 in
-	"e") (cd $cal_dir && vim -c FZF) ;;
-	"t") cat $cal_dir/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | grep $(date +%Y-%m-%d) | sort ;;
-	"m") cat $cal_dir/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | grep $(date +%Y-%m) | sort ;;
-	"") cat $cal_dir/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | sort ;;
+	"e") (cd ${cal_dir} && vim -c FZF) ;;
+	"t") cat ${cal_dir}/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | grep $(date +%Y-%m-%d) | sort ;;
+	"m") cat ${cal_dir}/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | grep $(date +%Y-%m) | sort ;;
+	"") cat ${cal_dir}/* <(echo $(date +"%Y-%m-%d %a %H:%M") "      === TODAY ===") | sort ;;
 esac
