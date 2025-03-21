@@ -7,65 +7,65 @@ db=$DB_DIR/media.db
 shows_csv=$DB_DIR/shows.csv
 
 function main() {
-  echo ""
-  awk -F, '{ printf "%2d. %s\n", NR, $2 }' $shows_csv
-  echo ""
-  echo -n "> "
-  read selection
-  table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
-  title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $shows_csv)
-  show_dir=$(awk -F, -v sel=$selection 'NR==sel { print $3 }' $shows_csv)
-  actions
+	echo ""
+	awk -F, '{ printf "%2d. %s\n", NR, $2 }' $shows_csv
+	echo ""
+	echo -n "> "
+	read selection
+	table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $shows_csv)
+	title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $shows_csv)
+	show_dir=$(awk -F, -v sel=$selection 'NR==sel { print $3 }' $shows_csv)
+	actions
 }
 
 function get_episode() {
-  case $1 in
-    "next") episode_num=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1") ;;
-    "random") episode_num=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1") ;;
-    *) episode_num=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE NumOverall == $1") ;;
-  esac
-  episode_title=$(sqlite3 $db "SELECT Title FROM $table WHERE NumOverall == $episode_num")
-  sqlite3 $db -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
-  echo ""
-  [[ -z $show_dir ]] || echo "p. Play episode"
-  [[ -z $episode_num ]] || echo "w. Mark episode $episode_num as watched"
+	case $1 in
+		"next") episode_num=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1") ;;
+		"random") episode_num=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1") ;;
+		*) episode_num=$(sqlite3 $db "SELECT NumOverall FROM $table WHERE NumOverall == $1") ;;
+	esac
+	episode_title=$(sqlite3 $db "SELECT Title FROM $table WHERE NumOverall == $episode_num")
+	sqlite3 $db -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
+	echo ""
+	[[ -z $show_dir ]] || echo "p. Play episode"
+	[[ -z $episode_num ]] || echo "w. Mark episode $episode_num as watched"
 }
 
 function actions() {
-  episode_num=""
-  echo ""
-  echo "1. List episodes"
-  echo "2. Next episode"
-  echo "3. Random episode"
-  echo "4. Select episode"
-  [[ $table = "xfiles" ]] && echo "a. List mythology arc"
-  echo "m. Main menu"
-  while true; do
-    echo ""
-    echo -n "${title}> "
-    read action
-    echo ""
-    case $action in
-      1) sqlite3 $db -box "SELECT * from $table" ;;
-      2) get_episode "next" ;;
-      3) get_episode "random" ;;
-      4)
-        echo -n "Episode: "
-        read episode
-        get_episode $episode
-        ;;
-      a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
-      p)
-        episode_title_formatted=$(echo $episode_title | sed "s/\W//g")
-        xdg-open "$(find "$SHOWS_DIR"/"$show_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
-        ;;
-      w)
-        sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
-        actions
-        ;;
-      m) main ;;
-    esac
-  done
+	episode_num=""
+	echo ""
+	echo "1. List episodes"
+	echo "2. Next episode"
+	echo "3. Random episode"
+	echo "4. Select episode"
+	[[ $table = "xfiles" ]] && echo "a. List mythology arc"
+	echo "m. Main menu"
+	while true; do
+		echo ""
+		echo -n "${title}> "
+		read action
+		echo ""
+		case $action in
+			1) sqlite3 $db -box "SELECT * from $table" ;;
+			2) get_episode "next" ;;
+			3) get_episode "random" ;;
+			4)
+				echo -n "Episode: "
+				read episode
+				get_episode $episode
+				;;
+			a) sqlite3 $db -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
+			p)
+				episode_title_formatted=$(echo $episode_title | sed "s/\W//g")
+				xdg-open "$(find "$SHOWS_DIR"/"$show_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
+				;;
+			w)
+				sqlite3 $db "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
+				actions
+				;;
+			m) main ;;
+		esac
+	done
 }
 
 main
