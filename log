@@ -12,8 +12,10 @@ case $1 in
 		while IFS= read -r line; do
 			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> ${log_dir}/log
 		done < ${log_dir}/tasks
+		log t
 		;;
 	"t")
+		clear
 		grep $(date +%Y-%m-%d) ${log_dir}/log
 		;;
 	"")
@@ -24,6 +26,7 @@ case $1 in
 		date="$(date +%Y-%m-%d)"
 		sed -i "/${date}.*$1/ s/\[ \]/[X]/" ${log_dir}/log
 		sed -i "/${date}.*$1/ s/$/${description}/" ${log_dir}/log
+		log t
 		;;
 
 esac
