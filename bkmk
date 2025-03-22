@@ -9,7 +9,7 @@ case $1 in
 		(nvim $bookmarks_file)
 		;;
 	"")
-		url_truncated="$(awk -F'\t' '{printf "%-66.64s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file | fzf -e | cut --delimiter=' ' --fields=1)"
+		url_truncated="$(awk -F'\t' '{printf "%-66.64s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file | fzf -e --preview-window=hidden | cut --delimiter=' ' --fields=1)"
 		url_full=$(grep "$url_truncated" $bookmarks_file | cut --fields=1)
 		[[ -z $url_truncated ]] || firefox --new-tab $url_full
 		;;
