@@ -7,4 +7,4 @@ weekday="$(date --date=$selected_date +%a)"
 
 awk -v date="$selected_date" -v weekday="$weekday" -f header.awk <(grep "$selected_date" "$data_dir"/header.tsv)
 awk -f main.awk <(grep "$selected_date" "$data_dir"/main.csv)
-awk -f notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date{print $2}' "$data_dir"/notes.tsv))
+awk -f notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date {print $2}' "$data_dir"/notes.tsv))
