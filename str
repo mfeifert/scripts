@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-# Append description of strength workout to appropriate line in daily task tracker log.
+str_dir="$HOME/tmp"
+width="61"
+selected_date="${1-$(date -I)}"
+weekday="$(date --date=$selected_date +%a)"
 
-log_dir=~/sync/log
-workout="1x12 Squats bw, Push-ups, Sit-ups, Biceps curls db15, Overhead press db15"
-
-sed -i "/$(date +%Y-%m-%d).*Strength/ s/$/$workout/" $log_dir/log
+awk -v date="$selected_date" -v weekday="$weekday" -f ~/tmp/header.awk <(grep "$selected_date" "$str_dir"/data_header)
+awk -f ~/tmp/main.awk <(grep "$selected_date" "$str_dir"/data_main)
+awk -f ~/tmp/notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date{print $2}' "$str_dir"/data_notes))
