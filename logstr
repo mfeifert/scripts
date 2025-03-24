@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Append description of strength workout to appropriate line in daily task tracker log.
+
+log_dir=~/sync/log
+workout="1x12 Squats bw, Push-ups, Sit-ups, Biceps curls db15, Overhead press db15"
+
+sed -i "/$(date +%Y-%m-%d).*Strength/ s/$/$workout/" $log_dir/log
