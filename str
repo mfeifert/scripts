@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-str_dir="$HOME/tmp"
+str_dir="$HOME/sync/str"
 width="61"
 selected_date="${1-$(date -I)}"
 weekday="$(date --date=$selected_date +%a)"
 
-awk -v date="$selected_date" -v weekday="$weekday" -f ~/tmp/header.awk <(grep "$selected_date" "$str_dir"/data_header)
-awk -f ~/tmp/main.awk <(grep "$selected_date" "$str_dir"/data_main)
-awk -f ~/tmp/notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date{print $2}' "$str_dir"/data_notes))
+awk -v date="$selected_date" -v weekday="$weekday" -f header.awk <(grep "$selected_date" "$str_dir"/header.tsv)
+awk -f main.awk <(grep "$selected_date" "$str_dir"/main.csv)
+awk -f notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date{print $2}' "$str_dir"/notes.tsv))
