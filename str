@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 data_dir="$HOME/sync/str"
+
+[[ $1 == "e" ]] && (cd "$data_dir" && nvim -c FZF) && exit
+
 width="61"
 selected_date="${1-$(date -I)}"
 weekday="$(date --date=$selected_date +%a)"
