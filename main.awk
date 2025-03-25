@@ -1,4 +1,4 @@
-BEGIN { FS = ","
+BEGIN { FS = "\t"
 	print "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫"
 	print "┃ Exercise                     Set1   Set2   Set3   Set4   Set5 ┃" }
 
