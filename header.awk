@@ -1,6 +1,6 @@
 BEGIN { FS = "\t" 
 	print "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" }
 
-{ printf "┃ %-46s %s %s ┃\n", $2, weekday, date }
+{ printf "┃ %-40s %9s %10s ┃\n", $2, weekday, date }
 { print  "┃                                                               ┃" }
 { printf "┃ %-61s ┃\n", $3 }
