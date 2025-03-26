@@ -18,4 +18,4 @@ awk -v date="$selected_date" -v weekday="$weekday" -f str_header.awk "$data_dir"
 awk -v date="$selected_date" -f str_main.awk "$data_dir"/main.tsv
 
 # Footer: notes
-awk -f str_notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date {print $2}' "$data_dir"/notes.tsv))
+awk -f str_notes.awk <(grep "$selected_date" "$data_dir"/notes.tsv | cut --fields=2 | fmt --width="$width")
