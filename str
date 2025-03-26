@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 
+# Display workout log sheets for data stored in local text files.
+
 data_dir="$HOME/sync/str"
 
+# Edit data files
 [[ $1 == "e" ]] && (cd "$data_dir" && nvim -c FZF) && exit
 
 width="61"
 selected_date="${1-$(date -I)}"
 weekday="$(date --date=$selected_date +%A)"
 
+# Header: description, location, date
 awk -v date="$selected_date" -v weekday="$weekday" -f str_header.awk "$data_dir"/header.tsv
+
+# Exercise list
 awk -v date="$selected_date" -f str_main.awk "$data_dir"/main.tsv
+
+# Footer: notes
 awk -f str_notes.awk <(fmt --width="$width" <(awk -F '\t' -v date="$selected_date" '$1~date {print $2}' "$data_dir"/notes.tsv))
