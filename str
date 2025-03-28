@@ -8,14 +8,32 @@ data_dir="$HOME/sync/str"
 [[ $1 == "e" ]] && (cd "$data_dir" && nvim -c FZF) && exit
 
 width="61"
-selected_date="${1-$(date -I)}"
+selected_date="$(grep "^[[:digit:]]" "$data_dir"/header.tsv |
+	awk -F "\t" '{printf "%s %s\n", $1, $2}' |
+	sort --unique --reverse |
+	gum filter --no-fuzzy |
+	cut --delimiter=" " --fields=1)"
 weekday="$(date --date=$selected_date +%A)"
 
-# Header: description, location, date
-awk -v date="$selected_date" -v weekday="$weekday" -f str_header.awk "$data_dir"/header.tsv
+function print_report() {
+	# Header: description, location, date
+	awk -v date="$selected_date" -v weekday="$weekday" -f str_header.awk "$data_dir"/header.tsv
 
-# Exercise list
-awk -v date="$selected_date" -f str_main.awk "$data_dir"/main.tsv
+	# Exercise list
+	awk -v date="$selected_date" -f str_main.awk "$data_dir"/main.tsv
 
-# Footer: notes
-awk -f str_notes.awk <(grep "$selected_date" "$data_dir"/notes.tsv | cut --fields=2 | fmt --width="$width")
+	# Footer: notes
+	awk -f str_notes.awk <(grep "$selected_date" "$data_dir"/notes.tsv | cut --fields=2 | fmt --width="$width")
+}
+
+case $1 in
+	"n")
+		new_entry
+		;;
+	"t")
+		print_report
+		;;
+	*)
+		print_report
+		;;
+esac
