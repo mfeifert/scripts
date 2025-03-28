@@ -6,7 +6,7 @@ bookmarks_file="$HOME/sync/bookmarks/bookmarks.tsv"
 
 case $1 in
 	"e")
-		(nvim $bookmarks_file)
+		(nvim $bookmarks_file +)
 		;;
 	"")
 		url_truncated="$(awk -F'\t' '{printf "%-66.64s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file | fzf -e --preview-window=hidden | cut --delimiter=' ' --fields=1)"
