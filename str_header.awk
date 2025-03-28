@@ -11,5 +11,6 @@ END {
 	if (i == 0) {
 		print  "┃                                                               ┃"
 		print  "┃                                                               ┃"
+		print  "┃                                                               ┃"
 	}
 }
