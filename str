@@ -37,8 +37,7 @@ case $1 in
 		;;
 	*)
 		# select from list of dates
-		selected_date="$(grep "^[[:digit:]]" "$data_dir"/header.tsv \
-			| awk -F "\t" '{printf "%s %s\n", $1, $2}' \
+		selected_date="$(awk -F "\t" '/^[[:digit:]]/ {printf "%s %s\n", $1, $2}' "$data_dir"/header.tsv \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
 			| cut --delimiter=" " --fields=1)"
