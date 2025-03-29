@@ -3,7 +3,9 @@
 # Preferred format style for shell code.
 
 shfmt \
-	-w \
-	-ci \
-	-sr \
+	--write \
+	--binary-next-line \
+	--case-indent \
+	--space-redirects \
+	--func-next-line \
 	$1
