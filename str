@@ -10,7 +10,14 @@ data_file="$data_dir/main.tsv"
 
 function new_entry()
 {
-	exit
+	date=$(gum input --header="Date" --value=$(date -I))
+	description=$(gum input --header="Description")
+	location=$(gum input --header="Location")
+	exercise=$(gum input --header="Exercise")
+	wgt_type=$(gum input --header="Weight type")
+	reps=$(gum input --header="Reps")
+	lbs=$(gum input --header="lbs")
+	notes=$(gum input --header="Notes")
 }
 
 function print_report()
