@@ -24,7 +24,10 @@ function print_report()
 	awk -v date="$selected_date" -f str_main.awk "$data_file"
 
 	# Footer: notes
-	awk -f str_notes.awk <(grep -P "${selected_date}\tnotes" "$data_file" | cut --fields=3 | fmt --width="$width")
+	grep -P "${selected_date}\tnotes" "$data_file" \
+		| cut --fields=3 \
+		| fmt --width="$width" \
+		| awk -f str_notes.awk
 }
 
 case $1 in
