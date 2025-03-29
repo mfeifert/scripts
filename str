@@ -7,15 +7,15 @@ data_dir="$HOME/sync/str"
 # Edit data files
 [[ $1 == "e" ]] && (cd "$data_dir" && nvim -c FZF) && exit
 
-width="61"
-selected_date="$(grep "^[[:digit:]]" "$data_dir"/header.tsv |
-	awk -F "\t" '{printf "%s %s\n", $1, $2}' |
-	sort --unique --reverse |
-	gum filter --no-fuzzy |
-	cut --delimiter=" " --fields=1)"
-weekday="$(date --date=$selected_date +%A)"
+function new_entry()
+{
+	exit
+}
 
-function print_report() {
+function print_report()
+{
+	width="61"
+
 	# Header: description, location, date
 	awk -v date="$selected_date" -v weekday="$weekday" -f str_header.awk "$data_dir"/header.tsv
 
@@ -31,9 +31,20 @@ case $1 in
 		new_entry
 		;;
 	"t")
+		# print report for today
+		selected_date="$(date -I)"
 		print_report
 		;;
 	*)
-		print_report
+		# select from list of dates
+		selected_date="$(grep "^[[:digit:]]" "$data_dir"/header.tsv \
+			| awk -F "\t" '{printf "%s %s\n", $1, $2}' \
+			| sort --unique --reverse \
+			| gum filter --no-fuzzy \
+			| cut --delimiter=" " --fields=1)"
+		if [[ $selected_date ]]; then
+			weekday="$(date --date=$selected_date +%A)"
+			print_report
+		fi
 		;;
 esac
