@@ -24,7 +24,7 @@ function print_report()
 	awk -v date="$selected_date" -f str_main.awk "$data_file"
 
 	# Footer: notes
-	awk -f str_notes.awk <(grep "$selected_date" "$data_dir"/notes.tsv | cut --fields=2 | fmt --width="$width")
+	awk -f str_notes.awk <(grep -P "${selected_date}\tnotes" "$data_file" | cut --fields=3 | fmt --width="$width")
 }
 
 case $1 in
@@ -38,7 +38,7 @@ case $1 in
 		;;
 	*)
 		# select from list of dates
-		selected_date="$(awk -F "\t" '/^[[:digit:]]/ {printf "%s %s\n", $1, $2}' "$data_dir"/header.tsv \
+		selected_date="$(awk -F "\t" '/^[[:digit:]]/ && $2 == "header" {printf "%s %s\n", $1, $3}' "$data_file" \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
 			| cut --delimiter=" " --fields=1)"
