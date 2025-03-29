@@ -4,20 +4,37 @@
 
 data_dir="$HOME/sync/str"
 data_file="$data_dir/main.tsv"
+tmp_file="$data_dir/tmp.tsv"
 
 # Edit data files
 [[ $1 == "e" ]] && (cd "$data_dir" && nvim -c FZF) && exit
 
 function new_entry()
 {
+	echo "" > "$tmp_file"
 	date=$(gum input --header="Date" --value=$(date -I))
+	echo -n -e "${date}\theader\t" >> "$tmp_file"
 	description=$(gum input --header="Description")
+	echo -n -e "${description}\t" >> "$tmp_file"
 	location=$(gum input --header="Location")
-	exercise=$(gum input --header="Exercise")
-	wgt_type=$(gum input --header="Weight type")
-	reps=$(gum input --header="Reps")
-	lbs=$(gum input --header="lbs")
+	echo $location >> "$tmp_file"
+	while true; do
+		exercise=$(gum input --header="Exercise")
+		[[ $exercise ]] || break
+		wgt_type=$(gum input --header="Weight type")
+		echo -n -e "${date}\t${exercise}\t${wgt_type}\t" >> "$tmp_file"
+		while true; do
+			reps=$(gum input --header="Set ${set} Reps")
+			[[ $reps ]] || break
+			[[ $wgt_type != "Bodyweight" ]] && lbs=$(gum input --header="Set ${set} lbs")
+			echo -n -e "${reps}\t${lbs}\t" >> "$tmp_file"
+		done
+		echo "" >> "$tmp_file"
+	done
 	notes=$(gum input --header="Notes")
+	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> "$tmp_file"
+
+	cat "$tmp_file" >> "$data_file"
 }
 
 function print_report()
