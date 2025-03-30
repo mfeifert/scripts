@@ -2,12 +2,10 @@
 
 # Display and modify calendar events stored in local text files.
 
-cal_dir="$HOME/sync/cal"
-
-[[ $1 == "e" ]] && (cd ${cal_dir} && nvim -c FZF) && exit
+[[ $1 == "e" ]] && (cd $MCAL_DATA_DIR && nvim -c FZF) && exit
 
 today="$(date +"%Y-%m-%d %a %H:%M")       === TODAY ==="
-cal_events=$(cat $cal_dir/* && printf "%s\n" "$today")
+cal_events=$(cat $MCAL_DATA_DIR/* && printf "%s\n" "$today")
 
 case $1 in
 	"t") cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m-%d) ;;

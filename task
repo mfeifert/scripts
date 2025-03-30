@@ -2,7 +2,9 @@
 
 # Display and modify todo/task lists stored in local text files.
 
-task_dir=~/sync/task
+monthly_data="$TASK_DATA_DIR/monthly"
+monthly_template="$TASK_DATA_DIR/monthly_tasks"
+todo_data="$TASK_DATA_DIR/todo"
 
 case $1 in
 	"e")
@@ -11,25 +13,25 @@ case $1 in
 	"m")
 		if [[ -n "$2" ]]; then
 			month=$(date +%Y-%m)
-			sed -i "/$month.*$2/ s/\[ \]/[X]/" $task_dir/monthly
-			sed -i "/$month.*$2/ s/xx/$(date +%d)/" $task_dir/monthly
+			sed -i "/$month.*$2/ s/\[ \]/[X]/" $monthly_data
+			sed -i "/$month.*$2/ s/xx/$(date +%d)/" $monthly_data
 		else
-			grep $(date +%Y-%m) $task_dir/monthly
+			grep $(date +%Y-%m) $monthly_data
 		fi
 		;;
 	"mi")
 		while IFS= read -r line; do
-			echo "$(date +'%Y-%m-xx') [ ] $line" >> $task_dir/monthly
-		done < $task_dir/monthly_tasks
+			echo "$(date +'%Y-%m-xx') [ ] $line" >> $monthly_data
+		done < $monthly_template
 		;;
 	"c")
-		grep "^x" $task_dir/task
+		grep "^x" $todo_data
 		;;
 	*)
 		if [[ -n "$1" ]]; then
-			sed -i "/$1/ s/^/x $(date +%Y-%m-%d) /" $task_dir/task
+			sed -i "/$1/ s/^/x $(date +%Y-%m-%d) /" $todo_data
 		else
-			grep -v "^x" $task_dir/task
+			grep -v "^x" $todo_data
 		fi
 		;;
 esac

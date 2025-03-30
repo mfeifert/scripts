@@ -2,9 +2,9 @@
 
 # Keep track of non-periodic tasks
 
-data_dir="$HOME/sync/chores"
+data_file="$CHORES_DATA_DIR/chores.tsv"
 
 case $1 in
-	"e") (cd $data_dir && nvim -c FZF $data_dir/chores.tsv +) ;;
-	*) grep --ignore-case --color=auto "${*}" $data_dir/chores.tsv ;;
+	"e") (cd $CHORES_DATA_DIR && nvim -c FZF $data_file +) ;;
+	*) grep --ignore-case --color=auto "${*}" $data_file ;;
 esac
