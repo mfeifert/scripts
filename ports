@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Show open ports sorted by application
+
+sudo ss -tulpnQH | sort -k 5
