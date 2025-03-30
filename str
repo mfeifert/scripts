@@ -25,9 +25,8 @@ function new_entry()
 		[[ $exercise ]] || break
 		wgt_type=$(gum input --header="Weight type")
 		echo -n -e "${date}\t${exercise}\t${wgt_type}\t" >> $tmp_file
-		[[ $wgt_type == "Bodyweight" ]] \
-			&& lbs=""
 		set=1
+		lbs=""
 		while true; do
 			reps=$(gum input --header="${exercise} set ${set} reps" --value=$reps)
 			[[ $reps ]] || break
