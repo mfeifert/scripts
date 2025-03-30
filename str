@@ -29,9 +29,10 @@ function new_entry()
 		[[ $wgt_type == "Bodyweight" ]] && lbs=""
 		set=1
 		while true; do
-			reps=$(gum input --header="${exercise} set ${set} reps")
+			reps=$(gum input --header="${exercise} set ${set} reps" --value="$reps")
 			[[ $reps ]] || break
-			[[ $wgt_type != "Bodyweight" ]] && lbs=$(gum input --header="${exercise} set ${set} lbs")
+			[[ $wgt_type != "Bodyweight" ]] \
+				&& lbs=$(gum input --header="${exercise} set ${set} lbs" --value="$lbs")
 			echo -n -e "${reps}\t${lbs}\t" >> "$tmp_file"
 			((set++))
 		done
