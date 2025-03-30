@@ -9,6 +9,9 @@ tmp_file="$data_dir/tmp.tsv"
 # Edit data files
 [[ $1 == "e" ]] && (cd "$data_dir" && nvim -c FZF) && exit
 
+export GUM_INPUT_PLACEHOLDER=""
+export GUM_FILTER_PLACEHOLDER=""
+
 function new_entry()
 {
 	echo "" > "$tmp_file"
