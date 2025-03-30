@@ -70,7 +70,7 @@ case $1 in
 		selected_date="$(date -I)"
 		print_report
 		;;
-	*)
+	"")
 		# select from list of dates
 		selected_date="$(awk -F "\t" '/^[[:digit:]]/ && $2 == "header" {printf "%s %s\n", $1, $3}' "$data_file" \
 			| sort --unique --reverse \
@@ -80,6 +80,11 @@ case $1 in
 			weekday="$(date --date=$selected_date +%A)"
 			print_report
 		fi
+		;;
+	*)
+		# print report for specified date
+		selected_date=$1
+		print_report
 		;;
 esac
 
