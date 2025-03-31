@@ -9,7 +9,7 @@ case $1 in
 		(nvim $bookmarks_file +)
 		;;
 	"")
-		bookmark_number="$(awk -F'\t' '{printf "%-66.64s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file \
+		bookmark_number="$(awk -F'\t' '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file \
 			| nl \
 			| fzf --exact --style=full --preview-window=hidden \
 			| cut --fields=1)"
