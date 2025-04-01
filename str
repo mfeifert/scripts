@@ -23,7 +23,8 @@ function new_entry()
 	while true; do
 		exercise=$(gum input --header="Exercise")
 		[[ $exercise ]] || break
-		wgt_type=$(gum input --header="Weight type")
+		wgt_type_def=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=3)
+		wgt_type=$(gum input --header="Weight type" --value="$wgt_type_def")
 		echo -n -e "${date}\t${exercise}\t${wgt_type}\t" >> $tmp_file
 		set_number=1
 		lbs=""
