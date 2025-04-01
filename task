@@ -8,7 +8,7 @@ todo_data="$TASK_DATA_DIR/todo"
 
 case $1 in
 	"e")
-		(cd $task_dir && nvim -c FZF)
+		(cd $TASK_DATA_DIR && nvim -c FZF)
 		;;
 	"m")
 		if [[ -n "$2" ]]; then
