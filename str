@@ -36,11 +36,12 @@ function new_entry()
 	while true; do
 
 		# Exercise
-		exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' $data_file \
+		local exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' $data_file \
 			| sort --unique \
 			| gum filter \
 				--height=15 \
 				--no-strict \
+				--no-show-help \
 				--header="  Exercise")
 		[[ $exercise ]] || break
 		echo -n -e "${date}\texercise\t${exercise}\t" >> $tmp_file
@@ -50,7 +51,14 @@ function new_entry()
 		local wgt_type_default=$(tac $data_file \
 			| grep --max-count=1 "$exercise" \
 			| cut --fields=4)
-		local wgt_type=$(gum input --header="  Weight type" --value="$wgt_type_default")
+		local wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' $data_file \
+			| sort --unique \
+			| gum filter \
+				--height=15 \
+				--no-show-help \
+				--no-strict \
+				--header="  Weight type" \
+				--selected="$wgt_type_default")
 		echo -n -e "${wgt_type}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
 
