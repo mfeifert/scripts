@@ -125,7 +125,7 @@ case $1 in
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
 			| cut --delimiter=" " --fields=1)
-		print_report $date $data_file
+		[[ $date ]] && print_report $date $data_file
 		;;
 	*)
 		# print report for specified date
