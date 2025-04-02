@@ -39,7 +39,6 @@ function new_entry()
 		exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' $data_file \
 			| sort --unique \
 			| gum filter \
-				--value="" \
 				--height=15 \
 				--no-strict \
 				--header="  Exercise")
@@ -48,7 +47,9 @@ function new_entry()
 		clear && print_report $date $tmp_file
 
 		# Weight type
-		local wgt_type_default=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=4)
+		local wgt_type_default=$(tac $data_file \
+			| grep --max-count=1 "$exercise" \
+			| cut --fields=4)
 		local wgt_type=$(gum input --header="  Weight type" --value="$wgt_type_default")
 		echo -n -e "${wgt_type}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
@@ -78,7 +79,11 @@ function new_entry()
 
 	# Notes
 	clear && print_report $date $tmp_file
-	local notes=$(gum input --header="  Notes")
+	local notes=$(gum write \
+		--header="  Notes" \
+		--width=63 \
+		--no-show-help \
+		--placeholder="")
 	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> $tmp_file
 	clear && print_report $date $tmp_file
 
