@@ -112,7 +112,7 @@ function print_report()
 
 case $1 in
 	"n")
-		#new_entry
+		# enter new workout interactively
 		new_entry
 		;;
 	"t")
@@ -120,7 +120,7 @@ case $1 in
 		print_report $(date -I) $data_file
 		;;
 	"")
-		# select from list of dates
+		# select from list of dates and print report
 		date=$(awk -F "\t" '$2 == "header" {printf "%s %s\n", $1, $3}' $data_file \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
@@ -128,7 +128,7 @@ case $1 in
 		[[ $date ]] && print_report $date $data_file
 		;;
 	*)
-		# print report for specified date
+		# print report for date specified at command line
 		print_report $1 $data_file
 		;;
 esac
