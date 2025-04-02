@@ -10,52 +10,94 @@ tmp_file="$STR_DATA_DIR/tmp.tsv"
 
 export GUM_INPUT_PLACEHOLDER=""
 export GUM_FILTER_PLACEHOLDER=""
+export GUM_FILTER_SHOW_HELP="no"
 
 function new_entry()
 {
-	echo "" > $tmp_file
-	date=$(gum input --header="Date" --value=$(date -I))
+	clear && echo "" > $tmp_file
+	# Print blank sheet
+	str 2000-01-01
+
+	# Date
+	local date=$(gum input --header="Date" --value=$(date -I))
 	echo -n -e "${date}\theader\t" >> $tmp_file
-	description=$(gum input --header="Description")
+	clear && print_report $date $tmp_file
+
+	# Description
+	local description=$(gum input --header="Description")
 	echo -n -e "${description}\t" >> $tmp_file
-	location=$(gum input --header="Location")
+	clear && print_report $date $tmp_file
+
+	# Location
+	local location=$(gum input --header="Location")
 	echo $location >> $tmp_file
+	clear && print_report $date $tmp_file
+
 	while true; do
-		exercise=$(gum input --header="Exercise")
+
+		# Exercise
+		exercise=$(awk -F "\t" '$2 != "" && $2 != "EXERCISE" && $2 != "header" && $2 != "notes" {print $2}' $data_file \
+			| sort --unique \
+			| gum filter \
+				--value="" \
+				--height=15 \
+				--no-strict \
+				--header="Exercise")
 		[[ $exercise ]] || break
-		wgt_type_def=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=3)
-		wgt_type=$(gum input --header="Weight type" --value="$wgt_type_def")
-		echo -n -e "${date}\t${exercise}\t${wgt_type}\t" >> $tmp_file
-		set_number=1
-		lbs=""
+		echo -n -e "${date}\t${exercise}\t" >> $tmp_file
+		clear && print_report $date $tmp_file
+
+		# Weight type
+		local wgt_type_default=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=3)
+		local wgt_type=$(gum input --header="Weight type" --value="$wgt_type_default")
+		echo -n -e "${wgt_type}\t" >> $tmp_file
+		clear && print_report $date $tmp_file
+
+		local set_number=1
+		local lbs=""
 		while true; do
-			reps=$(gum input --header="${exercise} set ${set_number} reps" --value=$reps)
+
+			# Reps
+			local reps=$(gum input --header="${exercise} set ${set_number} reps" --value=$reps)
 			[[ $reps ]] || break
+			echo -n -e "${reps}\t" >> $tmp_file
+			clear && print_report $date $tmp_file
+
+			# lbs
 			[[ $wgt_type != "Bodyweight" ]] \
-				&& lbs=$(gum input --header="${exercise} set ${set_number} lbs" --value=$lbs)
-			echo -n -e "${reps}\t${lbs}\t" >> $tmp_file
+				&& local lbs=$(gum input --header="${exercise} set ${set_number} lbs" --value=$lbs)
+			echo -n -e "${lbs}\t" >> $tmp_file
+			clear && print_report $date $tmp_file
+
 			((set_number++))
 		done
 		echo "" >> $tmp_file
 	done
-	notes=$(gum input --header="Notes")
+
+	# Notes
+	clear && print_report $date $tmp_file
+	local notes=$(gum input --header="Notes")
 	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> $tmp_file
+	clear && print_report $date $tmp_file
 
 	cat $tmp_file >> $data_file
 }
 
 function print_report()
 {
-	width=61
+	local date=$1
+	local data_file=$2
+	local width=61
+	local weekday=$(date --date=$date +%A)
 
 	# Header: description, location, date
-	awk -v date=$selected_date -v weekday=$weekday -f str_header.awk $data_file
+	awk -v date=$date -v weekday=$weekday -f str_header.awk $data_file
 
 	# Exercise list
-	awk -v date=$selected_date -f str_main.awk $data_file
+	awk -v date=$date -f str_main.awk $data_file
 
 	# Footer: notes
-	grep -P "${selected_date}\tnotes" $data_file \
+	grep -P "${date}\tnotes" $data_file \
 		| cut --fields=3 \
 		| fmt --width=$width \
 		| awk -f str_notes.awk
@@ -63,28 +105,24 @@ function print_report()
 
 case $1 in
 	"n")
+		#new_entry
 		new_entry
 		;;
 	"t")
 		# print report for today
-		selected_date=$(date -I)
-		print_report
+		print_report $(date -I) $data_file
 		;;
 	"")
 		# select from list of dates
-		selected_date=$(awk -F "\t" '/^[[:digit:]]/ && $2 == "header" {printf "%s %s\n", $1, $3}' $data_file \
+		date=$(awk -F "\t" '/^[[:digit:]]/ && $2 == "header" {printf "%s %s\n", $1, $3}' $data_file \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
 			| cut --delimiter=" " --fields=1)
-		if [[ $selected_date ]]; then
-			weekday=$(date --date=$selected_date +%A)
-			print_report
-		fi
+		print_report $date $data_file
 		;;
 	*)
 		# print report for specified date
-		selected_date=$1
-		print_report
+		print_report $1 $data_file
 		;;
 esac
 
