@@ -19,17 +19,17 @@ function new_entry()
 	str 2000-01-01
 
 	# Date
-	local date=$(gum input --header="Date" --value=$(date -I))
+	local date=$(gum input --header="  Date" --value=$(date -I))
 	echo -n -e "${date}\theader\t" >> $tmp_file
 	clear && print_report $date $tmp_file
 
 	# Description
-	local description=$(gum input --header="Description")
+	local description=$(gum input --header="  Description")
 	echo -n -e "${description}\t" >> $tmp_file
 	clear && print_report $date $tmp_file
 
 	# Location
-	local location=$(gum input --header="Location")
+	local location=$(gum input --header="  Location")
 	echo $location >> $tmp_file
 	clear && print_report $date $tmp_file
 
@@ -42,14 +42,14 @@ function new_entry()
 				--value="" \
 				--height=15 \
 				--no-strict \
-				--header="Exercise")
+				--header="  Exercise")
 		[[ $exercise ]] || break
 		echo -n -e "${date}\texercise\t${exercise}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
 
 		# Weight type
 		local wgt_type_default=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=4)
-		local wgt_type=$(gum input --header="Weight type" --value="$wgt_type_default")
+		local wgt_type=$(gum input --header="  Weight type" --value="$wgt_type_default")
 		echo -n -e "${wgt_type}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
 
@@ -58,7 +58,7 @@ function new_entry()
 		while true; do
 
 			# Reps
-			local reps=$(gum input --header="${exercise} set ${set_number} reps" --value=$reps)
+			local reps=$(gum input --header="  ${exercise} set ${set_number} reps" --value=$reps)
 			[[ $reps ]] || break
 			echo -n -e "${reps}\t" >> $tmp_file
 			clear && print_report $date $tmp_file
@@ -66,7 +66,7 @@ function new_entry()
 			# lbs
 			[[ $wgt_type == "Bodyweight" ]] \
 				|| local lbs=$(gum input \
-					--header="${exercise} set ${set_number} lbs" \
+					--header="  ${exercise} set ${set_number} lbs" \
 					--value=$lbs)
 			echo -n -e "${lbs}\t" >> $tmp_file
 			clear && print_report $date $tmp_file
@@ -78,7 +78,7 @@ function new_entry()
 
 	# Notes
 	clear && print_report $date $tmp_file
-	local notes=$(gum input --header="Notes")
+	local notes=$(gum input --header="  Notes")
 	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> $tmp_file
 	clear && print_report $date $tmp_file
 
