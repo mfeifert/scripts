@@ -36,7 +36,7 @@ function new_entry()
 	while true; do
 
 		# Exercise
-		exercise=$(awk -F "\t" '$2 != "" && $2 != "EXERCISE" && $2 != "header" && $2 != "notes" {print $2}' $data_file \
+		exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' $data_file \
 			| sort --unique \
 			| gum filter \
 				--value="" \
@@ -44,11 +44,11 @@ function new_entry()
 				--no-strict \
 				--header="Exercise")
 		[[ $exercise ]] || break
-		echo -n -e "${date}\t${exercise}\t" >> $tmp_file
+		echo -n -e "${date}\texercise\t${exercise}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
 
 		# Weight type
-		local wgt_type_default=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=3)
+		local wgt_type_default=$(tac $data_file | grep --max-count=1 "$exercise" | cut --fields=4)
 		local wgt_type=$(gum input --header="Weight type" --value="$wgt_type_default")
 		echo -n -e "${wgt_type}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
@@ -64,8 +64,10 @@ function new_entry()
 			clear && print_report $date $tmp_file
 
 			# lbs
-			[[ $wgt_type != "Bodyweight" ]] \
-				&& local lbs=$(gum input --header="${exercise} set ${set_number} lbs" --value=$lbs)
+			[[ $wgt_type == "Bodyweight" ]] \
+				|| local lbs=$(gum input \
+					--header="${exercise} set ${set_number} lbs" \
+					--value=$lbs)
 			echo -n -e "${lbs}\t" >> $tmp_file
 			clear && print_report $date $tmp_file
 
@@ -114,7 +116,7 @@ case $1 in
 		;;
 	"")
 		# select from list of dates
-		date=$(awk -F "\t" '/^[[:digit:]]/ && $2 == "header" {printf "%s %s\n", $1, $3}' $data_file \
+		date=$(awk -F "\t" '$2 == "header" {printf "%s %s\n", $1, $3}' $data_file \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
 			| cut --delimiter=" " --fields=1)
