@@ -3,7 +3,8 @@
 # Display workout log sheets for data stored in local text files.
 
 data_file="$STR_DATA_DIR/main.tsv"
-tmp_file="$STR_DATA_DIR/tmp.tsv"
+tmp_file=$(mktemp)
+trap "rm -f $tmp_file" EXIT
 
 # Edit data files
 [[ $1 == "e" ]] && (cd $STR_DATA_DIR && nvim -c FZF) && exit
@@ -140,5 +141,3 @@ case $1 in
 		print_report $1 $data_file
 		;;
 esac
-
-rm -f $tmp_file
