@@ -8,6 +8,9 @@ case $1 in
 	"e")
 		(nvim $bookmarks_file +)
 		;;
+	"n")
+		(nvim $bookmarks_file + +"normal o" +"normal p" +"normal a	" +"startinsert!")
+		;;
 	"")
 		bookmark_number="$(awk -F'\t' '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file \
 			| nl \
