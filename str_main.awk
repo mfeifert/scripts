@@ -3,5 +3,5 @@ BEGIN { FS = "\t"
 	print "┃ Exercise                     Set1   Set2   Set3   Set4   Set5 ┃" }
 
 $1 ~ date && $2 == "exercise" { print  "┠───────────────────────────────────────────────────────────────┨" }
-$1 ~ date && $2 == "exercise" { printf "┃ %-20s Reps: %5s %6s %6s %6s %6s  ┃\n", $3, $5, $7, $9, $11, $13 }
-$1 ~ date && $2 == "exercise" { printf "┃ ⤷  %-17s  lbs: %5s %6s %6s %6s %6s  ┃\n", $4, $6, $8, $10, $12, $14 }
+$1 ~ date && $2 == "exercise" { printf "┃ \033[1;m%-20s\033[0m Reps: %5s %6s %6s %6s %6s  ┃\n", $3, $5, $7, $9, $11, $13 }
+$1 ~ date && $2 == "exercise" { printf "┃ \033[0;31m⤷ \033[0m %-17s  lbs: %5s %6s %6s %6s %6s  ┃\n", $4, $6, $8, $10, $12, $14 }
