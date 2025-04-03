@@ -12,9 +12,9 @@ case $1 in
 		(nvim $bookmarks_file + +"normal o" +"normal p" +"normal a	" +"startinsert!")
 		;;
 	"")
-		bookmark_number="$(awk -F'\t' '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file \
+		bookmark_number="$(awk -F "\t" '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' $bookmarks_file \
 			| nl \
-			| fzf --exact --style=full --preview-window=hidden \
+			| fzf --exact --style=full --no-preview \
 			| cut --fields=1)"
 		url=$(cat -n $bookmarks_file | grep ^"$bookmark_number" | cut --fields=2)
 		[[ -z $bookmark_number ]] || firefox --new-tab $url
