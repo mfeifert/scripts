@@ -56,8 +56,8 @@ function new_entry()
 			| sort --unique \
 			| gum filter \
 				--height=15 \
-				--no-show-help \
 				--no-strict \
+				--no-show-help \
 				--header="  Weight type" \
 				--selected="$wgt_type_default")
 		echo -n -e "${wgt_type}\t" >> $tmp_file
@@ -89,9 +89,9 @@ function new_entry()
 	# Notes
 	clear && print_report $date $tmp_file
 	local notes=$(gum write \
-		--header="  Notes" \
 		--width=63 \
 		--no-show-help \
+		--header="  Notes" \
 		--placeholder="")
 	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> $tmp_file
 	clear && print_report $date $tmp_file
