@@ -20,7 +20,11 @@ case $1 in
 		echo -n "End time: "
 		read end_time_entered
 		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
-		calendar=$(gum filter --height=10 --placeholder="" --header="Calendar: " $(ls $MCAL_DATA_DIR))
+		calendar=$(gum filter \
+			--height=10 \
+			--placeholder="" \
+			--no-show-help \
+			--header="Calendar: " $(ls $MCAL_DATA_DIR))
 		echo "Calendar: $calendar"
 		echo -n "Tags: "
 		read tags
