@@ -2,36 +2,65 @@
 
 # Display and modify todo/task lists stored in local text files.
 
-monthly_data="$TASK_DATA_DIR/monthly"
-monthly_template="$TASK_DATA_DIR/monthly_tasks"
-todo_data="$TASK_DATA_DIR/todo"
+data_file_todo="$TASK_DATA_DIR/data_todo"
+data_file_daily="$TASK_DATA_DIR/data_daily"
+data_file_monthly="$TASK_DATA_DIR/data_monthly"
+template_daily="$TASK_DATA_DIR/template_daily"
+template_monthly="$TASK_DATA_DIR/template_monthly"
 
 case $1 in
 	"e")
 		(cd $TASK_DATA_DIR && nvim -c FZF)
 		;;
-	"m")
-		if [[ -n "$2" ]]; then
-			month=$(date +%Y-%m)
-			sed -i "/$month.*$2/ s/\[ \]/[X]/" $monthly_data
-			sed -i "/$month.*$2/ s/xx/$(date +%d)/" $monthly_data
+	"t")
+		if [[ -n $2 ]]; then
+			sed -i "/$2/ s/\[ \]/[X]/" $data_file_todo
 		else
-			grep $(date +%Y-%m) $monthly_data
+			grep "\[ \]" $data_file_todo | sort
+		fi
+		;;
+	"m")
+		if [[ -n $2 ]]; then
+			month=$(date +%Y-%m)
+			sed -i "/$month.*$2/ s/\[ \]/[X]/" $data_file_monthly
+			sed -i "/$month.*$2/ s/xx    /$(date +'%d %a')/" $data_file_monthly
+		else
+			clear
+			grep $(date +%Y-%m) $data_file_monthly
 		fi
 		;;
 	"mi")
 		while IFS= read -r line; do
-			echo "$(date +'%Y-%m-xx') [ ] $line" >> $monthly_data
-		done < $monthly_template
+			echo "$(date +'%Y-%m-xx    ') [ ] $line" >> $data_file_monthly
+		done < $template_monthly
 		;;
-	"c")
-		grep "^x" $todo_data
-		;;
-	*)
-		if [[ -n "$1" ]]; then
-			sed -i "/$1/ s/^/x $(date +%Y-%m-%d) /" $todo_data
+	"d")
+		if [[ -n $2 ]]; then
+			description="${@:3}"
+			date="$(date +%Y-%m-%d)"
+			sed -i "/${date}.*$2/ s/\[ \]/[X]/" $data_file_daily
+			sed -i "/${date}.*$2/ s/$/${description}/" $data_file_daily
+			log t
 		else
-			grep -v "^x" $todo_data
+			clear
+			grep $(date +%Y-%m-%d) $data_file_daily
 		fi
+		;;
+	"di")
+		while IFS= read -r line; do
+			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> $data_file_daily
+		done < $template_daily
+		log t
+		;;
+	"")
+		clear
+		echo -e "=== TODO ===\n"
+		grep "\[ ]" $data_file_todo | sort
+		# sort $data_file_todo
+		echo -e "\n=== DAILY ===\n"
+		grep $(date -I) $data_file_daily
+		echo -e "\n=== MONTHLY ===\n"
+		grep $(date +%Y-%m) $data_file_monthly
+		echo
 		;;
 esac
