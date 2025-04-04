@@ -14,10 +14,10 @@ case $1 in
 		echo -n "Date: "
 		read date_entered
 		date=$(date --date="$date_entered" +"%F %a")
-		echo -n "Start time (24-hour): "
+		echo -n "Start time: "
 		read start_time_entered
 		[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
-		echo -n "End time (24-hour): "
+		echo -n "End time: "
 		read end_time_entered
 		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
 		calendar=$(gum filter --height=10 --placeholder="" --header="Calendar: " $(ls $MCAL_DATA_DIR))
