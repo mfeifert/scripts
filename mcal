@@ -26,7 +26,7 @@ case $1 in
 		read tags
 		echo -n "Description: "
 		read description
-		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}" >> "$MCAL_DATA_DIR/$calendar"
+		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
 		;;
 	"") cat <<< $cal_events | sort ;;
 	*) cat <<< $cal_events | sort | grep --color=auto "${*}" ;;
