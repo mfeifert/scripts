@@ -19,15 +19,18 @@ case $1 in
 			grep "\[ \]" $data_file_todo | sort
 		fi
 		;;
+	"tn") ;;
 	"m")
 		if [[ -n $2 ]]; then
 			month=$(date +%Y-%m)
 			sed -i "/$month.*$2/ s/\[ \]/[X]/" $data_file_monthly
 			sed -i "/$month.*$2/ s/xx    /$(date +'%d %a')/" $data_file_monthly
 		else
-			clear
 			grep $(date +%Y-%m) $data_file_monthly
 		fi
+		;;
+	"ma")
+		cat $data_file_monthly
 		;;
 	"mi")
 		while IFS= read -r line; do
@@ -40,26 +43,44 @@ case $1 in
 			date="$(date +%Y-%m-%d)"
 			sed -i "/${date}.*$2/ s/\[ \]/[X]/" $data_file_daily
 			sed -i "/${date}.*$2/ s/$/${description}/" $data_file_daily
-			log t
 		else
-			clear
 			grep $(date +%Y-%m-%d) $data_file_daily
 		fi
+		;;
+	"da")
+		cat $data_file_daily
 		;;
 	"di")
 		while IFS= read -r line; do
 			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> $data_file_daily
 		done < $template_daily
-		log t
 		;;
 	"")
 		clear
-		echo -e "=== TODO ===\n"
+		todo=$(grep "\[ ]" $data_file_todo)
+		if [[ $todo ]]; then
+			echo -e "\e[1;0m=== \e[1;33mTODO \e[1;0m===\e[0m\n"
+			echo "$todo" | sort
+		fi
+		daily=$(grep "$(date -I).*\[ \]" $data_file_daily)
+		if [[ $daily ]]; then
+			echo -e "\n\e[1;0m=== \e[1;34mDAILY \e[1;0m===\e[0m\n"
+			echo "$daily"
+		fi
+		monthly=$(grep "$(date +%Y-%m).*\[ \]" $data_file_monthly)
+		if [[ $monthly ]]; then
+			echo -e "\n\e[1;0m=== \e[1;35mMONTHLY \e[1;0m===\e[0m\n"
+			echo "$monthly"
+		fi
+		echo
+		;;
+	"a")
+		clear
+		echo -e "\e[1;0m=== \e[1;33mTODO \e[1;0m===\e[0m\n"
 		grep "\[ ]" $data_file_todo | sort
-		# sort $data_file_todo
-		echo -e "\n=== DAILY ===\n"
+		echo -e "\n\e[1;0m=== \e[1;34mDAILY \e[1;0m===\e[0m\n"
 		grep $(date -I) $data_file_daily
-		echo -e "\n=== MONTHLY ===\n"
+		echo -e "\n\e[1;0m=== \e[1;35mMONTHLY \e[1;0m===\e[0m\n"
 		grep $(date +%Y-%m) $data_file_monthly
 		echo
 		;;
