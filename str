@@ -9,9 +9,17 @@ trap "rm -f $tmp_file" EXIT
 # Edit data files
 [[ $1 == "e" ]] && (cd $STR_DATA_DIR && nvim -c FZF) && exit
 
-export GUM_INPUT_PLACEHOLDER=""
+# Gum options
 export GUM_FILTER_PLACEHOLDER=""
 export GUM_FILTER_SHOW_HELP="no"
+export GUM_INPUT_PLACEHOLDER=""
+
+# Gum colors
+export GUM_FILTER_HEADER_FOREGROUND="240"
+export GUM_FILTER_INDICATOR_FOREGROUND="9"
+export GUM_FILTER_MATCH_FOREGROUND="9"
+export GUM_INPUT_CURSOR_FOREGROUND=""
+export GUM_WRITE_CURSOR_FOREGROUND=""
 
 function new_entry()
 {
@@ -59,7 +67,8 @@ function new_entry()
 				--no-strict \
 				--no-show-help \
 				--header="  Weight type" \
-				--selected="$wgt_type_default")
+				--selected="$wgt_type_default" \
+				--selected-prefix=" ")
 		echo -n -e "${wgt_type}\t" >> $tmp_file
 		clear && print_report $date $tmp_file
 
