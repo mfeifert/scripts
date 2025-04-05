@@ -10,17 +10,26 @@ template_monthly="$TASK_DATA_DIR/template_monthly"
 
 case $1 in
 	"e")
+		# task e
+		# edit - Edit data files
 		(cd $TASK_DATA_DIR && nvim -c FZF)
 		;;
 	"t")
+		# task t [pattern]
+		# todo - Show incomplete TODO tasks.  Mark complete if pattern is provided.
 		if [[ -n $2 ]]; then
 			sed -i "/$2/ s/\[ \]/[X]/" $data_file_todo
 		else
 			grep "\[ \]" $data_file_todo | sort
 		fi
 		;;
-	"tn") ;;
+	"tn")
+		# task tn
+		# todo new - Create new TODO task interactively
+		;;
 	"m")
+		# task m [pattern]
+		# monthly - Show current MONTHLY tasks.  Mark complete if pattern is provided.
 		if [[ -n $2 ]]; then
 			month=$(date +%Y-%m)
 			sed -i "/$month.*$2/ s/\[ \]/[X]/" $data_file_monthly
@@ -30,14 +39,20 @@ case $1 in
 		fi
 		;;
 	"ma")
+		# task ma
+		# monthly all - Show all MONTHLY tasks
 		cat $data_file_monthly
 		;;
 	"mi")
+		# task mi
+		# monthly initialize - Create new MONTHLY tasks from template
 		while IFS= read -r line; do
 			echo "$(date +'%Y-%m-xx    ') [ ] $line" >> $data_file_monthly
 		done < $template_monthly
 		;;
 	"d")
+		# task d [pattern [comment]]
+		# daily - Show current DAILY tasks.  Mark complete and add comment, if provided.
 		if [[ -n $2 ]]; then
 			description="${@:3}"
 			date="$(date +%Y-%m-%d)"
@@ -48,14 +63,20 @@ case $1 in
 		fi
 		;;
 	"da")
+		# task da
+		# daily all - Show all DAILY tasks
 		cat $data_file_daily
 		;;
 	"di")
+		# task di
+		# daily initialize - Create new DAILY tasks from template
 		while IFS= read -r line; do
 			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> $data_file_daily
 		done < $template_daily
 		;;
 	"")
+		# task
+		# Show all current incomplete TODO, DAILY, and MONTHLY tasks
 		clear
 		todo=$(grep "\[ ]" $data_file_todo)
 		if [[ $todo ]]; then
@@ -75,6 +96,8 @@ case $1 in
 		echo
 		;;
 	"a")
+		# task a
+		# all - Show all current TODO, DAILY, and MONTHLY tasks
 		clear
 		echo -e "\e[1;0m=== \e[1;33mTODO \e[1;0m===\e[0m\n"
 		grep "\[ ]" $data_file_todo | sort
