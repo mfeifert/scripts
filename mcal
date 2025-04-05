@@ -37,6 +37,9 @@ case $1 in
 			--height=10 \
 			--placeholder="" \
 			--no-show-help \
+			--header.foreground="" \
+			--indicator.foreground="12" \
+			--match.foreground="12" \
 			--header="Calendar: " \
 			$(ls -p $MCAL_DATA_DIR | grep -v /))
 		echo "Calendar: $calendar"
