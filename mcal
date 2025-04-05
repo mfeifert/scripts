@@ -11,9 +11,19 @@ today="$(date +"%Y-%m-%d %a %H:%M")       === TODAY ==="
 cal_events=$(cat $(find $MCAL_DATA_DIR -maxdepth 1 -type f) && printf "%s\n" "$today")
 
 case $1 in
-	"t") cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m-%d) ;;
-	"m") cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m) ;;
+	"t")
+		# mcal t
+		# Show all events for current day
+		cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m-%d)
+		;;
+	"m")
+		# mcal m
+		# Show all events for current month
+		cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m)
+		;;
 	"n")
+		# mcal n
+		# Add new event interactively
 		echo -n "Date: "
 		read date_entered
 		date=$(date --date="$date_entered" +"%F %a")
@@ -37,6 +47,8 @@ case $1 in
 		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
 		;;
 	"b")
+		# mcal b
+		# Add new birthday events from template
 		while read -r line; do
 			name="$(echo "$line" | cut --fields=2)"
 			name_in_data=$(grep "$(date +%Y).*${name}" $data_birthdays)
@@ -55,6 +67,14 @@ case $1 in
 			fi
 		done < $template_birthdays
 		;;
-	"") cat <<< $cal_events | sort ;;
-	*) cat <<< $cal_events | sort | grep --color=auto "${*}" ;;
+	"")
+		# mcal
+		# Show all events
+		cat <<< $cal_events | sort
+		;;
+	*)
+		# mcal <pattern>
+		# Match pattern to all events
+		cat <<< $cal_events | sort | grep --color=auto "${*}"
+		;;
 esac
