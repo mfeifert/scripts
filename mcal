@@ -36,7 +36,6 @@ case $1 in
 		calendar=$(gum filter \
 			--height=10 \
 			--placeholder="" \
-			--no-show-help \
 			--header.foreground="" \
 			--indicator.foreground="12" \
 			--match.foreground="12" \
