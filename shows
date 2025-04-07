@@ -10,11 +10,10 @@
 
 function main()
 {
-	echo ""
+	echo
 	awk -F, '{ printf "%2d. %s\n", NR, $2 }' $SHOWS_CSV
-	echo ""
-	echo -n "> "
-	read selection
+	echo
+	read -p "> " selection
 	table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $SHOWS_CSV)
 	title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $SHOWS_CSV)
 	show_media_dir=$(awk -F, -v sel=$selection 'NR==sel { print $3 }' $SHOWS_CSV)
@@ -25,20 +24,23 @@ function get_episode()
 {
 	case $1 in
 		"next")
-			episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+			episode_num=$(sqlite3 \
+				$MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
 			;;
 		"random")
-			episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
+			episode_num=$(sqlite3 \
+				$MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
 			;;
 		*)
-			episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE NumOverall == $1")
+			episode_num=$(sqlite3 \
+				$MEDIA_DB "SELECT NumOverall FROM $table WHERE NumOverall == $1")
 			;;
 	esac
 
 	episode_title=$(sqlite3 $MEDIA_DB "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 $MEDIA_DB -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
-	echo ""
+	echo
 	[[ -z $show_media_dir ]] || echo "p. Play episode"
 	[[ -z $episode_num ]] || echo "w. Mark episode $episode_num as watched"
 }
@@ -46,7 +48,7 @@ function get_episode()
 function actions()
 {
 	episode_num=""
-	echo ""
+	echo
 	echo "1. List episodes"
 	echo "2. Next episode"
 	echo "3. Random episode"
@@ -55,10 +57,9 @@ function actions()
 	echo "m. Main menu"
 
 	while true; do
-		echo ""
-		echo -n "${title}> "
-		read action
-		echo ""
+		echo
+		read -p "${title}> " action
+		echo
 		case $action in
 			1)
 				sqlite3 $MEDIA_DB -box "SELECT * from $table"
@@ -70,8 +71,7 @@ function actions()
 				get_episode "random"
 				;;
 			4)
-				echo -n "Episode: "
-				read episode
+				read -p "Episode: " episode
 				get_episode $episode
 				;;
 			a)
