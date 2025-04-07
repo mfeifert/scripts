@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-# Enable services while at home.
-
-sudo systemctl start syncthing@maf.service
-sudo systemctl start bluetooth.service
-sudo systemctl start avahi-daemon
-sudo systemctl start passim

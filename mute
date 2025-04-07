@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# Mute audio. Originally designed for use with dwm.
-
-SINK=$(pamixer --list-sinks | grep Running | awk '{print $1}')
-
-pactl set-sink-mute $SINK toggle

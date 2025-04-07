@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-# Insert records including date and minutes of yoga sessions into database.
-
-minutes=${1-10}
-table=yoga
-
-sqlite3 $HEALTH_DB "INSERT INTO $table VALUES (date('now', 'localtime'), $minutes);"
-sqlite3 -box $HEALTH_DB "SELECT * FROM $table ORDER BY Date DESC LIMIT 5;"
