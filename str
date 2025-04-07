@@ -2,7 +2,7 @@
 
 # Display workout log sheets for data stored in local text files.
 
-data_file="$STR_DATA_DIR/main.tsv"
+data_file="$STR_DATA_DIR/str_data.tsv"
 tmp_file=$(mktemp)
 trap "rm -f $tmp_file" EXIT
 
@@ -116,7 +116,7 @@ function print_report()
 	awk -v date=$date -v weekday=$weekday -f str_header.awk $data_file
 
 	# Exercise list
-	awk -v date=$date -f str_main.awk $data_file
+	awk -v date=$date -f str_exercises.awk $data_file
 
 	# Footer: notes
 	grep -P "${date}\tnotes" $data_file \
