@@ -24,12 +24,20 @@ function main()
 function get_episode()
 {
 	case $1 in
-		"next") episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1") ;;
-		"random") episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1") ;;
-		*) episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE NumOverall == $1") ;;
+		"next")
+			episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+			;;
+		"random")
+			episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
+			;;
+		*)
+			episode_num=$(sqlite3 $MEDIA_DB "SELECT NumOverall FROM $table WHERE NumOverall == $1")
+			;;
 	esac
+
 	episode_title=$(sqlite3 $MEDIA_DB "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 $MEDIA_DB -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
+
 	echo ""
 	[[ -z $show_media_dir ]] || echo "p. Play episode"
 	[[ -z $episode_num ]] || echo "w. Mark episode $episode_num as watched"
@@ -45,21 +53,30 @@ function actions()
 	echo "4. Select episode"
 	[[ $table == "xfiles" ]] && echo "a. List mythology arc"
 	echo "m. Main menu"
+
 	while true; do
 		echo ""
 		echo -n "${title}> "
 		read action
 		echo ""
 		case $action in
-			1) sqlite3 $MEDIA_DB -box "SELECT * from $table" ;;
-			2) get_episode "next" ;;
-			3) get_episode "random" ;;
+			1)
+				sqlite3 $MEDIA_DB -box "SELECT * from $table"
+				;;
+			2)
+				get_episode "next"
+				;;
+			3)
+				get_episode "random"
+				;;
 			4)
 				echo -n "Episode: "
 				read episode
 				get_episode $episode
 				;;
-			a) sqlite3 $MEDIA_DB -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL" ;;
+			a)
+				sqlite3 $MEDIA_DB -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
+				;;
 			p)
 				episode_title_formatted=$(echo $episode_title | sed "s/\W//g")
 				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
@@ -68,7 +85,9 @@ function actions()
 				sqlite3 $MEDIA_DB "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
 				actions
 				;;
-			m) main ;;
+			m)
+				main
+				;;
 		esac
 	done
 }
