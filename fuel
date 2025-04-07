@@ -5,16 +5,11 @@
 db=$DB_DIR/auto.db
 table=fuel
 
-echo -n "Total price: "
-read amount
-echo -n "Price per gallon: "
-read ppg
-echo -n "Gallons: "
-read gallons
-echo -n "Miles per gallon: "
-read mpg
-echo -n "Odometer: "
-read miles
+read -p "Total price: " amount
+read -p "Price per gallon: " ppg
+read -p "Gallons: " gallons
+read -p "Miles per gallon: " mpg
+read -p "Odometer: " miles
 
 sqlite3 $db "INSERT INTO $table VALUES (date('now', 'localtime'), $amount, $ppg, $gallons, $mpg, $miles);"
 
