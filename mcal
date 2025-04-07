@@ -70,6 +70,11 @@ case $1 in
 			fi
 		done < $template_birthdays
 		;;
+	"r")
+		# mcal r [start date] [end date]
+		# Show all events from specified start date to end date TODO
+		#echo "$cal_events" | sort | awk -v start=$3 -v end=$4 '$1 >= "$start" && $1 <= "$end"'
+		;;
 	"")
 		# mcal
 		# Show all events
