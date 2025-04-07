@@ -73,13 +73,11 @@ case $1 in
 	"")
 		# mcal
 		# Show all events
-		# cat <<< $cal_events | sort
 		echo "$cal_events" | sort
 		;;
 	*)
 		# mcal <pattern>
 		# Match pattern to all events
-		# cat <<< $cal_events | sort | grep --color=auto "${*}"
 		echo "$cal_events" | sort | grep --color=auto "${*}"
 		;;
 esac
