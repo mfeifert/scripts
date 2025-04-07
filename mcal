@@ -24,14 +24,11 @@ case $1 in
 	"n")
 		# mcal n
 		# Add new event interactively
-		echo -n "Date: "
-		read date_entered
+		read -p "Date: " date_entered
 		date=$(date --date="$date_entered" +"%F %a")
-		echo -n "Start time: "
-		read start_time_entered
+		read -p "Start time: " start_time_entered
 		[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
-		echo -n "End time: "
-		read end_time_entered
+		read -p "End time: " end_time_entered
 		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
 		calendar=$(gum filter \
 			--height=10 \
@@ -42,10 +39,8 @@ case $1 in
 			--header="Calendar: " \
 			$(ls -p $MCAL_DATA_DIR | grep -v /))
 		echo "Calendar: $calendar"
-		echo -n "Tags: "
-		read tags
-		echo -n "Description: "
-		read description
+		read -p "Tags: " tags
+		read -p "Description: " description
 		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
 		;;
 	"b")
