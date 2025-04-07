@@ -14,12 +14,12 @@ case $1 in
 	"t")
 		# mcal t
 		# Show all events for current day
-		cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m-%d)
+		echo "$cal_events" | sort | grep --color=auto $(date +%Y-%m-%d)
 		;;
 	"m")
 		# mcal m
 		# Show all events for current month
-		cat <<< $cal_events | sort | grep --color=auto $(date +%Y-%m)
+		echo "$cal_events" | sort | grep --color=auto $(date +%Y-%m)
 		;;
 	"n")
 		# mcal n
@@ -73,11 +73,13 @@ case $1 in
 	"")
 		# mcal
 		# Show all events
-		cat <<< $cal_events | sort
+		# cat <<< $cal_events | sort
+		echo "$cal_events" | sort
 		;;
 	*)
 		# mcal <pattern>
 		# Match pattern to all events
-		cat <<< $cal_events | sort | grep --color=auto "${*}"
+		# cat <<< $cal_events | sort | grep --color=auto "${*}"
+		echo "$cal_events" | sort | grep --color=auto "${*}"
 		;;
 esac
