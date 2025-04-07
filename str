@@ -3,11 +3,11 @@
 # Display workout log sheets for data stored in local text files.
 
 data_file="$STR_DATA_DIR/str_data.tsv"
-tmp_file=$(mktemp)
-trap "rm -f $tmp_file" EXIT
+tmp_file="$(mktemp)"
+trap 'rm -f $tmp_file' EXIT
 
 # Edit data files
-[[ $1 == "e" ]] && (cd $STR_DATA_DIR && nvim -c FZF) && exit
+[[ $1 == "e" ]] && (cd "$STR_DATA_DIR" && nvim -c FZF) && exit
 
 # Gum options
 export GUM_FILTER_PLACEHOLDER=""
@@ -22,43 +22,43 @@ export GUM_WRITE_CURSOR_FOREGROUND=""
 
 function new_entry()
 {
-	clear && echo "" > $tmp_file
+	clear && echo "" > "$tmp_file"
 	# Print blank sheet
 	str 2000-01-01
 
 	# Date
-	local date=$(gum input --header="  Date" --value=$(date -I))
-	echo -n -e "${date}\theader\t" >> $tmp_file
-	clear && print_report $date $tmp_file
+	local date=$(gum input --header="  Date" --value="$(date -I)")
+	echo -n -e "${date}\theader\t" >> "$tmp_file"
+	clear && print_report "$date" "$tmp_file"
 
 	# Description
 	local description=$(gum input --header="  Description")
-	echo -n -e "${description}\t" >> $tmp_file
-	clear && print_report $date $tmp_file
+	echo -n -e "${description}\t" >> "$tmp_file"
+	clear && print_report "$date" "$tmp_file"
 
 	# Location
 	local location=$(gum input --header="  Location")
-	echo $location >> $tmp_file
-	clear && print_report $date $tmp_file
+	echo "$location" >> "$tmp_file"
+	clear && print_report "$date" "$tmp_file"
 
 	while true; do
 
 		# Exercise
-		local exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' $data_file \
+		local exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' "$data_file" \
 			| sort --unique \
 			| gum filter \
 				--height=15 \
 				--no-strict \
 				--header="  Exercise")
 		[[ $exercise ]] || break
-		echo -n -e "${date}\texercise\t${exercise}\t" >> $tmp_file
-		clear && print_report $date $tmp_file
+		echo -n -e "${date}\texercise\t${exercise}\t" >> "$tmp_file"
+		clear && print_report "$date" "$tmp_file"
 
 		# Weight type
-		local wgt_type_default=$(tac $data_file \
+		local wgt_type_default=$(tac "$data_file" \
 			| grep --max-count=1 "$exercise" \
 			| cut --fields=4)
-		local wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' $data_file \
+		local wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' "$data_file" \
 			| sort --unique \
 			| gum filter \
 				--height=15 \
@@ -66,62 +66,62 @@ function new_entry()
 				--header="  Weight type" \
 				--selected="$wgt_type_default" \
 				--selected-prefix=" ")
-		echo -n -e "${wgt_type}\t" >> $tmp_file
-		clear && print_report $date $tmp_file
+		echo -n -e "${wgt_type}\t" >> "$tmp_file"
+		clear && print_report "$date" "$tmp_file"
 
 		local set_number=1
 		local lbs=""
 		while true; do
 
 			# Reps
-			local reps=$(gum input --header="  ${exercise} set ${set_number} reps" --value=$reps)
+			local reps=$(gum input --header="  ${exercise} set ${set_number} reps" --value="$reps")
 			[[ $reps ]] || break
-			echo -n -e "${reps}\t" >> $tmp_file
-			clear && print_report $date $tmp_file
+			echo -n -e "${reps}\t" >> "$tmp_file"
+			clear && print_report "$date" "$tmp_file"
 
 			# lbs
 			[[ $wgt_type == "Bodyweight" ]] \
 				|| local lbs=$(gum input \
 					--header="  ${exercise} set ${set_number} lbs" \
-					--value=$lbs)
-			echo -n -e "${lbs}\t" >> $tmp_file
-			clear && print_report $date $tmp_file
+					--value="$lbs")
+			echo -n -e "${lbs}\t" >> "$tmp_file"
+			clear && print_report "$date" "$tmp_file"
 
 			((set_number++))
 		done
-		echo "" >> $tmp_file
+		echo "" >> "$tmp_file"
 	done
 
 	# Notes
-	clear && print_report $date $tmp_file
+	clear && print_report "$date" "$tmp_file"
 	local notes=$(gum write \
 		--width=63 \
 		--no-show-help \
 		--header="  Notes" \
 		--placeholder="")
-	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> $tmp_file
-	clear && print_report $date $tmp_file
+	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> "$tmp_file"
+	clear && print_report "$date" "$tmp_file"
 
-	cat $tmp_file >> $data_file
+	cat "$tmp_file" >> "$data_file"
 }
 
 function print_report()
 {
-	local date=$1
-	local data_file=$2
+	local date="$1"
+	local data_file="$2"
 	local width=61
-	local weekday=$(date --date=$date +%A)
+	local weekday="$(date --date="$date" +%A)"
 
 	# Header: description, location, date
-	awk -v date=$date -v weekday=$weekday -f str_header.awk $data_file
+	awk -v date="$date" -v weekday="$weekday" -f str_header.awk "$data_file"
 
 	# Exercise list
-	awk -v date=$date -f str_exercises.awk $data_file
+	awk -v date="$date" -f str_exercises.awk "$data_file"
 
 	# Footer: notes
-	grep -P "${date}\tnotes" $data_file \
+	grep -P "${date}\tnotes" "$data_file" \
 		| cut --fields=3 \
-		| fmt --width=$width \
+		| fmt --width="$width" \
 		| awk -f str_notes.awk
 }
 
@@ -132,18 +132,18 @@ case $1 in
 		;;
 	"t")
 		# print report for today
-		print_report $(date -I) $data_file
+		print_report "$(date -I)" "$data_file"
 		;;
 	"")
 		# select from list of dates and print report
-		date=$(awk -F "\t" '$2 == "header" {printf "%s %s\n", $1, $3}' $data_file \
+		date=$(awk -F "\t" '$2 == "header" {printf "%s %s\n", $1, $3}' "$data_file" \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
 			| cut --delimiter=" " --fields=1)
-		[[ $date ]] && print_report $date $data_file
+		[[ $date ]] && print_report "$date" "$data_file"
 		;;
 	*)
 		# print report for date specified at command line
-		print_report $1 $data_file
+		print_report "$1" "$data_file"
 		;;
 esac
