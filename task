@@ -9,10 +9,9 @@ template_daily="$TASK_DATA_DIR/template_daily"
 template_monthly="$TASK_DATA_DIR/template_monthly"
 
 # Legend:
-# a - all               t - todo
-# i - initialize        d - daily
-# n - new               m - monthly
-# e - edit
+# t - todo           a - all
+# d - daily          i - initialize
+# m - monthly        n - new
 
 case $1 in
 	"e")
