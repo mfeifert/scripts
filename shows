@@ -78,7 +78,7 @@ function actions()
 				sqlite3 "$MEDIA_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
 				;;
 			p)
-				episode_title_formatted=$(echo "$episode_title" | sed "s/\W//g")
+				episode_title_formatted=${episode_title/\W//}
 				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
 				;;
 			w)
