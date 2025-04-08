@@ -8,4 +8,4 @@ shfmt \
 	--case-indent \
 	--space-redirects \
 	--func-next-line \
-	$1
+	"$1"

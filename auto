@@ -5,7 +5,7 @@
 # "hledger_auto" is a separate executable script used to print a report
 # on auto-related finances.
 
-miles=$(sqlite3 -column $AUTO_DB "select Miles from fuel order by Date desc limit 1;")
+miles=$(sqlite3 -column "$AUTO_DB" "select Miles from fuel order by Date desc limit 1;")
 total=$(hledger_auto | awk 'END {print $1}')
 dpm=$(echo "scale=2; $total / $miles" | bc -l)
 mpd=$(echo "scale=2; $miles / $total" | bc -l | awk '{printf "%.2f", $0}')

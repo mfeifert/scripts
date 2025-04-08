@@ -10,4 +10,4 @@ indent \
 	-bls \
 	-nce \
 	-sar \
-	$1
+	"$1"

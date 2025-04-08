@@ -11,12 +11,12 @@
 function main()
 {
 	echo
-	awk -F, '{ printf "%2d. %s\n", NR, $2 }' $SHOWS_CSV
+	awk -F, '{ printf "%2d. %s\n", NR, $2 }' "$SHOWS_CSV"
 	echo
-	read -p "> " selection
-	table=$(awk -F, -v sel=$selection 'NR==sel { print $1 }' $SHOWS_CSV)
-	title=$(awk -F, -v sel=$selection 'NR==sel { print $2 }' $SHOWS_CSV)
-	show_media_dir=$(awk -F, -v sel=$selection 'NR==sel { print $3 }' $SHOWS_CSV)
+	read -rp "> " selection
+	table=$(awk -F, -v sel="$selection" 'NR==sel { print $1 }' "$SHOWS_CSV")
+	title=$(awk -F, -v sel="$selection" 'NR==sel { print $2 }' "$SHOWS_CSV")
+	show_media_dir=$(awk -F, -v sel="$selection" 'NR==sel { print $3 }' "$SHOWS_CSV")
 	actions
 }
 
@@ -25,20 +25,20 @@ function get_episode()
 	case $1 in
 		"next")
 			episode_num=$(sqlite3 \
-				$MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+				"$MEDIA_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
 			;;
 		"random")
 			episode_num=$(sqlite3 \
-				$MEDIA_DB "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
+				"$MEDIA_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
 			;;
 		*)
 			episode_num=$(sqlite3 \
-				$MEDIA_DB "SELECT NumOverall FROM $table WHERE NumOverall == $1")
+				"$MEDIA_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $1")
 			;;
 	esac
 
-	episode_title=$(sqlite3 $MEDIA_DB "SELECT Title FROM $table WHERE NumOverall == $episode_num")
-	sqlite3 $MEDIA_DB -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
+	episode_title=$(sqlite3 "$MEDIA_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
+	sqlite3 "$MEDIA_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
 	echo
 	[[ -z $show_media_dir ]] || echo "p. Play episode"
@@ -58,11 +58,11 @@ function actions()
 
 	while true; do
 		echo
-		read -p "${title}> " action
+		read -rp "${title}> " action
 		echo
 		case $action in
 			1)
-				sqlite3 $MEDIA_DB -box "SELECT * from $table"
+				sqlite3 "$MEDIA_DB" -box "SELECT * from $table"
 				;;
 			2)
 				get_episode "next"
@@ -71,18 +71,18 @@ function actions()
 				get_episode "random"
 				;;
 			4)
-				read -p "Episode: " episode
-				get_episode $episode
+				read -rp "Episode: " episode
+				get_episode "$episode"
 				;;
 			a)
-				sqlite3 $MEDIA_DB -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
+				sqlite3 "$MEDIA_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
 				;;
 			p)
-				episode_title_formatted=$(echo $episode_title | sed "s/\W//g")
+				episode_title_formatted=$(echo "$episode_title" | sed "s/\W//g")
 				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
 				;;
 			w)
-				sqlite3 $MEDIA_DB "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
+				sqlite3 "$MEDIA_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
 				actions
 				;;
 			m)

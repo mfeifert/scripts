@@ -2,7 +2,7 @@
 
 # Display and modify calendar events stored in local text files.
 
-[[ $1 == "e" ]] && (cd $MCAL_DATA_DIR && nvim -c FZF) && exit
+[[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
 
 data_birthdays="$MCAL_DATA_DIR/Birthdays"
 template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
@@ -24,11 +24,11 @@ case $1 in
 	"n")
 		# mcal n
 		# Add new event interactively
-		read -p "Date: " date_entered
+		read -rp "Date: " date_entered
 		date=$(date --date="$date_entered" +"%F %a")
-		read -p "Start time: " start_time_entered
+		read -rp "Start time: " start_time_entered
 		[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
-		read -p "End time: " end_time_entered
+		read -rp "End time: " end_time_entered
 		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
 		calendar=$(gum filter \
 			--height=10 \
@@ -37,10 +37,10 @@ case $1 in
 			--indicator.foreground="12" \
 			--match.foreground="12" \
 			--header="Calendar: " \
-			$(ls -p "$MCAL_DATA_DIR" | grep -v /))
+			"$(ls -p "$MCAL_DATA_DIR" | grep -v /)")
 		echo "Calendar: $calendar"
-		read -p "Tags: " tags
-		read -p "Description: " description
+		read -rp "Tags: " tags
+		read -rp "Description: " description
 		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
 		;;
 	"b")

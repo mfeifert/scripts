@@ -2,15 +2,15 @@
 
 # Insert records including details of fuel refills into database.
 
-db=$DB_DIR/auto.db
-table=fuel
+db="$DB_DIR/auto.db"
+table="fuel"
 
-read -p "Total price: " amount
-read -p "Price per gallon: " ppg
-read -p "Gallons: " gallons
-read -p "Miles per gallon: " mpg
-read -p "Odometer: " miles
+read -rp "Total price: " amount
+read -rp "Price per gallon: " ppg
+read -rp "Gallons: " gallons
+read -rp "Miles per gallon: " mpg
+read -rp "Odometer: " miles
 
-sqlite3 $db "INSERT INTO $table VALUES (date('now', 'localtime'), $amount, $ppg, $gallons, $mpg, $miles);"
+sqlite3 "$db" "INSERT INTO $table VALUES (date('now', 'localtime'), $amount, $ppg, $gallons, $mpg, $miles);"
 
-sqlite3 -box $db "SELECT * FROM $table ORDER BY Date DESC LIMIT 5;"
+sqlite3 -box "$db" "SELECT * FROM $table ORDER BY Date DESC LIMIT 5;"
