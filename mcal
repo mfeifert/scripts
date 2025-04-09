@@ -66,8 +66,8 @@ case $1 in
 		done < "$template_birthdays"
 		;;
 	"r")
-		# Show all events from specified start date to end date TODO
-		# echo "$cal_events" | sort | awk -v start=$3 -v end=$4 '$1 >= "$start" && $1 <= "$end"'
+		# Show all events from specified begin date to end date
+		echo "$cal_events" | sort | awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
 		;;
 	"")
 		# Show all events
