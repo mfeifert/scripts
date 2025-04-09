@@ -22,29 +22,31 @@ export GUM_WRITE_CURSOR_FOREGROUND=""
 
 function new_entry()
 {
+	local date description location exercise wgt_type_default \
+		wgt_type reps lbs notes weekday
 	clear && echo "" > "$tmp_file"
 	# Print blank sheet
 	str 2000-01-01
 
 	# Date
-	local date=$(gum input --header="  Date" --value="$(date -I)")
+	date=$(gum input --header="  Date" --value="$(date -I)")
 	echo -n -e "${date}\theader\t" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
 	# Description
-	local description=$(gum input --header="  Description")
+	description=$(gum input --header="  Description")
 	echo -n -e "${description}\t" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
 	# Location
-	local location=$(gum input --header="  Location")
+	location=$(gum input --header="  Location")
 	echo "$location" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
 	while true; do
 
 		# Exercise
-		local exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' "$data_file" \
+		exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' "$data_file" \
 			| sort --unique \
 			| gum filter \
 				--height=15 \
@@ -55,10 +57,10 @@ function new_entry()
 		clear && print_report "$date" "$tmp_file"
 
 		# Weight type
-		local wgt_type_default=$(tac "$data_file" \
+		wgt_type_default=$(tac "$data_file" \
 			| grep --max-count=1 "$exercise" \
 			| cut --fields=4)
-		local wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' "$data_file" \
+		wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' "$data_file" \
 			| sort --unique \
 			| gum filter \
 				--height=15 \
@@ -74,14 +76,14 @@ function new_entry()
 		while true; do
 
 			# Reps
-			local reps=$(gum input --header="  ${exercise} set ${set_number} reps" --value="$reps")
+			reps=$(gum input --header="  ${exercise} set ${set_number} reps" --value="$reps")
 			[[ $reps ]] || break
 			echo -n -e "${reps}\t" >> "$tmp_file"
 			clear && print_report "$date" "$tmp_file"
 
 			# lbs
 			[[ $wgt_type == "Bodyweight" ]] \
-				|| local lbs=$(gum input \
+				|| lbs=$(gum input \
 					--header="  ${exercise} set ${set_number} lbs" \
 					--value="$lbs")
 			echo -n -e "${lbs}\t" >> "$tmp_file"
@@ -94,7 +96,7 @@ function new_entry()
 
 	# Notes
 	clear && print_report "$date" "$tmp_file"
-	local notes=$(gum write \
+	notes=$(gum write \
 		--width=63 \
 		--no-show-help \
 		--header="  Notes" \
@@ -110,7 +112,8 @@ function print_report()
 	local date="$1"
 	local data_file="$2"
 	local width=61
-	local weekday="$(date --date="$date" +%A)"
+	local weekday
+	weekday="$(date --date="$date" +%A)"
 
 	# Header: description, location, date
 	awk -v date="$date" -v weekday="$weekday" -f str_header.awk "$data_file"
