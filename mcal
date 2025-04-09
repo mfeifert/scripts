@@ -12,17 +12,14 @@ cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf 
 
 case $1 in
 	"t")
-		# mcal t
 		# Show all events for current day
 		echo "$cal_events" | sort | grep --color=auto "$(date +%Y-%m-%d)"
 		;;
 	"m")
-		# mcal m
 		# Show all events for current month
 		echo "$cal_events" | sort | grep --color=auto "$(date +%Y-%m)"
 		;;
 	"n")
-		# mcal n
 		# Add new event interactively
 		read -rp "Date: " date_entered
 		date=$(date --date="$date_entered" +"%F %a")
@@ -45,10 +42,9 @@ case $1 in
 		echo "Calendar: $calendar"
 		read -rp "Tags: " tags
 		read -rp "Description: " description
-		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}"
+		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
 		;;
 	"b")
-		# mcal b
 		# Add new birthday events from template
 		while IFS=$'\t' read -r bday_input name; do
 			# Check if name from line in template already has
@@ -70,18 +66,15 @@ case $1 in
 		done < "$template_birthdays"
 		;;
 	"r")
-		# mcal r [start date] [end date]
 		# Show all events from specified start date to end date TODO
 		# echo "$cal_events" | sort | awk -v start=$3 -v end=$4 '$1 >= "$start" && $1 <= "$end"'
 		;;
 	"")
-		# mcal
 		# Show all events
 		echo "$cal_events" | sort
 		;;
 	*)
-		# mcal <pattern>
-		# Match pattern to all events
+		# Show all events that match pattern
 		echo "$cal_events" | sort | grep --color=auto "${*}"
 		;;
 esac
