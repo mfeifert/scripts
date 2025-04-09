@@ -30,6 +30,10 @@ case $1 in
 		[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
 		read -rp "End time: " end_time_entered
 		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
+		calendars=()
+		for file in "$MCAL_DATA_DIR"/*; do
+			[[ -f $file ]] && calendars+=("${file##*/}")
+		done
 		calendar=$(gum filter \
 			--height=10 \
 			--placeholder="" \
@@ -37,11 +41,11 @@ case $1 in
 			--indicator.foreground="12" \
 			--match.foreground="12" \
 			--header="Calendar: " \
-			"$(ls -p "$MCAL_DATA_DIR" | grep -v /)")
+			"${calendars[@]}")
 		echo "Calendar: $calendar"
 		read -rp "Tags: " tags
 		read -rp "Description: " description
-		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
+		echo "${date} ${start_time------}-${end_time------} ${calendar}:${tags} ${description}"
 		;;
 	"b")
 		# mcal b
