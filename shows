@@ -44,27 +44,32 @@ function actions()
 	echo "4) Select episode"
 	[[ $table == "xfiles" ]] && echo "a) List mythology arc"
 	echo "m) Main menu"
+	echo
 
 	while true; do
-		echo
 		read -rp "${title}> " action
 		echo
 		case $action in
 			1)
 				sqlite3 "$SHOWS_DB" -box "SELECT * from $table"
+				echo
 				;;
 			2)
 				get_episode "next"
+				echo
 				;;
 			3)
 				get_episode "random"
+				echo
 				;;
 			4)
 				read -rp "Episode: " episode
 				get_episode "$episode"
+				echo
 				;;
 			a)
 				sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
+				echo
 				;;
 			p)
 				episode_title_formatted=${episode_title/\W//}
@@ -72,6 +77,7 @@ function actions()
 				;;
 			w)
 				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
+				echo
 				continue
 				;;
 			m)
@@ -88,13 +94,11 @@ while IFS=',' read -r table title show_media_dir; do
 	show_media_dirs+=("$show_media_dir")
 done < "$SHOWS_CSV"
 
-# Main menu settings
-export COLUMNS=1
-PS3=$'\n'"> "
-
 # Show main menu
+echo
 while true; do
-	echo
+	export COLUMNS=1
+	PS3=$'\n'"> "
 	select item in "${titles[@]}"; do
 		index=$((REPLY - 1))
 		table=${tables[$index]}
