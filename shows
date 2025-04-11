@@ -14,12 +14,10 @@ get_episode()
 		"next")
 			episode_num=$(sqlite3 \
 				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
-			[[ $? != 0 ]] && echo "No unwatched episodes" && return
 			;;
 		"random")
 			episode_num=$(sqlite3 \
 				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
-			[[ $? != 0 ]] && echo "No unwatched episodes" && return
 			;;
 		*)
 			episode_num=$(sqlite3 \
@@ -27,6 +25,7 @@ get_episode()
 			;;
 	esac
 
+	[[ -n $episode_num ]] || echo "No unwatched episodes" && return
 	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
@@ -73,7 +72,11 @@ actions()
 				;;
 			p)
 				episode_title_formatted=${episode_title//[![:word:]]/}
-				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)" 2> /dev/null
+				episode_filename=$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f 2> /dev/null \
+					| fzf -i -1 -f "$episode_title_formatted" \
+					| head -n 1)
+				[[ $? != 0 ]] && echo -e "Media not found\n" && continue
+				xdg-open "$episode_filename" 2> /dev/null
 				;;
 			w)
 				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
@@ -93,6 +96,8 @@ while IFS=',' read -r table title show_media_dir; do
 	titles+=("$title")
 	show_media_dirs+=("$show_media_dir")
 done < "$SHOWS_CSV"
+
+set -o pipefail
 
 # Show main menu
 echo
