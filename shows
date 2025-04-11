@@ -64,12 +64,12 @@ function actions()
 {
 	episode_num=""
 	echo
-	echo "1. List episodes"
-	echo "2. Next episode"
-	echo "3. Random episode"
-	echo "4. Select episode"
-	[[ $table == "xfiles" ]] && echo "a. List mythology arc"
-	echo "m. Main menu"
+	echo "1) List episodes"
+	echo "2) Next episode"
+	echo "3) Random episode"
+	echo "4) Select episode"
+	[[ $table == "xfiles" ]] && echo "a) List mythology arc"
+	echo "m) Main menu"
 
 	while true; do
 		echo
