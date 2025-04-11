@@ -4,7 +4,7 @@
 # and track which episodes have been watched.
 
 # Environment variables:
-# MEDIA_DB        - Path of sqlite database containing information on show episodes
+# SHOWS_DB        - Path of sqlite database containing information on show episodes
 # SHOWS_CSV       - Path of csv file used for creating main menu
 # SHOWS_MEDIA_DIR - Path of base directory where media files are found
 
@@ -27,20 +27,20 @@ function get_episode()
 	case $1 in
 		"next")
 			episode_num=$(sqlite3 \
-				"$MEDIA_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
 			;;
 		"random")
 			episode_num=$(sqlite3 \
-				"$MEDIA_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
+				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
 			;;
 		*)
 			episode_num=$(sqlite3 \
-				"$MEDIA_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $1")
+				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $1")
 			;;
 	esac
 
-	episode_title=$(sqlite3 "$MEDIA_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
-	sqlite3 "$MEDIA_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
+	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
+	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
 	echo
 	[[ -z $show_media_dir ]] || echo "p. Play episode"
@@ -64,7 +64,7 @@ function actions()
 		echo
 		case $action in
 			1)
-				sqlite3 "$MEDIA_DB" -box "SELECT * from $table"
+				sqlite3 "$SHOWS_DB" -box "SELECT * from $table"
 				;;
 			2)
 				get_episode "next"
@@ -77,14 +77,14 @@ function actions()
 				get_episode "$episode"
 				;;
 			a)
-				sqlite3 "$MEDIA_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
+				sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
 				;;
 			p)
 				episode_title_formatted=${episode_title/\W//}
 				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
 				;;
 			w)
-				sqlite3 "$MEDIA_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
+				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
 				continue
 				;;
 			m)
