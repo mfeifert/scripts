@@ -14,10 +14,12 @@ function get_episode()
 		"next")
 			episode_num=$(sqlite3 \
 				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+			[[ $? ]] && echo "No unwatched episodes" && return
 			;;
 		"random")
 			episode_num=$(sqlite3 \
 				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
+			[[ $? ]] && echo "No unwatched episodes" && return
 			;;
 		*)
 			episode_num=$(sqlite3 \
