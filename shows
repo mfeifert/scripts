@@ -10,7 +10,6 @@
 
 function main()
 {
-	COLUMN=1
 	PS3=$'\n'"> "
 
 	# Get data from csv file
@@ -26,7 +25,7 @@ function main()
 		select item in "${titles[@]}"; do
 			index=$((REPLY - 1))
 			table=${tables[$index]}
-			title=${titles[$index]}
+			title=$item
 			show_media_dir=${show_media_dirs[$index]}
 			break
 		done
