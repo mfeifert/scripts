@@ -8,7 +8,7 @@
 # SHOWS_CSV       - Path of csv file used for creating main menu
 # SHOWS_MEDIA_DIR - Path of base directory where media files are found
 
-function get_episode()
+get_episode()
 {
 	case $1 in
 		"next")
@@ -35,7 +35,7 @@ function get_episode()
 	[[ $episode_num ]] && echo "w. Mark episode $episode_num as watched"
 }
 
-function actions()
+actions()
 {
 	echo
 	echo "1) List episodes"
