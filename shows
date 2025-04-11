@@ -31,8 +31,8 @@ function get_episode()
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
 	echo
-	[[ -z $show_media_dir ]] || echo "p. Play episode"
-	[[ -z $episode_num ]] || echo "w. Mark episode $episode_num as watched"
+	[[ $show_media_dir ]] && echo "p. Play episode"
+	[[ $episode_num ]] && echo "w. Mark episode $episode_num as watched"
 }
 
 function actions()
