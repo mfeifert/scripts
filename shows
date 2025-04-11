@@ -8,33 +8,6 @@
 # SHOWS_CSV       - Path of csv file used for creating main menu
 # SHOWS_MEDIA_DIR - Path of base directory where media files are found
 
-export COLUMNS=1
-
-function main()
-{
-	PS3=$'\n'"> "
-
-	# Get data from csv file
-	while IFS=',' read -r table title show_media_dir; do
-		tables+=("$table")
-		titles+=("$title")
-		show_media_dirs+=("$show_media_dir")
-	done < "$SHOWS_CSV"
-
-	# Show main menu
-	while true; do
-		echo
-		select item in "${titles[@]}"; do
-			index=$((REPLY - 1))
-			table=${tables[$index]}
-			title=$item
-			show_media_dir=${show_media_dirs[$index]}
-			break
-		done
-		actions
-	done
-}
-
 function get_episode()
 {
 	case $1 in
@@ -107,4 +80,26 @@ function actions()
 	done
 }
 
-main
+# Get data from csv file
+while IFS=',' read -r table title show_media_dir; do
+	tables+=("$table")
+	titles+=("$title")
+	show_media_dirs+=("$show_media_dir")
+done < "$SHOWS_CSV"
+
+# Main menu settings
+export COLUMNS=1
+PS3=$'\n'"> "
+
+# Show main menu
+while true; do
+	echo
+	select item in "${titles[@]}"; do
+		index=$((REPLY - 1))
+		table=${tables[$index]}
+		title=$item
+		show_media_dir=${show_media_dirs[$index]}
+		break
+	done
+	actions
+done
