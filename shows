@@ -10,14 +10,26 @@
 
 function main()
 {
+	COLUMN=1
+	PS3=$'\n'"> "
+
+	# Get data from csv file
+	while IFS=',' read -r table title show_media_dir; do
+		tables+=("$table")
+		titles+=("$title")
+		show_media_dirs+=("$show_media_dir")
+	done < "$SHOWS_CSV"
+
+	# Show main menu
 	while true; do
 		echo
-		awk -F, '{ printf "%2d. %s\n", NR, $2 }' "$SHOWS_CSV"
-		echo
-		read -rp "> " selection
-		table=$(awk -F, -v sel="$selection" 'NR==sel { print $1 }' "$SHOWS_CSV")
-		title=$(awk -F, -v sel="$selection" 'NR==sel { print $2 }' "$SHOWS_CSV")
-		show_media_dir=$(awk -F, -v sel="$selection" 'NR==sel { print $3 }' "$SHOWS_CSV")
+		select item in "${titles[@]}"; do
+			index=$((REPLY - 1))
+			table=${tables[$index]}
+			title=${titles[$index]}
+			show_media_dir=${show_media_dirs[$index]}
+			break
+		done
 		actions
 	done
 }
