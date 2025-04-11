@@ -35,7 +35,6 @@ function get_episode()
 
 function actions()
 {
-	episode_num=""
 	echo
 	echo "1) List episodes"
 	echo "2) Next episode"
