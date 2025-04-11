@@ -72,7 +72,7 @@ actions()
 				echo
 				;;
 			p)
-				episode_title_formatted=${episode_title/\W//}
+				episode_title_formatted=${episode_title//[![:word:]]/}
 				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)" 2> /dev/null
 				;;
 			w)
