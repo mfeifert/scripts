@@ -8,6 +8,8 @@
 # SHOWS_CSV       - Path of csv file used for creating main menu
 # SHOWS_MEDIA_DIR - Path of base directory where media files are found
 
+export COLUMNS=1
+
 function main()
 {
 	PS3=$'\n'"> "
