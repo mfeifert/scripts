@@ -94,7 +94,7 @@ function actions()
 				;;
 			p)
 				episode_title_formatted=${episode_title/\W//}
-				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)"
+				xdg-open "$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f | fzf -i -1 -f "$episode_title_formatted" | head -n 1)" 2> /dev/null
 				;;
 			w)
 				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
