@@ -83,7 +83,6 @@ actions()
 				;;
 			w)
 				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
-				echo
 				continue
 				;;
 			m)
