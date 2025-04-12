@@ -66,8 +66,7 @@ function new_entry()
 				--height=15 \
 				--no-strict \
 				--header="  Weight type" \
-				--selected="$wgt_type_default" \
-				--selected-prefix=" ")
+				--value="$wgt_type_default")
 		echo -n -e "${wgt_type}\t" >> "$tmp_file"
 		clear && print_report "$date" "$tmp_file"
 
