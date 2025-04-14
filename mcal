@@ -7,17 +7,17 @@
 data_birthdays="$MCAL_DATA_DIR/Birthdays"
 template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
-today="$(date +"%Y-%m-%d %a %H:%M")       === TODAY ==="
+today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
 case $1 in
 	"t")
 		# Show all events for current day
-		echo "$cal_events" | sort | grep --color=auto "$(date +%Y-%m-%d)"
+		echo "$cal_events" | sort | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"m")
 		# Show all events for current month
-		echo "$cal_events" | sort | grep --color=auto "$(date +%Y-%m)"
+		echo "$cal_events" | sort | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
 		;;
 	"n")
 		# Add new event interactively
