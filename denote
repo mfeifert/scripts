@@ -40,7 +40,7 @@ make_filename()
 make_txt()
 {
 	local date
-	date=$(date --date="$creation_date" -I)
+	date=$(date --date="@$timestamp" +%F)
 	local tags_txt
 	tags_txt=$(printf '%s  ' "${tags[@]}")
 	local front_matter
@@ -61,7 +61,7 @@ EOF
 make_md()
 {
 	local date
-	date=$(date --date="$creation_date" +"%FT%H:%M:%S%:z")
+	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
 	local tags_md
 	tags_md=$(printf '"%s", ' "${tags[@]}")
 	local front_matter
@@ -94,7 +94,7 @@ EOF
 make_org()
 {
 	local date
-	date=$(date --date="$creation_date" +"%F %a %H:%M")
+	date=$(date --date="@$timestamp" +"%F %a %H:%M")
 	local tags_org
 	tags_org=$(printf '%s:' "${tags[@]}")
 	local front_matter
@@ -129,9 +129,13 @@ read -rp "Title: " title
 read -rp "Tags: " tags_string
 tags=(${tags_string,,})
 
-creation_date=$(date)
-id=$(date --date="$creation_date" +"%Y%m%dT%H%M%S")
+# Generate timestamp for id and front matter date
+timestamp=$(printf '%(%s)T')
 
+# Create ID from timestamp
+id=$(date --date="@$timestamp" +"%Y%m%dT%H%M%S")
+
+# Generate filename and full filepath
 filename=$(make_filename)
 filepath="${notes_dir}/${filename}"
 
