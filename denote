@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+
+# Create denote notes interactively.
+# Based on "denote" Emacs package by Protesilaos Stavrou.
+# https://protesilaos.com/
+# https://github.com/protesilaos/denote
+
+notes_dir="$NOTES_DIR"
+# notes_dir="$HOME/tmp"
+
+make_filename()
+{
+	local filename
+
+	filename+="$id"
+
+	# Make signature lowercase and replace spaces with "="
+	[[ -n $signature ]] && local sig="${signature,,}" && filename+="==${sig// /=}"
+
+	# Make title lowercase and replace spaces with "-"
+	local title=${title,,} && filename+="--${title// /-}"
+
+	# Make tags lowercase and replace spaces with "_"
+	if [[ -n $tags ]]; then
+		filename+="_"
+		for tag in "${tags[@]}"; do
+			filename+="_${tag,,}"
+		done
+	fi
+
+	# Add file extension
+	filename+=".${filetype%-*}"
+
+	echo "$filename"
+}
+
+make_txt()
+{
+	local date
+	date=$(date --date="$creation_date" -I)
+	local tags_txt
+	tags_txt=$(printf '%s  ' "${tags[@]}")
+	local front_matter
+
+	front_matter=$(
+		cat << EOF
+title:      ${title}
+date:       ${date}
+tags:       ${tags_txt%  }
+identifier: ${id}
+---------------------------
+EOF
+	)
+
+	echo -e "$front_matter" "\n"
+}
+
+make_md()
+{
+	local date
+	date=$(date --date="$creation_date" +"%FT%H:%M:%S%:z")
+	local tags_md
+	tags_md=$(printf '"%s", ' "${tags[@]}")
+	local front_matter
+
+	[[ $1 == "yaml" ]] && front_matter=$(
+		cat << EOF
+---
+title:      "${title}"
+date:       ${date}
+tags:       [${tags_md%, }]
+identifier: "${id}"
+---
+EOF
+	)
+
+	[[ $1 == "toml" ]] && front_matter=$(
+		cat << EOF
++++
+title      = "${title}"
+date       = ${date}
+tags       = [${tags_md%, }]
+identifier = "${id}"
++++
+EOF
+	)
+
+	echo -e "$front_matter" "\n"
+}
+
+make_org()
+{
+	local date
+	date=$(date --date="$creation_date" +"%F %a %H:%M")
+	local tags_org
+	tags_org=$(printf '%s:' "${tags[@]}")
+	local front_matter
+
+	front_matter=$(
+		cat << EOF
+#+title:      ${title}
+#+date:       [${date}]
+#+filetags:   :${tags_org}
+#+identifier: ${id}
+EOF
+	)
+
+	echo -e "$front_matter" "\n"
+}
+
+# Select file type
+filetypes=("txt" "md-toml" "md-yaml" "org")
+PS3="> "
+select item in "${filetypes[@]}"; do
+	filetype="$item"
+	break
+done
+
+# Enter signature
+read -rp "Signature: " signature
+
+# Enter title
+read -rp "Title: " title
+
+# Enter tags separated by spaces
+read -rp "Tags: " tags_string
+tags=(${tags_string,,})
+
+creation_date=$(date)
+id=$(date --date="$creation_date" +"%Y%m%dT%H%M%S")
+
+filename=$(make_filename)
+filepath="${notes_dir}/${filename}"
+
+# For reals
+case $filetype in
+	"txt") make_txt >> "$filepath" ;;
+	"md-toml") make_md "toml" >> "$filepath" ;;
+	"md-yaml") make_md "yaml" >> "$filepath" ;;
+	"org") make_org >> "$filepath" ;;
+esac
+
+(cd $notes_dir && nvim "$filepath" +)
+
+# For testing
+# case $filetype in
+# 	"txt") make_txt && echo "$filename" ;;
+# 	"md-toml") make_md "toml" && echo "$filename" ;;
+# 	"md-yaml") make_md "yaml" && echo "$filename" ;;
+# 	"org") make_org && echo "$filename" ;;
+# esac
