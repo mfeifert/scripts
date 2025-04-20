@@ -75,7 +75,7 @@ make_md()
 	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
 	tags_md=$(printf '"%s", ' "${tags[@]}")
 
-	# Front matter template for org-yaml
+	# Front matter template for markdown-yaml
 	[[ $1 == "yaml" ]] && front_matter=$(
 		cat << EOF
 ---
@@ -87,7 +87,7 @@ identifier: "${id}"
 EOF
 	)
 
-	# Front matter template for org-toml
+	# Front matter template for markdown-toml
 	[[ $1 == "toml" ]] && front_matter=$(
 		cat << EOF
 +++
