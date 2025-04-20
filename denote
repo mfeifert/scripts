@@ -153,20 +153,21 @@ id=$(date --date="@$timestamp" +"%Y%m%dT%H%M%S")
 filename=$(make_filename)
 filepath="${notes_dir}/${filename}"
 
-# For reals
+# Create file containing front matter
 case $filetype in
-	"txt") make_txt >> "$filepath" ;;
-	"md-toml") make_md "toml" >> "$filepath" ;;
-	"md-yaml") make_md "yaml" >> "$filepath" ;;
-	"org") make_org >> "$filepath" ;;
+	"txt") make_txt > "$filepath" ;;
+	"md-yaml") make_md "yaml" > "$filepath" ;;
+	"md-toml") make_md "toml" > "$filepath" ;;
+	"org") make_org > "$filepath" ;;
 esac
 
+# Change to notes directory and edit file
 (cd $notes_dir && nvim "$filepath" +)
 
-# For testing
+# For testing: show front matter and filename without creating file
 # case $filetype in
-# 	"txt") make_txt && echo "$filename" ;;
-# 	"md-toml") make_md "toml" && echo "$filename" ;;
-# 	"md-yaml") make_md "yaml" && echo "$filename" ;;
-# 	"org") make_org && echo "$filename" ;;
+# 	"txt") echo && make_txt && echo "$filename" ;;
+# 	"md-yaml") echo && make_md "yaml" && echo "$filename" ;;
+# 	"md-toml") echo && make_md "toml" && echo "$filename" ;;
+# 	"org") echo && make_org && echo "$filename" ;;
 # esac
