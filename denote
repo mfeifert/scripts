@@ -10,29 +10,28 @@ notes_dir="$NOTES_DIR"
 
 make_filename()
 {
-	local filename
+	# ID
+	local filename+="$id"
 
-	filename+="$id"
-
-	# Make signature lowercase and replace spaces with "="
+	# Signature: convert signature to lowercase and replace spaces with "="
 	if [[ -n $signature ]]; then
 		local sig="${signature,,}"
 		filename+="==${sig// /=}"
 	fi
 
-	# Make title lowercase and replace spaces with "-"
+	# Title: convert title to lowercase and replace spaces with "-"
 	local title=${title,,}
 	filename+="--${title// /-}"
 
-	# Make tags lowercase and replace spaces with "_"
+	# Tags: replace spaces with "_"
 	if [[ -n $tags ]]; then
 		filename+="_"
 		for tag in "${tags[@]}"; do
-			filename+="_${tag,,}"
+			filename+="_${tag}"
 		done
 	fi
 
-	# Add file extension
+	# File extension: remove "-yaml" or "-toml"
 	filename+=".${filetype%-*}"
 
 	echo "$filename"
@@ -113,7 +112,7 @@ EOF
 }
 
 # Select file type
-filetypes=("txt" "md-toml" "md-yaml" "org")
+filetypes=("txt" "md-yaml" "md-toml" "org")
 PS3="> "
 select item in "${filetypes[@]}"; do
 	filetype="$item"
@@ -126,7 +125,7 @@ read -rp "Signature: " signature
 # Enter title
 read -rp "Title: " title
 
-# Enter tags separated by spaces
+# Enter tags separated by spaces and convert to lowercase
 read -rp "Tags: " tags_string
 tags=(${tags_string,,})
 
