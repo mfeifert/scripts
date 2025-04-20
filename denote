@@ -62,7 +62,7 @@ identifier: ${id}
 EOF
 	)
 
-	printf "${front_matter}\n\n"
+	printf "%s\n\n" "$front_matter"
 }
 
 make_md()
@@ -99,7 +99,7 @@ identifier = "${id}"
 EOF
 	)
 
-	printf "${front_matter}\n\n"
+	printf "%s\n\n" "$front_matter"
 }
 
 make_org()
@@ -122,7 +122,7 @@ make_org()
 EOF
 	)
 
-	printf "${front_matter}\n\n"
+	printf "%s\n\n" "$front_matter"
 }
 
 # Select file type
@@ -158,22 +158,22 @@ case $filetype in
 	"txt")
 		echo
 		make_txt
-		printf "${filename}\n\n"
+		printf "%s\n\n" "$filename"
 		;;
 	"md-yaml")
 		echo
 		make_md "yaml"
-		printf "${filename}\n\n"
+		printf "%s\n\n" "$filename"
 		;;
 	"md-toml")
 		echo
 		make_md "toml"
-		printf "${filename}\n\n"
+		printf "%s\n\n" "$filename"
 		;;
 	"org")
 		echo
 		make_org
-		printf "${filename}\n\n"
+		printf "%s\n\n" "$filename"
 		;;
 esac
 
