@@ -153,21 +153,46 @@ id=$(date --date="@$timestamp" +"%Y%m%dT%H%M%S")
 filename=$(make_filename)
 filepath="${notes_dir}/${filename}"
 
-# Create file containing front matter
+# Show completed front matter and filename
 case $filetype in
-	"txt") make_txt > "$filepath" ;;
-	"md-yaml") make_md "yaml" > "$filepath" ;;
-	"md-toml") make_md "toml" > "$filepath" ;;
-	"org") make_org > "$filepath" ;;
+	"txt")
+		echo
+		make_txt
+		printf "${filename}\n\n"
+		;;
+	"md-yaml")
+		echo
+		make_md "yaml"
+		printf "${filename}\n\n"
+		;;
+	"md-toml")
+		echo
+		make_md "toml"
+		printf "${filename}\n\n"
+		;;
+	"org")
+		echo
+		make_org
+		printf "${filename}\n\n"
+		;;
 esac
 
-# Change to notes directory and edit file
-(cd $notes_dir && nvim "$filepath" +)
+# Request confirmation for file creation
+read -rp "Create file? (y/n): " choice
 
-# For testing: show front matter and filename without creating file
-# case $filetype in
-# 	"txt") echo && make_txt && echo "$filename" ;;
-# 	"md-yaml") echo && make_md "yaml" && echo "$filename" ;;
-# 	"md-toml") echo && make_md "toml" && echo "$filename" ;;
-# 	"org") echo && make_org && echo "$filename" ;;
-# esac
+if [[ $choice == "y" ]]; then
+
+	# Create file containing front matter
+	case $filetype in
+		"txt") make_txt > "$filepath" ;;
+		"md-yaml") make_md "yaml" > "$filepath" ;;
+		"md-toml") make_md "toml" > "$filepath" ;;
+		"org") make_org > "$filepath" ;;
+	esac
+
+	# Output filepath for opening in editor of choice
+	echo "$filepath"
+
+else
+	exit
+fi
