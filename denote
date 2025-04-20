@@ -11,7 +11,6 @@
 # modifying properties of existing files or creating links.
 
 notes_dir="$NOTES_DIR"
-# notes_dir="$HOME/tmp"
 
 make_filename()
 {
@@ -45,11 +44,14 @@ make_filename()
 make_txt()
 {
 	local date
-	date=$(date --date="@$timestamp" +%F)
 	local tags_txt
-	tags_txt=$(printf '%s  ' "${tags[@]}")
 	local front_matter
 
+	# Format date and tags for txt front matter
+	date=$(date --date="@$timestamp" +%F)
+	tags_txt=$(printf '%s  ' "${tags[@]}")
+
+	# Front matter template for txt
 	front_matter=$(
 		cat << EOF
 title:      ${title}
@@ -66,11 +68,14 @@ EOF
 make_md()
 {
 	local date
-	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
 	local tags_md
-	tags_md=$(printf '"%s", ' "${tags[@]}")
 	local front_matter
 
+	# Format date and tags for markdown front matter
+	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
+	tags_md=$(printf '"%s", ' "${tags[@]}")
+
+	# Front matter template for org-yaml
 	[[ $1 == "yaml" ]] && front_matter=$(
 		cat << EOF
 ---
@@ -82,6 +87,7 @@ identifier: "${id}"
 EOF
 	)
 
+	# Front matter template for org-toml
 	[[ $1 == "toml" ]] && front_matter=$(
 		cat << EOF
 +++
@@ -99,11 +105,14 @@ EOF
 make_org()
 {
 	local date
-	date=$(date --date="@$timestamp" +"%F %a %H:%M")
 	local tags_org
-	tags_org=$(printf '%s:' "${tags[@]}")
 	local front_matter
 
+	# Format date and tags for org front matter
+	date=$(date --date="@$timestamp" +"%F %a %H:%M")
+	tags_org=$(printf '%s:' "${tags[@]}")
+
+	# Front matter template for org
 	front_matter=$(
 		cat << EOF
 #+title:      ${title}
