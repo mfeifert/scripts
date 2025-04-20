@@ -177,8 +177,8 @@ case $filetype in
 		;;
 esac
 
-# Request confirmation for file creation
-read -rp "Create file? (y/n): " choice
+# Request confirmation for creating and editing file
+read -rp "Create and edit file? (y/n): " choice
 
 if [[ $choice == "y" ]]; then
 
@@ -190,8 +190,8 @@ if [[ $choice == "y" ]]; then
 		"org") make_org > "$filepath" ;;
 	esac
 
-	# Output filepath for opening in editor of choice
-	echo "$filepath"
+	# Open file in editor of choice
+	$EDITOR "$filepath"
 
 else
 	exit
