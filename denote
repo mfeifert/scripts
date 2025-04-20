@@ -15,10 +15,14 @@ make_filename()
 	filename+="$id"
 
 	# Make signature lowercase and replace spaces with "="
-	[[ -n $signature ]] && local sig="${signature,,}" && filename+="==${sig// /=}"
+	if [[ -n $signature ]]; then
+		local sig="${signature,,}"
+		filename+="==${sig// /=}"
+	fi
 
 	# Make title lowercase and replace spaces with "-"
-	local title=${title,,} && filename+="--${title// /-}"
+	local title=${title,,}
+	filename+="--${title// /-}"
 
 	# Make tags lowercase and replace spaces with "_"
 	if [[ -n $tags ]]; then
