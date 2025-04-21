@@ -21,16 +21,25 @@ case $1 in
 		;;
 	"n")
 		# Add new event interactively
+
+		# Date
 		read -rp "Date: " date_entered
 		date=$(date --date="$date_entered" +"%F %a")
+
+		# Start time
 		read -rp "Start time: " start_time_entered
 		[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
+
+		# End time
 		read -rp "End time: " end_time_entered
 		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
+
+		# Calendar
 		calendars=()
 		for file in "$MCAL_DATA_DIR"/*; do
 			[[ -f $file ]] && calendars+=("${file##*/}")
 		done
+
 		calendar=$(gum filter \
 			--height=10 \
 			--placeholder="" \
@@ -39,9 +48,16 @@ case $1 in
 			--match.foreground="12" \
 			--header="Calendar: " \
 			"${calendars[@]}")
+
 		echo "Calendar: $calendar"
+
+		# Tags
 		read -rp "Tags: " tags
+
+		# Description
 		read -rp "Description: " description
+
+		# Create calendar event
 		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
 		;;
 	"b")
