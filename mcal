@@ -10,6 +10,75 @@ template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
+new_event()
+{
+	# Date
+	read -rp "Date: " date_entered
+	date=$(date --date="$date_entered" +"%F %a")
+
+	# Start time
+	read -rp "Start time: " start_time_entered
+	[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
+
+	# End time
+	read -rp "End time: " end_time_entered
+	[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
+
+	# Calendar
+	calendars=()
+	for file in "$MCAL_DATA_DIR"/*; do
+		[[ -f $file ]] && calendars+=("${file##*/}")
+	done
+
+	calendar=$(gum filter \
+		--height=10 \
+		--placeholder="" \
+		--header.foreground="" \
+		--indicator.foreground="12" \
+		--match.foreground="12" \
+		--header="Calendar: " \
+		"${calendars[@]}")
+
+	echo "Calendar: $calendar"
+
+	# Tags
+	read -rp "Tags: " tags
+
+	# Description
+	read -rp "Description: " description
+
+	# Create calendar event
+	echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
+}
+
+birthdays()
+{
+	while IFS=$'\t' read -r bday_input name; do
+
+		# Check if name from line in template already has
+		# a birthday calendar event for the current year.
+		# Create a new event only if one does not already exist.
+		name_in_data=$(grep "$(date +%Y).*${name}" "$data_birthdays")
+
+		if [[ -z $name_in_data ]]; then
+
+			bday_md=$(date --date="$bday_input" +"%m/%d")
+			bday_output=$(date --date="$bday_md" +"%F %a")
+			bday_year=$(date --date="$bday_input" +%Y)
+			age=$(("$(date +%Y)" - "$bday_year"))
+
+			if [[ $age -gt 0 ]]; then
+				age_ordinal="$(echo ${age} | ordinal) "
+			else
+				age_ordinal=""
+			fi
+
+			echo "${bday_output} ----------- Birthdays: ${name}'s ${age_ordinal}birthday" >> "$data_birthdays"
+		fi
+
+	done < "$template_birthdays"
+}
+
 case $1 in
 	"t")
 		# Show all events for current day
@@ -21,65 +90,11 @@ case $1 in
 		;;
 	"n")
 		# Add new event interactively
-
-		# Date
-		read -rp "Date: " date_entered
-		date=$(date --date="$date_entered" +"%F %a")
-
-		# Start time
-		read -rp "Start time: " start_time_entered
-		[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
-
-		# End time
-		read -rp "End time: " end_time_entered
-		[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
-
-		# Calendar
-		calendars=()
-		for file in "$MCAL_DATA_DIR"/*; do
-			[[ -f $file ]] && calendars+=("${file##*/}")
-		done
-
-		calendar=$(gum filter \
-			--height=10 \
-			--placeholder="" \
-			--header.foreground="" \
-			--indicator.foreground="12" \
-			--match.foreground="12" \
-			--header="Calendar: " \
-			"${calendars[@]}")
-
-		echo "Calendar: $calendar"
-
-		# Tags
-		read -rp "Tags: " tags
-
-		# Description
-		read -rp "Description: " description
-
-		# Create calendar event
-		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
+		new_event
 		;;
 	"b")
 		# Add new birthday events from template
-		while IFS=$'\t' read -r bday_input name; do
-			# Check if name from line in template already has
-			# a birthday calendar event for the current year.
-			# Create a new event only if one does not already exist.
-			name_in_data=$(grep "$(date +%Y).*${name}" "$data_birthdays")
-			if [[ -z $name_in_data ]]; then
-				bday_md=$(date --date="$bday_input" +"%m/%d")
-				bday_output=$(date --date="$bday_md" +"%F %a")
-				bday_year=$(date --date="$bday_input" +%Y)
-				age=$(("$(date +%Y)" - "$bday_year"))
-				if [[ $age -gt 0 ]]; then
-					age_ordinal="$(echo ${age} | ordinal) "
-				else
-					age_ordinal=""
-				fi
-				echo "${bday_output} ----------- Birthdays: ${name}'s ${age_ordinal}birthday" >> "$data_birthdays"
-			fi
-		done < "$template_birthdays"
+		birthdays
 		;;
 	"r")
 		# Show all events from specified begin date to end date
