@@ -20,6 +20,17 @@ export GUM_FILTER_MATCH_FOREGROUND="9"
 export GUM_INPUT_CURSOR_FOREGROUND=""
 export GUM_WRITE_CURSOR_FOREGROUND=""
 
+# ANSI colors
+if [[ -t 1 ]]; then
+	bold=$(tput bold)
+	accent=$(tput setaf 1)
+	reset=$(tput sgr0)
+else
+	bold=""
+	accent=""
+	reset=""
+fi
+
 function new_entry()
 {
 	local date description location exercise wgt_type_default \
@@ -115,16 +126,26 @@ function print_report()
 	weekday="$(date --date="$date" +%A)"
 
 	# Header: description, location, date
-	awk -v date="$date" -v weekday="$weekday" -f str_header.awk "$data_file"
+	awk \
+		-v date="$date" \
+		-v weekday="$weekday" \
+		-v bold="$bold" \
+		-v reset="$reset" \
+		-f str_header.awk "$data_file"
 
 	# Exercise list
-	awk -v date="$date" -f str_exercises.awk "$data_file"
+	awk \
+		-v date="$date" \
+		-v bold="$bold" \
+		-v accent="$accent" \
+		-v reset="$reset" \
+		-f str_exercises.awk "$data_file"
 
 	# Footer: notes
 	grep -P "${date}\tnotes" "$data_file" \
 		| cut --fields=3 \
 		| fmt --width="$width" \
-		| awk -f str_notes.awk
+		| awk -v bold="$bold" -v reset="$reset" -f str_notes.awk
 }
 
 case $1 in

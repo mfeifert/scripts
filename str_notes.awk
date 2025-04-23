@@ -1,7 +1,7 @@
 BEGIN { FS = "\t"
 	i = 2
 	print "┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫"
-	print "┃ Notes:                                                        ┃" }
+	print bold "┃ Notes:                                                        ┃" reset }
 
 { printf "┃ %-61s ┃\n", $0 }
 { i -=1 }
