@@ -2,4 +2,4 @@
 
 # Display the value of $PATH, one item per line.
 
-echo "$PATH" | tr ':' '\n'
+echo -e "${PATH//:/\\n}"
