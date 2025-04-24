@@ -53,7 +53,7 @@ new_event()
 
 	# Location
 	read -rp "Location: " location
-	[[ $location ]] && location="<$location>"
+	[[ $location ]] && location=" <$location>"
 
 	# Notes
 	read -rp "Notes: " notes
@@ -66,24 +66,24 @@ new_event()
 	if [[ $start_date != $end_date ]]; then
 
 		# Create event spanning multiple days
-		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${title} ┓ ${location} ${notes}" \
+		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${title} ┓${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date < $((end_date - day)) ]]; do
 			start_date=$((start_date + day))
 			date=$(date --date="@$start_date" +"%F %a")
-			echo "${date} ----------- ${calendar}:${tags} ┃ ${title} ┃ ${location}" \
+			echo "${date} ----------- ${calendar}:${tags} ┃ ${title} ┃${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
 
 		date=$(date --date="@$end_date" +"%F %a")
 
-		echo "${date} ------${end_time:------} ${calendar}:${tags} ┗ ${title} ┛ ${location}" \
+		echo "${date} ------${end_time:------} ${calendar}:${tags} ┗ ${title} ┛${location}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 	else
 		# Create single-day event
-		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [${title}] ${location} ${notes}" \
+		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [${title}]${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 	fi
 }
