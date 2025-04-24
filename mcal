@@ -12,6 +12,9 @@ cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf 
 
 new_event()
 {
+	# Title
+	read -rp "Title: " title
+
 	# Start date
 	read -rp "Start date: " start_date
 	start_date=$(date --date="${start_date:=today}" +%s)
@@ -50,9 +53,10 @@ new_event()
 
 	# Location
 	read -rp "Location: " location
+	[[ $location ]] && location="<$location>"
 
-	# Description
-	read -rp "Description: " description
+	# Notes
+	read -rp "Notes: " notes
 
 	# Create calendar event
 
@@ -62,24 +66,24 @@ new_event()
 	if [[ $start_date != $end_date ]]; then
 
 		# Create event spanning multiple days
-		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${location} ┓ ${description}" \
+		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${title} ┓ ${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date < $((end_date - day)) ]] do
 			start_date=$((start_date + day))
 			date=$(date --date="@$start_date" +"%F %a")
-			echo "${date} ----------- ${calendar}:${tags} ┃ ${location} ┃" \
+			echo "${date} ----------- ${calendar}:${tags} ┃ ${title} ┃ ${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
 
 		date=$(date --date="@$end_date" +"%F %a")
 
-		echo "${date} ------${end_time:------} ${calendar}:${tags} ┗ ${location} ┛" \
+		echo "${date} ------${end_time:------} ${calendar}:${tags} ┗ ${title} ┛ ${location}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
-# ┛┗┓┏┃
+
 	else
 		# Create single-day event
-		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [ ${location} ] ${description}" \
+		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [ ${title} ] ${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 	fi
 }
