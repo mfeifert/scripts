@@ -125,6 +125,10 @@ case $1 in
 		# Show all events for current month
 		echo "$cal_events" | sort | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
 		;;
+	"md")
+		# Show all multi-day events
+		echo "$cal_events" | sort | grep --color=auto -e "┏" -e "┓" -e "┃" -e "┗" -e "┛"
+		;;
 	"n")
 		# Add new event interactively
 		new_event
