@@ -69,7 +69,7 @@ new_event()
 		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${title} ┓ ${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
-		while [[ $start_date < $((end_date - day)) ]] do
+		while [[ $start_date < $((end_date - day)) ]]; do
 			start_date=$((start_date + day))
 			date=$(date --date="@$start_date" +"%F %a")
 			echo "${date} ----------- ${calendar}:${tags} ┃ ${title} ┃ ${location}" \
@@ -83,7 +83,7 @@ new_event()
 
 	else
 		# Create single-day event
-		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [ ${title} ] ${location} ${notes}" \
+		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [${title}] ${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 	fi
 }
