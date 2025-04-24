@@ -12,17 +12,21 @@ cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf 
 
 new_event()
 {
-	# Date
-	read -rp "Date: " date_entered
-	date=$(date --date="$date_entered" +"%F %a")
+	# Start date
+	read -rp "Start date: " start_date
+	start_date=$(date --date="${start_date:=today}" +%s)
 
 	# Start time
-	read -rp "Start time: " start_time_entered
-	[[ $start_time_entered ]] && start_time=$(date --date="$start_time_entered" +%R)
+	read -rp "Start time: " start_time
+	[[ $start_time ]] && start_time=$(date --date="$start_time" +%R)
+
+	# End date
+	read -rp "End date: " end_date
+	end_date=$(date --date="${end_date:=@$start_date}" +%s)
 
 	# End time
-	read -rp "End time: " end_time_entered
-	[[ $end_time_entered ]] && end_time=$(date --date="$end_time_entered" +%R)
+	read -rp "End time: " end_time
+	[[ $end_time ]] && end_time=$(date --date="$end_time" +%R)
 
 	# Calendar
 	calendars=()
@@ -44,11 +48,40 @@ new_event()
 	# Tags
 	read -rp "Tags: " tags
 
+	# Location
+	read -rp "Location: " location
+
 	# Description
 	read -rp "Description: " description
 
 	# Create calendar event
-	echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} ${description}" | tee -a "$MCAL_DATA_DIR/$calendar"
+
+	day=86400 # Number of seconds in a day
+	date=$(date --date="@$start_date" +"%F %a")
+
+	if [[ $start_date != $end_date ]]; then
+
+		# Create event spanning multiple days
+		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${location} ┓ ${description}" \
+			| tee -a "$MCAL_DATA_DIR/$calendar"
+
+		while [[ $start_date < $((end_date - day)) ]] do
+			start_date=$((start_date + day))
+			date=$(date --date="@$start_date" +"%F %a")
+			echo "${date} ----------- ${calendar}:${tags} ┃ ${location} ┃" \
+				| tee -a "$MCAL_DATA_DIR/$calendar"
+		done
+
+		date=$(date --date="@$end_date" +"%F %a")
+
+		echo "${date} ------${end_time:------} ${calendar}:${tags} ┗ ${location} ┛" \
+			| tee -a "$MCAL_DATA_DIR/$calendar"
+# ┛┗┓┏┃
+	else
+		# Create single-day event
+		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [ ${location} ] ${description}" \
+			| tee -a "$MCAL_DATA_DIR/$calendar"
+	fi
 }
 
 birthdays()
