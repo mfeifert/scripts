@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+PS3="> "
+
+first_day_of_month()
+{
+	date -d "$1" +"%Y-%m-01"
+}
+
+last_day_of_month()
+{
+	date -d "$(first_day_of_month "$1") +1month -1day" +%F
+}
+
+get_date()
+{
+	local count="$number"
+
+	if [[ $anchor == "Beginning of month" ]]; then
+		local date="$first"
+		local op="+"
+	elif [[ $anchor == "End of month" ]]; then
+		local date="$last"
+		local op="-"
+	fi
+
+	while [[ $count -gt 0 ]]; do
+		if [[ $number == 5 ]] && [[ $(date -d "$date" +%B) != "$month" ]]; then
+			return 1
+		fi
+		[[ $(date -d "$date" +%A) == "$day_of_week" ]] && ((count--))
+		[[ $count == 0 ]] && break
+		date=$(date -d "${date} ${op}1day")
+	done
+
+	date -d "$date" +"%F %a"
+}
+
+# Start date
+read -rp "Start date: " start_date
+if ! start_date=$(date -d "${start_date:=today}" +%F 2> /dev/null); then
+	echo "Invalid date"
+	exit
+fi
+
+# End date
+read -rp "End repeat: " end_repeat
+if ! end_repeat=$(date -d "${end_repeat:=$start_date}" +%F 2> /dev/null); then
+	echo "Invalid date"
+	exit
+fi
+
+# Anchor to beginning or end of month
+echo "Choose day relative to beginning or end of month?"
+select anchor in "Beginning of month" "End of month"; do break; done
+
+# Day of week
+echo "Which day of week?"
+select day_of_week in "Monday" "Tuesday" "Wednesday" \
+	"Thursday" "Friday" "Saturday" "Sunday"; do break; done
+
+# Number of days from beginning or end of month
+echo "Which $day_of_week?"
+if [[ $anchor == "Beginning of month" ]]; then
+	select ordinal in "First" "Second" "Third" "Fourth" "Fifth"; do
+		number="$REPLY"
+		break
+	done
+else
+	select ordinal in "Last" "Second to last" "Third to last" \
+		"Fourth to last" "Fifth to last"; do
+		number="$REPLY"
+		break
+	done
+fi
+
+# Get selected dates
+while [[ $start_date < $end_repeat ]]; do
+
+	# Set values
+	first="$(first_day_of_month "$start_date")"
+	last="$(last_day_of_month "$start_date")"
+	month="$(date -d "$start_date" +%B)"
+	year="$(date -d "$start_date" +%Y)"
+
+	# Get date of selected day
+	selected_date=$(get_date)
+
+	if [[ $? == 1 ]]; then
+		echo "Only 4 ${day_of_week}s in ${month} ${year}"
+	else
+		printf "%s %s in %-15s %s\n" "$ordinal" "$day_of_week" "$month $year:" "$selected_date"
+	fi
+
+	start_date=$(date -d "$start_date +1month" +%F)
+
+done
