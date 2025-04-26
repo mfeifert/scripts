@@ -15,23 +15,34 @@ last_day_of_month()
 get_date()
 {
 	local count="$number"
+	local -A weekdays=([Sunday]=0 [Monday]=1 [Tuesday]=2 [Wednesday]=3 \
+		[Thursday]=4 [Friday]=5 [Saturday]=6)
+	local selected_weekday=${weekdays[$day_of_week]}
 
 	if [[ $anchor == "Beginning of month" ]]; then
-		local date="$first"
+		local date=$(first_day_of_month "$start_date")
 		local op="+"
+		local reference_weekday=$(date -d "$date" +%w)
+		local offset=$((($selected_weekday - $reference_weekday + 7) % 7))
 	elif [[ $anchor == "End of month" ]]; then
-		local date="$last"
+		local date=$(last_day_of_month "$start_date")
 		local op="-"
+		local reference_weekday=$(date -d "$date" +%w)
+		local offset=$((($reference_weekday - $selected_weekday + 7) % 7))
 	fi
 
-	while [[ $count -gt 0 ]]; do
-		if [[ $number == 5 ]] && [[ $(date -d "$date" +%B) != "$month" ]]; then
-			return 1
-		fi
-		[[ $(date -d "$date" +%A) == "$day_of_week" ]] && ((count--))
-		[[ $count == 0 ]] && break
-		date=$(date -d "${date} ${op}1day")
-	done
+	if [[ $(date -d "$date" +%w) != ${weekdays[$day_of_week]} ]]
+	then
+		date=$(date -d "$date ${op}${offset}days" +%F)
+	fi
+
+	((count--))
+
+	[[ $count > 0 ]] && date=$(date -d "$date ${op}${count}weeks" +%F)
+
+	if [[ $number == 5 ]] && [[ $(date -d "$date" +%B) != "$month" ]]; then
+		return 1
+	fi
 
 	date -d "$date" +"%F %a"
 }
@@ -78,8 +89,6 @@ fi
 while [[ $start_date < $end_repeat ]]; do
 
 	# Set values
-	first="$(first_day_of_month "$start_date")"
-	last="$(last_day_of_month "$start_date")"
 	month="$(date -d "$start_date" +%B)"
 	year="$(date -d "$start_date" +%Y)"
 
