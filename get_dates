@@ -19,6 +19,7 @@ get_date()
 		[Thursday]=4 [Friday]=5 [Saturday]=6)
 	local selected_weekday=${weekdays[$day_of_week]}
 
+	# Set values depending upon choosing date relative to beginning or end of month
 	if [[ $anchor == "Beginning of month" ]]; then
 		local date=$(first_day_of_month "$start_date")
 		local op="+"
@@ -31,15 +32,17 @@ get_date()
 		local offset=$((($reference_weekday - $selected_weekday + 7) % 7))
 	fi
 
+	# Shift date to selected weekday
 	if [[ $(date -d "$date" +%w) != ${weekdays[$day_of_week]} ]]
 	then
 		date=$(date -d "$date ${op}${offset}days" +%F)
 	fi
 
+	# Shift date the selected number of weeks
 	((count--))
-
 	[[ $count > 0 ]] && date=$(date -d "$date ${op}${count}weeks" +%F)
 
+	# Check if there are 5 of the selected weekday in the current month
 	if [[ $number == 5 ]] && [[ $(date -d "$date" +%B) != "$month" ]]; then
 		return 1
 	fi
