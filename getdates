@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-PS3="> "
-
 first_day_of_month()
 {
 	date -d "$1" +"%Y-%m-01"
@@ -16,7 +14,7 @@ get_date_of_weekday()
 {
 	local date
 	local starting_weekday
-	local count=$(( number - 1 ))
+	local count=$((number - 1))
 	local -A weekdays=([sun]=0 [mon]=1 [tue]=2 [wed]=3 [thu]=4 [fri]=5 [sat]=6)
 	local selected_weekday=${weekdays[$day_of_week]}
 
@@ -38,8 +36,7 @@ get_date_of_weekday()
 	fi
 
 	# Shift date to selected weekday
-	if [[ $(date -d "$date" +%w) != "${weekdays[$day_of_week]}" ]]
-	then
+	if [[ $(date -d "$date" +%w) != "${weekdays[$day_of_week]}" ]]; then
 		date=$(date -d "$date ${op}${offset}days" +%F)
 	fi
 
@@ -58,7 +55,7 @@ get_date_of_weekday()
 get_date_of_day()
 {
 	local date
-	local count=$(( number - 1 ))
+	local count=$((number - 1))
 
 	# Set values depending upon choosing date relative to beginning or end of month
 	if [[ $anchor == "bom" ]]; then
@@ -85,17 +82,15 @@ while getopts ":ds:e:i:k:c:" opt; do
 		e) end_repeat=$(date -d "$OPTARG" +%F) ;;
 		i) increment=$OPTARG ;;
 		d) repeat_type="d" ;;
-		k) 
+		k)
 			day_of_week=${OPTARG,,}
 			day_of_week=${day_of_week:0:3}
 			;;
-		c) 
+		c)
 			number=$OPTARG
-			if [[ $number -lt 0 ]]
-			then 
+			if [[ $number -lt 0 ]]; then
 				anchor="eom"
-				number=$(( -number ))
-				echo
+				number=$((-number))
 			else
 				anchor="bom"
 			fi
