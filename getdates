@@ -100,7 +100,7 @@ reference_date_mode()
 }
 
 # Command line options
-while getopts ":mrds:e:i:k:c:" opt; do
+while getopts ":mrdws:e:i:k:c:" opt; do
 	case $opt in
 		m) mode="monthly" ;;
 		r) mode="reference_date" ;;
@@ -108,6 +108,7 @@ while getopts ":mrds:e:i:k:c:" opt; do
 		e) end_repeat=$(date -d "$OPTARG" +%F) ;;
 		i) increment=$OPTARG ;;
 		d) repeat_type="d" ;;
+		w) repeat_type="w" ;;
 		k)
 			repeat_type="k"
 			day_of_week=${OPTARG,,}
