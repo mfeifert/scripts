@@ -23,14 +23,12 @@ get_date_of_weekday()
 
 		date=$(first_day_of_month "$start_date")
 		starting_weekday=$(date -d "$date" +%w)
-		local op="+"
 		local offset=$(((selected_weekday - starting_weekday + 7) % 7))
 
 	elif [[ $anchor == "eom" ]]; then
 
 		date=$(last_day_of_month "$start_date")
 		starting_weekday=$(date -d "$date" +%w)
-		local op="-"
 		local offset=$(((starting_weekday - selected_weekday + 7) % 7))
 
 	fi
@@ -120,9 +118,11 @@ while getopts ":mrdws:e:i:k:c:" opt; do
 			number=$OPTARG
 			if [[ $number -lt 0 ]]; then
 				anchor="eom"
+				op="-"
 				number=$((-number))
 			else
 				anchor="bom"
+				op="+"
 			fi
 			;;
 		*) echo "Invalid option" ;;
