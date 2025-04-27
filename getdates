@@ -94,10 +94,16 @@ monthly_mode()
 	done
 }
 
+reference_date_mode()
+{
+	true
+}
+
 # Command line options
-while getopts ":mds:e:i:k:c:" opt; do
+while getopts ":mrds:e:i:k:c:" opt; do
 	case $opt in
 		m) mode="monthly" ;;
+		r) mode="reference_date" ;;
 		s) start_date=$(date -d "$OPTARG" +%F) ;;
 		e) end_repeat=$(date -d "$OPTARG" +%F) ;;
 		i) increment=$OPTARG ;;
@@ -120,4 +126,8 @@ while getopts ":mds:e:i:k:c:" opt; do
 	esac
 done
 
-[[ $mode == "monthly" ]] && monthly_mode
+if [[ $mode == "monthly" ]]; then
+	monthly_mode
+elif [[ $mode == "reference_date" ]]; then
+	reference_date_mode
+fi
