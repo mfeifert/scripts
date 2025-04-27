@@ -43,16 +43,10 @@ get_date_of_weekday()
 	# Shift date the selected number of weeks
 	[[ $count -gt 0 ]] && date=$(date -d "$date ${op}${count}weeks" +%F)
 
-	# Check if there are 5 of the selected weekday in the current month
-	if [[ $number -gt 4 ]] \
-		&& [[ $(date -d "$date" +%B) != $(date -d "$start_date" +%B) ]]; then
-		return 1
-	fi
-
 	date -d "$date" +"%F %a"
 }
 
-get_date_of_day()
+get_date_of_day_of_month()
 {
 	local date
 	local count=$((number - 1))
@@ -80,13 +74,21 @@ monthly_mode()
 	while [[ $start_date < $end_repeat ]]; do
 
 		if [[ $repeat_type == "d" ]]; then
-			if selected_date=$(get_date_of_day); then
+			if selected_date=$(get_date_of_day_of_month); then
 				echo "$selected_date"
 			fi
+
 		elif [[ $repeat_type == "k" ]]; then
-			if selected_date=$(get_date_of_weekday); then
+
+			selected_date=$(get_date_of_weekday)
+
+			# Check if there are 5 of the selected weekday in the current month
+			if [[ $number -gt 4 ]] && [[ $(date -d "$selected_date" +%B) != $(date -d "$start_date" +%B) ]]; then
+				false
+			else
 				echo "$selected_date"
 			fi
+
 		fi
 
 		start_date=$(date -d "$start_date +${increment:-1}month" +%F)
