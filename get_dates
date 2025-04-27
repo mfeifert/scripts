@@ -12,10 +12,9 @@ last_day_of_month()
 	date -d "$(first_day_of_month "$1") +1month -1day" +%F
 }
 
-get_date()
+get_date_of_weekday()
 {
 	local date
-	local month
 	local starting_weekday
 	local count=$(( number - 1 ))
 	local -A weekdays=([sun]=0 [mon]=1 [tue]=2 [wed]=3 [thu]=4 [fri]=5 [sat]=6)
@@ -48,12 +47,35 @@ get_date()
 	[[ $count -gt 0 ]] && date=$(date -d "$date ${op}${count}weeks" +%F)
 
 	# Check if there are 5 of the selected weekday in the current month
-	month="$(date -d "$start_date" +%B)"
-	if [[ $number -gt 4 ]] && [[ $(date -d "$date" +%B) != "$month" ]]; then
+	if [[ $number -gt 4 ]] \
+		&& [[ $(date -d "$date" +%B) != $(date -d "$start_date" +%B) ]]; then
 		return 1
 	fi
 
 	date -d "$date" +"%F %a"
+}
+
+get_date_of_day()
+{
+	local date
+	local count=$(( number - 1 ))
+
+	# Set values depending upon choosing date relative to beginning or end of month
+	if [[ $anchor == "bom" ]]; then
+		date=$(first_day_of_month "$start_date")
+		local op="+"
+	elif [[ $anchor == "eom" ]]; then
+		date=$(last_day_of_month "$start_date")
+		local op="-"
+	fi
+
+	# Check if the current month has the selected day
+	date=$(date -d "$date ${op}${count}days" +"%F %a")
+	if [[ $(date -d "$date" +%B) != $(date -d "$start_date" +%B) ]]; then
+		return 1
+	fi
+
+	echo "$date"
 }
 
 # Command line options
@@ -62,7 +84,7 @@ while getopts ":ds:e:i:k:c:" opt; do
 		s) start_date=$(date -d "$OPTARG" +%F) ;;
 		e) end_repeat=$(date -d "$OPTARG" +%F) ;;
 		i) increment=$OPTARG ;;
-		d) ;;
+		d) repeat_type="d" ;;
 		k) 
 			day_of_week=${OPTARG,,}
 			day_of_week=${day_of_week:0:3}
@@ -85,8 +107,14 @@ done
 # Get selected dates
 while [[ $start_date < $end_repeat ]]; do
 
-	if selected_date=$(get_date); then
-		echo "$selected_date"
+	if [[ $repeat_type == "d" ]]; then
+		if selected_date=$(get_date_of_day); then
+			echo "$selected_date"
+		fi
+	else
+		if selected_date=$(get_date_of_weekday); then
+			echo "$selected_date"
+		fi
 	fi
 
 	start_date=$(date -d "$start_date +${increment:-1}month" +%F)
