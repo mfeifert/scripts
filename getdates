@@ -75,14 +75,35 @@ get_date_of_day()
 	echo "$date"
 }
 
+monthly_mode()
+{
+	while [[ $start_date < $end_repeat ]]; do
+
+		if [[ $repeat_type == "d" ]]; then
+			if selected_date=$(get_date_of_day); then
+				echo "$selected_date"
+			fi
+		elif [[ $repeat_type == "k" ]]; then
+			if selected_date=$(get_date_of_weekday); then
+				echo "$selected_date"
+			fi
+		fi
+
+		start_date=$(date -d "$start_date +${increment:-1}month" +%F)
+
+	done
+}
+
 # Command line options
-while getopts ":ds:e:i:k:c:" opt; do
+while getopts ":mds:e:i:k:c:" opt; do
 	case $opt in
+		m) mode="monthly" ;;
 		s) start_date=$(date -d "$OPTARG" +%F) ;;
 		e) end_repeat=$(date -d "$OPTARG" +%F) ;;
 		i) increment=$OPTARG ;;
 		d) repeat_type="d" ;;
 		k)
+			repeat_type="k"
 			day_of_week=${OPTARG,,}
 			day_of_week=${day_of_week:0:3}
 			;;
@@ -99,19 +120,4 @@ while getopts ":ds:e:i:k:c:" opt; do
 	esac
 done
 
-# Get selected dates
-while [[ $start_date < $end_repeat ]]; do
-
-	if [[ $repeat_type == "d" ]]; then
-		if selected_date=$(get_date_of_day); then
-			echo "$selected_date"
-		fi
-	else
-		if selected_date=$(get_date_of_weekday); then
-			echo "$selected_date"
-		fi
-	fi
-
-	start_date=$(date -d "$start_date +${increment:-1}month" +%F)
-
-done
+[[ $mode == "monthly" ]] && monthly_mode
