@@ -14,19 +14,21 @@ get_date_of_weekday()
 {
 	local date
 	local starting_weekday
-	local count=$((number - 1))
 	local -A weekdays=([sun]=0 [mon]=1 [tue]=2 [wed]=3 [thu]=4 [fri]=5 [sat]=6)
 	local selected_weekday=${weekdays[$day_of_week]}
 
 	# Set values depending upon choosing date relative to beginning or end of month
 	if [[ $anchor == "bom" ]]; then
 
+		local count=$((number - 1))
 		date=$(first_day_of_month "$start_date")
 		starting_weekday=$(date -d "$date" +%w)
 		local offset=$(((selected_weekday - starting_weekday + 7) % 7))
 
 	elif [[ $anchor == "eom" ]]; then
 
+		local count=$((-number))
+		((count--))
 		date=$(last_day_of_month "$start_date")
 		starting_weekday=$(date -d "$date" +%w)
 		local offset=$(((starting_weekday - selected_weekday + 7) % 7))
@@ -71,7 +73,7 @@ monthly_mode()
 {
 	while [[ $start_date < $end_repeat ]]; do
 
-		if [[ $repeat_type == "d" ]]; then
+		if [[ $repeat_type == "day" ]]; then
 			if selected_date=$(get_date_of_day_of_month); then
 				echo "$selected_date"
 			fi
@@ -89,14 +91,31 @@ monthly_mode()
 
 		fi
 
-		start_date=$(date -d "$start_date +${increment:-1}month" +%F)
+		start_date=$(date -d "$start_date +${interval:-1}month" +%F)
 
 	done
 }
 
 reference_date_mode()
 {
-	true
+	local count="$number"
+
+	case $repeat_type in
+		"day" | "week")
+			if [[ $start_date < $end_repeat ]]; then
+				while [[ $start_date < $end_repeat ]]; do
+					echo "$(date -d "$start_date" +"%F %a")"
+					start_date=$(date -d "$start_date +${interval:-1}${repeat_type}" +%F)
+				done
+			else
+				while [[ $start_date > $end_repeat ]]; do
+					echo "$(date -d "$start_date" +"%F %a")"
+					start_date=$(date -d "$start_date -${interval:-1}${repeat_type}" +%F)
+				done
+			fi
+			;;
+		"k") ;;
+	esac
 }
 
 # Command line options
@@ -106,9 +125,9 @@ while getopts ":mrdws:e:i:k:c:" opt; do
 		r) mode="reference_date" ;;
 		s) start_date=$(date -d "$OPTARG" +%F) ;;
 		e) end_repeat=$(date -d "$OPTARG" +%F) ;;
-		i) increment=$OPTARG ;;
-		d) repeat_type="d" ;;
-		w) repeat_type="w" ;;
+		i) interval=$OPTARG ;;
+		d) repeat_type="day" ;;
+		w) repeat_type="week" ;;
 		k)
 			repeat_type="k"
 			day_of_week=${OPTARG,,}
@@ -119,7 +138,6 @@ while getopts ":mrdws:e:i:k:c:" opt; do
 			if [[ $number -lt 0 ]]; then
 				anchor="eom"
 				op="-"
-				number=$((-number))
 			else
 				anchor="bom"
 				op="+"
