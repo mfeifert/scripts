@@ -38,7 +38,8 @@ case $1 in
 		if [[ -n $2 ]]; then
 			month=$(date +%Y-%m)
 			sed -i "/$month.*$2/ s/\[ \]/[X]/" "$data_file_monthly"
-			sed -i "/$month.*$2/ s/xx    /$(date +'%d %a')/" "$data_file_monthly"
+			sed -i "/$month.*$2/ s/-- ---/$(date +'%d %a')/" "$data_file_monthly"
+			task
 		else
 			grep "$(date +%Y-%m)" "$data_file_monthly"
 		fi
@@ -52,7 +53,7 @@ case $1 in
 		# task mi
 		# Create new MONTHLY tasks from template
 		while IFS= read -r line; do
-			echo "$(date +'%Y-%m-xx    ') [ ] $line" >> "$data_file_monthly"
+			echo "$(date +'%Y-%m--- ---') [ ] $line" >> "$data_file_monthly"
 		done < "$template_monthly"
 		;;
 	"d")
