@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Show all current Todo, DAILY, and MONTHLY tasks with headings
+
+bold=$(tput bold)
+yellow=$(tput setaf 3)
+blue=$(tput setaf 4)
+magenta=$(tput setaf 5)
+reset=$(tput sgr0)
+
+echo -e "${bold}=== ${yellow}TODO${reset} ${bold}===${reset}\n"
+task-todo
+
+echo -e "\n${bold}=== ${blue}DAILY${reset} ${bold}===${reset}\n"
+task-daily
+
+echo -e "\n${bold}=== ${magenta}MONTHLY${reset} ${bold}===${reset}\n"
+task-monthly
+
+echo

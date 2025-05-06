@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+data_file_todo="$TASK_DATA_DIR/data_todo"
+
+case $1 in
+	"")
+		# task-todo [pattern]
+		# Show incomplete todo tasks.  Mark complete if pattern is provided.
+		if [[ -n $2 ]]; then
+			sed -i "/$2/ s/\[ \]/[X]/" "$data_file_todo"
+		else
+			grep "\[ \]" "$data_file_todo" | sort
+		fi
+		;;
+	"n")
+		# task-todo n
+		# Create new todo task interactively
+		;;
+esac
