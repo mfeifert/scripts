@@ -4,18 +4,6 @@ data_file_daily="$TASK_DATA_DIR/data_daily"
 template_daily="$TASK_DATA_DIR/template_daily"
 
 case $1 in
-	"")
-		# task-daily [pattern [comment]]
-		# Show current DAILY tasks.  Mark complete and add comment, if provided.
-		if [[ -n $2 ]]; then
-			description="${*:3}"
-			date="$(date +%Y-%m-%d)"
-			sed -i "/${date}.*$2/ s/\[ \]/[X]/" "$data_file_daily"
-			sed -i "/${date}.*$2/ s/$/${description}/" "$data_file_daily"
-		else
-			grep "$(date +%Y-%m-%d)" "$data_file_daily"
-		fi
-		;;
 	"a")
 		# task-daily a
 		# Show all DAILY tasks
@@ -27,5 +15,18 @@ case $1 in
 		while IFS= read -r line; do
 			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> "$data_file_daily"
 		done < "$template_daily"
+		;;
+	"")
+		# task-daily
+		# Show current DAILY tasks.
+		grep "$(date +%Y-%m-%d)" "$data_file_daily"
+		;;
+	*)
+		# task-daily [pattern [comment]]
+		# Mark task complete and add comment
+		description="${*:2}"
+		date="$(date +%Y-%m-%d)"
+		sed -i "/${date}.*$1/ s/\[ \]/[X]/" "$data_file_daily"
+		sed -i "/${date}.*$1/ s/$/${description}/" "$data_file_daily"
 		;;
 esac

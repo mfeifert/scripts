@@ -16,5 +16,3 @@ task-daily
 
 echo -e "\n${bold}=== ${magenta}MONTHLY${reset} ${bold}===${reset}\n"
 task-monthly
-
-echo

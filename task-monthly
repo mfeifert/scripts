@@ -4,28 +4,28 @@ data_file_monthly="$TASK_DATA_DIR/data_monthly"
 template_monthly="$TASK_DATA_DIR/template_monthly"
 
 case $1 in
-	"")
-		# task m [pattern]
-		# Show current MONTHLY tasks.  Mark complete if pattern is provided.
-		if [[ -n $2 ]]; then
-			month=$(date +%Y-%m)
-			sed -i "/$month.*$2/ s/\[ \]/[X]/" "$data_file_monthly"
-			sed -i "/$month.*$2/ s/-- ---/$(date +'%d %a')/" "$data_file_monthly"
-			task
-		else
-			grep "$(date +%Y-%m)" "$data_file_monthly"
-		fi
-		;;
 	"a")
-		# task ma
+		# task-monthly a
 		# Show all MONTHLY tasks
 		cat "$data_file_monthly"
 		;;
 	"i")
-		# task mi
+		# task-monthly i
 		# Create new MONTHLY tasks from template
 		while IFS= read -r line; do
 			echo "$(date +'%Y-%m--- ---') [ ] $line" >> "$data_file_monthly"
 		done < "$template_monthly"
+		;;
+	"")
+		# task-monthly
+		# Show current MONTHLY tasks.  Mark complete if pattern is provided.
+		grep "$(date +%Y-%m)" "$data_file_monthly"
+		;;
+	*)
+		# task-monthly [pattern]
+		# Mark complete task that matches pattern
+		month=$(date +%Y-%m)
+		sed -i "/$month.*$1/ s/\[ \]/[X]/" "$data_file_monthly"
+		sed -i "/$month.*$1/ s/-- ---/$(date +'%d %a')/" "$data_file_monthly"
 		;;
 esac

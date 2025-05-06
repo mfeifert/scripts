@@ -3,17 +3,18 @@
 data_file_todo="$TASK_DATA_DIR/data_todo"
 
 case $1 in
-	"")
-		# task-todo [pattern]
-		# Show incomplete todo tasks.  Mark complete if pattern is provided.
-		if [[ -n $2 ]]; then
-			sed -i "/$2/ s/\[ \]/[X]/" "$data_file_todo"
-		else
-			grep "\[ \]" "$data_file_todo" | sort
-		fi
-		;;
 	"n")
 		# task-todo n
-		# Create new todo task interactively
+		# Create new Todo task interactively
+		;;
+	"")
+		# task-todo
+		# Show incomplete Todo tasks
+		grep "\[ \]" "$data_file_todo" | sort
+		;;
+	*)
+		# task-todo [pattern]
+		# Mark task complete that matches pattern
+		sed -i "/$1/ s/\[ \]/[X]/" "$data_file_todo"
 		;;
 esac
