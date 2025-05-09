@@ -131,7 +131,7 @@ function print_report()
 		-v weekday="$weekday" \
 		-v bold="$bold" \
 		-v reset="$reset" \
-		-f str_header.awk "$data_file"
+		-f str-header.awk "$data_file"
 
 	# Exercise list
 	awk \
@@ -139,13 +139,13 @@ function print_report()
 		-v bold="$bold" \
 		-v accent="$accent" \
 		-v reset="$reset" \
-		-f str_exercises.awk "$data_file"
+		-f str-exercises.awk "$data_file"
 
 	# Footer: notes
 	grep -P "${date}\tnotes" "$data_file" \
 		| cut --fields=3 \
 		| fmt --width="$width" \
-		| awk -v bold="$bold" -v reset="$reset" -f str_notes.awk
+		| awk -v bold="$bold" -v reset="$reset" -f str-notes.awk
 }
 
 case $1 in
