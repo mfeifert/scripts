@@ -10,14 +10,21 @@ template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
-new_event()
+repeating_event()
 {
+	true
+}
+
+enter_new_event()
+{
+	day=86400 # Number of seconds in a day
+
 	# Title
 	read -rp "Title: " title
 
 	# Start date
 	read -rp "Start date: " start_date
-	start_date=$(date --date="${start_date:=today}" +%s)
+	start_date=($(date --date="${start_date:=today}" +%s))
 
 	# Start time
 	read -rp "Start time: " start_time
@@ -58,34 +65,50 @@ new_event()
 	# Notes
 	read -rp "Notes: " notes
 
+	# Repeating event
+	read -rp "Repeating event? (y/N): " repeat
+	[[ $repeat == "y" ]] && repeating_event
+
 	# Create calendar event
+	event_duration=$((((end_date - start_date) / day) + 1))
+	create_event "$start_date"
 
-	day=86400 # Number of seconds in a day
-	date=$(date --date="@$start_date" +"%F %a")
+	# for i in "${dates[@]}"; do
+	# 	create_event $i
+	# done
+}
 
-	if [[ $start_date != $end_date ]]; then
+create_event()
+{
+	date=$(date --date="@$1" +"%F %a")
+
+	if [[ $event_duration > 1 ]]; then
 
 		# Create event spanning multiple days
-		echo "${date} ${start_time:------}------ ${calendar}:${tags} ┏ ${title} ┓${location} ${notes}" \
+		end_date=$(date --date="$date +${event_duration}days" +%s)
+
+		echo "${date} ${start_time:------}------ ${calendar}:${tags} |[${title}]${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date < $((end_date - day)) ]]; do
 			start_date=$((start_date + day))
 			date=$(date --date="@$start_date" +"%F %a")
-			echo "${date} ----------- ${calendar}:${tags} ┃ ${title} ┃${location}" \
+			echo "${date} ----------- ${calendar}:${tags} |[${title}]${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
 
 		date=$(date --date="@$end_date" +"%F %a")
 
-		echo "${date} ------${end_time:------} ${calendar}:${tags} ┗ ${title} ┛${location}" \
+		echo "${date} ------${end_time:------} ${calendar}:${tags} |[${title}]${location}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 	else
+
 		# Create single-day event
 		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [${title}]${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 	fi
+
 }
 
 birthdays()
@@ -131,7 +154,7 @@ case $1 in
 		;;
 	"n")
 		# Add new event interactively
-		new_event
+		enter_new_event
 		;;
 	"b")
 		# Add new birthday events from template
