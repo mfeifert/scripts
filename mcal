@@ -24,7 +24,7 @@ enter_new_event()
 
 	# Start date
 	read -rp "Start date: " start_date
-	start_date=($(date --date="${start_date:=today}" +%s))
+	start_dates=("$(date --date="${start_date:=today}" +%s)")
 
 	# Start time
 	read -rp "Start time: " start_time
@@ -32,7 +32,7 @@ enter_new_event()
 
 	# End date
 	read -rp "End date: " end_date
-	end_date=$(date --date="${end_date:=@$start_date}" +%s)
+	end_date=$(date --date="${end_date:=@"${start_dates[0]}"}" +%s)
 
 	# End time
 	read -rp "End time: " end_time
@@ -70,17 +70,17 @@ enter_new_event()
 	[[ $repeat == "y" ]] && repeating_event
 
 	# Create calendar event
-	event_duration=$((((end_date - start_date) / day) + 1))
-	create_event "$start_date"
+	event_duration=$((((end_date - ${start_dates[0]}) / day) + 1))
 
-	# for i in "${dates[@]}"; do
-	# 	create_event $i
-	# done
+	for i in "${start_dates[@]}"; do
+		create_event "$i"
+	done
 }
 
 create_event()
 {
-	date=$(date --date="@$1" +"%F %a")
+	start_date="$1"
+	date=$(date --date="@$start_date" +"%F %a")
 
 	if [[ $event_duration > 1 ]]; then
 
