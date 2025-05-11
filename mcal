@@ -12,7 +12,65 @@ cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf 
 
 repeating_event()
 {
-	true
+	getdates_command="getdates"
+
+	read -rp "Mode (ref or monthly): " mode
+
+	case $mode in
+		"ref")
+			getdates_command+=" ref"
+
+			read -rp "Repeat every: " interval
+			getdates_command+=" -i $interval"
+
+			select unit in "Days" "Weeks" "Weekday"; do
+				case $unit in
+					"Days")
+						getdates_command+=" -d"
+						;;
+					"Weeks")
+						getdates_command+=" -w"
+						;;
+					"Weekday")
+						select weekday in "Monday" "Tuesday" "Wednesday" \
+							"Thursday" "Friday" "Saturday" "Sunday"; do
+							getdates_command+=" -k ${weekday:0:3}"
+							break
+						done
+						;;
+				esac
+				break
+			done
+			;;
+
+		"monthly")
+			getdates_command+=" monthly"
+
+			read -rp "Repeat every (number): " n
+
+			select unit in "Day of month" "Weekday"; do
+				case $unit in
+					"Day of month")
+						getdates_command+=" -d $n"
+						;;
+					"Weekday")
+						select weekday in "Monday" "Tuesday" "Wednesday" \
+							"Thursday" "Friday" "Saturday" "Sunday"; do
+							getdates_command+=" -k ${weekday:0:3} -kn $n"
+							break
+						done
+						;;
+				esac
+				break
+			done
+			;;
+
+	esac
+
+	read -rp "Until (date): " end_date
+	getdates_command+=" -e $end_date"
+
+	mapfile -t start_dates < <($getdates_command)
 }
 
 enter_new_event()
@@ -33,6 +91,8 @@ enter_new_event()
 	# End date
 	read -rp "End date: " end_date
 	end_date=$(date --date="${end_date:=@"${start_dates[0]}"}" +%s)
+
+	event_duration=$((((end_date - "${start_dates[0]}") / day) + 1))
 
 	# End time
 	read -rp "End time: " end_time
@@ -70,7 +130,6 @@ enter_new_event()
 	[[ $repeat == "y" ]] && repeating_event
 
 	# Create calendar event
-	event_duration=$((((end_date - ${start_dates[0]}) / day) + 1))
 
 	for i in "${start_dates[@]}"; do
 		create_event "$i"
