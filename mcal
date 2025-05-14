@@ -116,7 +116,13 @@ enter_new_event()
 	echo "Calendar: $calendar"
 
 	# Tags
-	read -rp "Tags: " tags
+	read -rp "Tags: " tags_input
+	tags=(${tags_input,,})
+	if [[ -n $tags ]]; then
+		for tag in "${tags[@]}"; do
+			tags_formatted+="${tag}:"
+		done
+	fi
 
 	# Location
 	read -rp "Location: " location
@@ -146,25 +152,25 @@ create_event()
 		# Create event spanning multiple days
 		end_date=$(date --date="$date +${event_duration}days" +%s)
 
-		echo "${date} ${start_time:------}------ ${calendar}:${tags} |[${title}]${location} ${notes}" \
+		echo "${date} ${start_time:------}------ ${calendar}:${tags_formatted} |[${title}]${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date < $((end_date - day)) ]]; do
 			start_date=$((start_date + day))
 			date=$(date --date="@$start_date" +"%F %a")
-			echo "${date} ----------- ${calendar}:${tags} |[${title}]${location}" \
+			echo "${date} ----------- ${calendar}:${tags_formatted} |[${title}]${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
 
 		date=$(date --date="@$end_date" +"%F %a")
 
-		echo "${date} ------${end_time:------} ${calendar}:${tags} |[${title}]${location}" \
+		echo "${date} ------${end_time:------} ${calendar}:${tags_formatted} |[${title}]${location}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 	else
 
 		# Create single-day event
-		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags} [${title}]${location} ${notes}" \
+		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags_formatted} [${title}]${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 	fi
 
