@@ -73,7 +73,10 @@ make_md()
 
 	# Format date and tags for markdown front matter
 	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
-	tags_md=$(printf '"%s", ' "${tags[@]}")
+	if [[ -n $tags ]]; then
+		tags_md=$(printf '"%s", ' "${tags[@]}")
+		tags_md=${tags_md%, }
+	fi
 
 	# Front matter template for markdown-yaml
 	[[ $1 == "yaml" ]] && front_matter=$(
@@ -81,7 +84,7 @@ make_md()
 ---
 title:      "${title}"
 date:       ${date}
-tags:       [${tags_md%, }]
+tags:       [${tags_md:-}]
 identifier: "${id}"
 ---
 EOF
@@ -93,7 +96,7 @@ EOF
 +++
 title      = "${title}"
 date       = ${date}
-tags       = [${tags_md%, }]
+tags       = [${tags_md:-}]
 identifier = "${id}"
 +++
 EOF
@@ -110,14 +113,17 @@ make_org()
 
 	# Format date and tags for org front matter
 	date=$(date --date="@$timestamp" +"%F %a %H:%M")
-	tags_org=$(printf '%s:' "${tags[@]}")
+	if [[ -n $tags ]]; then
+		tags_org=":"
+		tags_org+=$(printf '%s:' "${tags[@]}")
+	fi
 
 	# Front matter template for org
 	front_matter=$(
 		cat << EOF
 #+title:      ${title}
 #+date:       [${date}]
-#+filetags:   :${tags_org}
+#+filetags:   ${tags_org:-}
 #+identifier: ${id}
 EOF
 	)
