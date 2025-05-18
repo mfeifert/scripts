@@ -183,9 +183,9 @@ birthdays()
 		# Check if name from line in template already has
 		# a birthday calendar event for the current year.
 		# Create a new event only if one does not already exist.
-		name_in_data=$(grep "$(date +%Y).*${name}" "$data_birthdays")
+		name_in_events=$(grep "$(date +%Y).*${name}" "$data_birthdays")
 
-		if [[ -z $name_in_data ]]; then
+		if [[ -z $name_in_events ]]; then
 
 			bday_md=$(date --date="$bday_input" +"%m/%d")
 			bday_output=$(date --date="$bday_md" +"%F %a")
