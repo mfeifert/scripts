@@ -184,9 +184,9 @@ case $filetype in
 esac
 
 # Request confirmation for creating and editing file
-read -rp "Create and edit file? (y/n): " choice
+read -rp "Create and edit file? (Y/n): " choice
 
-if [[ $choice == "y" ]]; then
+if [[ ${choice:-"y"} == "y" || $choice == "Y" ]]; then
 
 	# Create file containing front matter
 	case $filetype in
