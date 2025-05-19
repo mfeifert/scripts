@@ -18,7 +18,7 @@ repeating_event()
 
 	case $mode in
 		"ref")
-			getdates_command+=" ref"
+			getdates_command+=" r"
 
 			read -rp "Repeat every: " interval
 			getdates_command+=" -i $interval"
@@ -44,19 +44,19 @@ repeating_event()
 			;;
 
 		"monthly")
-			getdates_command+=" monthly"
+			getdates_command+=" m"
 
-			read -rp "Repeat every (number): " n
+			read -rp "Repeat every (number): " mn
 
 			select unit in "Day of month" "Weekday"; do
 				case $unit in
 					"Day of month")
-						getdates_command+=" -d $n"
+						getdates_command+=" -d -mn $mn"
 						;;
 					"Weekday")
 						select weekday in "Monday" "Tuesday" "Wednesday" \
 							"Thursday" "Friday" "Saturday" "Sunday"; do
-							getdates_command+=" -k ${weekday:0:3} -kn $n"
+							getdates_command+=" -k ${weekday:0:3} -mn $mn"
 							break
 						done
 						;;
