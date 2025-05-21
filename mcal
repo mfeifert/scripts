@@ -207,16 +207,22 @@ birthdays()
 week_view()
 {
 	sm=$1
+	offset=$2
 
-	week=$(date +%${sm})
+	week=$(date +%"$sm")
 	first=$(date +%F)
 
-	while [[ $(date -d "$first" +%${sm}) == $week ]]; do
+	while [[ $(date -d "$first" +%"$sm") == "$week" ]]; do
 		first=$(date -d "$first -1 day" +%F)
 	done
 
 	first=$(date -d "$first +1 day" +%F)
 	last=$(date -d "$first +6 days" +%F)
+
+	if [[ -n $offset ]]; then
+		first=$(date -d "$first $offset week" +%F)
+		last=$(date -d "$last $offset week" +%F)
+	fi
 
 	echo "$cal_events" | sort | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
@@ -244,11 +250,11 @@ case $1 in
 		;;
 	"wm")
 		# Show all events for current week beginning Monday
-		week_view "V"
+		week_view "V" "$2"
 		;;
 	"ws")
 		# Show all events for current week beginning Sunday
-		week_view "U"
+		week_view "U" "$2"
 		;;
 	"")
 		# Show all events
