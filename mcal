@@ -204,6 +204,23 @@ birthdays()
 	done < "$template_birthdays"
 }
 
+week_view()
+{
+	sm=$1
+
+	week=$(date +%${sm})
+	first=$(date +%F)
+
+	while [[ $(date -d "$first" +%${sm}) == $week ]]; do
+		first=$(date -d "$first -1 day" +%F)
+	done
+
+	first=$(date -d "$first +1 day" +%F)
+	last=$(date -d "$first +6 days" +%F)
+
+	echo "$cal_events" | sort | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
+}
+
 case $1 in
 	"t")
 		# Show all events for current day
@@ -224,6 +241,14 @@ case $1 in
 	"r")
 		# Show all events from specified begin date to end date
 		echo "$cal_events" | sort | awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
+		;;
+	"wm")
+		# Show all events for current week beginning Monday
+		week_view "V"
+		;;
+	"ws")
+		# Show all events for current week beginning Sunday
+		week_view "U"
 		;;
 	"")
 		# Show all events
