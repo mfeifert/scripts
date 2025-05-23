@@ -12,14 +12,16 @@ case $1 in
 	"")
 		# task-monthly
 		# Show current MONTHLY tasks.  Create new MONTHLY tasks if none exist.
-		date=$(date +"%Y-%m")
+		date=$(printf "%(%Y-%m)T" -1)
 		mapfile -t tasks < <(grep "$date" "$data_file_monthly")
+
 		if [[ -z $tasks ]]; then
 			while IFS= read -r line; do
-				echo "$(date +'%Y-%m--- ---') [ ] $line" >> "$data_file_monthly"
+				printf "%(%Y-%m)T--- --- [ ] %s\n" -1 "$line" >> "$data_file_monthly"
 			done < "$template_monthly"
 			mapfile -t tasks < <(grep "$date" "$data_file_monthly")
 		fi
+
 		for task in "${tasks[@]}"; do
 			echo "$task"
 		done
@@ -27,8 +29,8 @@ case $1 in
 	*)
 		# task-monthly [pattern]
 		# Mark complete task that matches pattern
-		month=$(date +%Y-%m)
+		date=$(printf "%(%Y-%m)T" -1)
 		sed -i "/$month.*$1/ s/\[ \]/[X]/" "$data_file_monthly"
-		sed -i "/$month.*$1/ s/-- ---/$(date +'%d %a')/" "$data_file_monthly"
+		sed -i "/$month.*$1/ s/-- ---/$(printf "%(%d %a)T" -1)/" "$data_file_monthly"
 		;;
 esac

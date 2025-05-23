@@ -12,14 +12,16 @@ case $1 in
 	"")
 		# task-daily
 		# Show current DAILY tasks.  Create new DAILY tasks if none exist.
-		date=$(date +%F)
+		date=$(printf "%(%F)T" -1)
 		mapfile -t tasks < <(grep "$date" "$data_file_daily")
+
 		if [[ -z $tasks ]]; then
 			while IFS= read -r line; do
-				echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> "$data_file_daily"
+				printf "%(%F %a)T [ ] %s: \n" -1 "$line" >> "$data_file_daily"
 			done < "$template_daily"
 			mapfile -t tasks < <(grep "$date" "$data_file_daily")
 		fi
+
 		for task in "${tasks[@]}"; do
 			echo "$task"
 		done
@@ -28,7 +30,7 @@ case $1 in
 		# task-daily [pattern [comment]]
 		# Mark task complete and add comment
 		description="${*:2}"
-		date="$(date +%Y-%m-%d)"
+		date=$(printf "%(%F)T" -1)
 		sed -i "/${date}.*$1/ s/\[ \]/[X]/" "$data_file_daily"
 		sed -i "/${date}.*$1/ s/$/${description}/" "$data_file_daily"
 		;;
