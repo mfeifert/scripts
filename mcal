@@ -117,8 +117,9 @@ enter_new_event()
 
 	# Tags
 	read -rp "Tags: " tags_input
-	tags=(${tags_input,,})
-	if [[ -n $tags ]]; then
+	read -ra tags <<< "${tags_input,,}"
+
+	if [[ -n ${tags[*]} ]]; then
 		for tag in "${tags[@]}"; do
 			tags_formatted+="${tag}:"
 		done
