@@ -150,21 +150,24 @@ create_event()
 	if [[ $event_duration > 1 ]]; then
 
 		# Create event spanning multiple days
+		index=1
 		end_date=$(date --date="$date +${event_duration}days" +%s)
 
-		echo "${date} ${start_time:------}------ ${calendar}:${tags_formatted} |[${title}]${location} ${notes}" \
+		echo "${date} ${start_time:------}------ ${calendar}:${tags_formatted} [${title}]${index}${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date < $((end_date - day)) ]]; do
+			((index++))
 			start_date=$((start_date + day))
 			date=$(date --date="@$start_date" +"%F %a")
-			echo "${date} ----------- ${calendar}:${tags_formatted} |[${title}]${location}" \
+			echo "${date} ----------- ${calendar}:${tags_formatted} [${title}]${index}${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
 
+		((index++))
 		date=$(date --date="@$end_date" +"%F %a")
 
-		echo "${date} ------${end_time:------} ${calendar}:${tags_formatted} |[${title}]${location}" \
+		echo "${date} ------${end_time:------} ${calendar}:${tags_formatted} [${title}]${index}${location}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 	else
