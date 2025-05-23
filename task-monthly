@@ -9,17 +9,20 @@ case $1 in
 		# Show all MONTHLY tasks
 		cat "$data_file_monthly"
 		;;
-	"i")
-		# task-monthly i
-		# Create new MONTHLY tasks from template
-		while IFS= read -r line; do
-			echo "$(date +'%Y-%m--- ---') [ ] $line" >> "$data_file_monthly"
-		done < "$template_monthly"
-		;;
 	"")
 		# task-monthly
-		# Show current MONTHLY tasks.  Mark complete if pattern is provided.
-		grep "$(date +%Y-%m)" "$data_file_monthly"
+		# Show current MONTHLY tasks.  Create new MONTHLY tasks if none exist.
+		date=$(date +"%Y-%m")
+		mapfile -t tasks < <(grep "$date" "$data_file_monthly")
+		if [[ -z $tasks ]]; then
+			while IFS= read -r line; do
+				echo "$(date +'%Y-%m--- ---') [ ] $line" >> "$data_file_monthly"
+			done < "$template_monthly"
+			mapfile -t tasks < <(grep "$date" "$data_file_monthly")
+		fi
+		for task in "${tasks[@]}"; do
+			echo "$task"
+		done
 		;;
 	*)
 		# task-monthly [pattern]
