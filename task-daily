@@ -9,17 +9,18 @@ case $1 in
 		# Show all DAILY tasks
 		cat "$data_file_daily"
 		;;
-	"i")
-		# task-daily i
-		# Create new DAILY tasks from template
-		while IFS= read -r line; do
-			echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> "$data_file_daily"
-		done < "$template_daily"
-		;;
 	"")
 		# task-daily
-		# Show current DAILY tasks.
-		grep "$(date +%Y-%m-%d)" "$data_file_daily"
+		# Show current DAILY tasks.  Create new DAILY tasks if none exist.
+		date=$(date +%F)
+		tasks=$(grep "$date" "$data_file_daily")
+		if [[ -z $tasks ]]; then
+			while IFS= read -r line; do
+				echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> "$data_file_daily"
+			done < "$template_daily"
+			tasks=$(grep "$date" "$data_file_daily")
+		fi
+		grep "$(date +%F)" "$data_file_daily"
 		;;
 	*)
 		# task-daily [pattern [comment]]
