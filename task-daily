@@ -13,14 +13,16 @@ case $1 in
 		# task-daily
 		# Show current DAILY tasks.  Create new DAILY tasks if none exist.
 		date=$(date +%F)
-		tasks=$(grep "$date" "$data_file_daily")
+		mapfile -t tasks < <(grep "$date" "$data_file_daily")
 		if [[ -z $tasks ]]; then
 			while IFS= read -r line; do
 				echo "$(date +'%Y-%m-%d %a') [ ] ${line}: " >> "$data_file_daily"
 			done < "$template_daily"
-			tasks=$(grep "$date" "$data_file_daily")
+			mapfile -t tasks < <(grep "$date" "$data_file_daily")
 		fi
-		grep "$(date +%F)" "$data_file_daily"
+		for task in "${tasks[@]}"; do
+			echo "$task"
+		done
 		;;
 	*)
 		# task-daily [pattern [comment]]
