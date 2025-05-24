@@ -7,6 +7,7 @@
 data_birthdays="$MCAL_DATA_DIR/Birthdays"
 template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
+readonly day=86400 # Number of seconds in a day
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
@@ -75,7 +76,6 @@ repeating_event()
 
 enter_new_event()
 {
-	day=86400 # Number of seconds in a day
 
 	# Title
 	read -rp "Title: " title
