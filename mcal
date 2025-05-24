@@ -91,7 +91,8 @@ enter_new_event()
 	read -rp "End date: " end_date
 	end_date=$(date --date="${end_date:=@"${start_dates[0]}"}" +%s)
 
-	event_duration=$(((end_date - "${start_dates[0]}") / day))
+	# Event duration
+	event_duration=$((end_date - "${start_dates[0]}"))
 
 	# End time
 	read -rp "End time: " end_time
@@ -145,13 +146,14 @@ enter_new_event()
 create_event()
 {
 	start_date="$1"
-	date=$(date --date="@$start_date" +"%F %a")
 
-	if [[ $event_duration -gt 1 ]]; then
+	date=$(printf "%(%F %a)T" "$start_date")
+
+	if [[ $event_duration -gt $day ]]; then
 
 		# Create event spanning multiple days
 		index=1
-		end_date=$(date --date="$date +${event_duration}days" +%s)
+		end_date=$((start_date + event_duration))
 
 		echo "${date} ${start_time:------}------ ${calendar}:${tags_formatted} [${title}]${index}${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
@@ -159,13 +161,13 @@ create_event()
 		while [[ $start_date -lt $((end_date - day)) ]]; do
 			((index++))
 			start_date=$((start_date + day))
-			date=$(date --date="@$start_date" +"%F %a")
+			date=$(printf "%(%F %a)T" "$start_date")
 			echo "${date} ----------- ${calendar}:${tags_formatted} [${title}]${index}${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
 
 		((index++))
-		date=$(date --date="@$end_date" +"%F %a")
+		date=$(printf "%(%F %a)T" "$end_date")
 
 		echo "${date} ------${end_time:------} ${calendar}:${tags_formatted} [${title}]${index}${location}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
