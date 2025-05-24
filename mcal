@@ -186,17 +186,18 @@ birthdays()
 		# Check if name from line in template already has
 		# a birthday calendar event for the current year.
 		# Create a new event only if one does not already exist.
-		name_in_events=$(grep "$(date +%Y).*${name}" "$data_birthdays")
+
+		name_in_events=$(grep "$(printf "%(%Y)T" -1).*${name}" "$data_birthdays")
 
 		if [[ -z $name_in_events ]]; then
 
-			bday_md=$(date --date="$bday_input" +"%m/%d")
-			bday_output=$(date --date="$bday_md" +"%F %a")
+			bday_month_day=$(date --date="$bday_input" +"%m/%d")
+			bday_output=$(date --date="$bday_month_day" +"%F %a")
 			bday_year=$(date --date="$bday_input" +%Y)
-			age=$(("$(date +%Y)" - "$bday_year"))
+			age=$(($(printf "%(%Y)T" -1) - bday_year))
 
 			if [[ $age -gt 0 ]]; then
-				age_ordinal="$(echo ${age} | ordinal) "
+				age_ordinal="$(echo $age | ordinal) "
 			else
 				age_ordinal=""
 			fi
