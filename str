@@ -40,7 +40,7 @@ function new_entry()
 	str 2000-01-01
 
 	# Date
-	date=$(gum input --header="  Date" --value="$(date -I)")
+	date=$(gum input --header="  Date" --value="$(printf "%(%F)T" -1)")
 	echo -n -e "${date}\theader\t" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
@@ -155,7 +155,7 @@ case $1 in
 		;;
 	"t")
 		# print report for today
-		print_report "$(date -I)" "$data_file"
+		print_report "$(printf "%(%F)T" -1)" "$data_file"
 		;;
 	"")
 		# select from list of dates and print report
