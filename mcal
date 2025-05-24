@@ -76,7 +76,6 @@ repeating_event()
 
 enter_new_event()
 {
-
 	# Title
 	read -rp "Title: " title
 
@@ -213,20 +212,24 @@ week_view()
 	sm=$1
 	offset=$2
 
-	week=$(date +%"$sm")
-	first=$(date +%F)
+	week=$(printf "%(%${sm})T" -1)
+	first=$(printf "%(%s)T" -1)
 
-	while [[ $(date -d "$first" +%"$sm") == "$week" ]]; do
-		first=$(date -d "$first -1 day" +%F)
+	while [[ $(printf "%(%${sm})T" "$first") == "$week" ]]; do
+		first=$((first - day))
 	done
 
-	first=$(date -d "$first +1 day" +%F)
-	last=$(date -d "$first +6 days" +%F)
+	first=$((first + day))
+	last=$((first + (day * 6)))
 
 	if [[ -n $offset ]]; then
-		first=$(date -d "$first $offset week" +%F)
-		last=$(date -d "$last $offset week" +%F)
+		offset=$((offset * day * 7))
+		first=$((first + offset))
+		last=$((last + offset))
 	fi
+
+	first=$(printf "%(%F)T" "$first")
+	last=$(printf "%(%F)T" "$last")
 
 	echo "$cal_events" | sort | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
