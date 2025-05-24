@@ -82,7 +82,7 @@ enter_new_event()
 
 	# Start date
 	read -rp "Start date: " start_date
-	start_dates=("$(date --date="${start_date:=today}" +%s)")
+	start_dates=("$(date --date="${start_date:="today 12 am"}" +%s)")
 
 	# Start time
 	read -rp "Start time: " start_time
@@ -92,7 +92,7 @@ enter_new_event()
 	read -rp "End date: " end_date
 	end_date=$(date --date="${end_date:=@"${start_dates[0]}"}" +%s)
 
-	event_duration=$((((end_date - "${start_dates[0]}") / day) + 1))
+	event_duration=$(((end_date - "${start_dates[0]}") / day))
 
 	# End time
 	read -rp "End time: " end_time
