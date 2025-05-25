@@ -90,7 +90,7 @@ repeating_event()
 
 enter_new_event()
 {
-	local tags_input
+	local -l tags_input
 	local -a tags
 	local -a calendars
 
@@ -134,7 +134,7 @@ enter_new_event()
 
 	# Tags
 	read -rp "Tags: " tags_input
-	read -ra tags <<< "${tags_input,,}"
+	read -ra tags <<< "$tags_input"
 
 	if [[ -n ${tags[*]} ]]; then
 		for tag in "${tags[@]}"; do
