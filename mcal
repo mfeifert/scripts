@@ -10,6 +10,18 @@ template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
 # Global variables
 declare -r day=86400 # Number of seconds in a day
+declare today
+declare events
+declare -a start_dates
+declare start_time
+declare end_date
+declare end_time
+declare event_duration
+declare calendar
+declare tags_formatted
+declare title
+declare location
+declare notes
 
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
@@ -78,6 +90,10 @@ repeating_event()
 
 enter_new_event()
 {
+	local tags_input
+	local -a tags
+	local -a calendars
+
 	# Title
 	read -rp "Title: " title
 
@@ -101,7 +117,6 @@ enter_new_event()
 	[[ $end_time ]] && end_time=$(date --date="$end_time" +%R)
 
 	# Calendar
-	calendars=()
 	for file in "$MCAL_DATA_DIR"/*; do
 		[[ -f $file ]] && calendars+=("${file##*/}")
 	done
