@@ -2,6 +2,7 @@
 
 # mcal: Display and modify calendar events stored in local text files.
 
+# Edit calendar files
 [[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
 
 # File locations
@@ -23,6 +24,7 @@ declare title
 declare location
 declare notes
 
+# Create list of events
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
@@ -40,6 +42,7 @@ repeating_event()
 
 	case $mode in
 		"r")
+			# Reference date mode
 			getdates_command+=" r"
 
 			read -rp "Repeat every: " interval
@@ -59,6 +62,7 @@ repeating_event()
 			;;
 
 		"m")
+			# Monthly mode
 			getdates_command+=" m"
 
 			read -rp "Repeat every (number): " mn
