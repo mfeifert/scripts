@@ -147,8 +147,8 @@ read -rp "Signature: " signature
 read -rp "Title: " title
 
 # Enter tags separated by spaces and convert to lowercase
-read -rp "Tags: " tags_string
-tags=(${tags_string,,})
+read -rp "Tags: " tags_input
+read -ra tags <<< "${tags_input,,}"
 
 # Generate timestamp for id and front matter date
 timestamp=$(printf '%(%s)T')
