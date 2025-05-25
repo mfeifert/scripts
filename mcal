@@ -175,11 +175,10 @@ create_event()
 
 	if [[ $duration -gt $day ]]; then
 
-		# Create event spanning multiple days
+		# First day of multi-day event
 		index=1
 		end_date=$((start_date + duration))
 
-		# First day of multi-day event
 		printf "%s %s------ %s:%s [%s]%s%s %s\n" \
 			"$date" \
 			"${start_time:------}" \
@@ -191,13 +190,13 @@ create_event()
 			"$notes" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
+		# Middle days of multi-day event
 		while [[ $start_date -lt $((end_date - day)) ]]; do
 
 			((index++))
 			start_date=$((start_date + day))
 			date=$(printf "%(%F %a)T" "$start_date")
 
-			# Middle days of multi-day event
 			printf "%s ----------- %s:%s [%s]%s%s\n" \
 				"$date" \
 				"$calendar" \
@@ -209,10 +208,10 @@ create_event()
 
 		done
 
+		# Last day of multi-day event
 		((index++))
 		date=$(printf "%(%F %a)T" "$end_date")
 
-		# Last day of multi-day event
 		printf "%s ------%s %s:%s [%s]%s%s\n" \
 			"$date" \
 			"${end_time:------}" \
@@ -225,7 +224,7 @@ create_event()
 
 	else
 
-		# Create single-day event
+		# Single-day event
 		printf "%s %s-%s %s:%s [%s]%s %s\n" \
 			"$date" \
 			"${start_time:------}" \
