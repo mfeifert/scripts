@@ -32,13 +32,6 @@ repeating_event()
 					"Weeks")
 						getdates_command+=" -w"
 						;;
-					"Weekday")
-						select weekday in "Monday" "Tuesday" "Wednesday" \
-							"Thursday" "Friday" "Saturday" "Sunday"; do
-							getdates_command+=" -k ${weekday:0:3}"
-							break
-						done
-						;;
 				esac
 				break
 			done
@@ -230,8 +223,6 @@ birthdays()
 			age=$(($(printf "%(%Y)T" -1) - bday_year))
 
 			[[ $age -gt 0 ]] && age_ordinal="$(echo $age | ordinal) "
-
-			# echo "${bday_output} ----------- Birthdays: ${name}'s ${age_ordinal:-}birthday" >> "$data_birthdays"
 
 			printf "%s ----------- Birthdays: %s's %sbirthday\n" \
 				"$bday_output" \
