@@ -30,7 +30,7 @@ case $1 in
 		# task-monthly [pattern]
 		# Mark complete task that matches pattern
 		date=$(printf "%(%Y-%m)T" -1)
-		sed -i "/$month.*$1/ s/\[ \]/[X]/" "$data_file_monthly"
-		sed -i "/$month.*$1/ s/-- ---/$(printf "%(%d %a)T" -1)/" "$data_file_monthly"
+		sed -i "/${date}.*$1/ s/\[ \]/[X]/" "$data_file_monthly"
+		sed -i "/${date}.*$1/ s/-- ---/$(printf "%(%d %a)T" -1)/" "$data_file_monthly"
 		;;
 esac
