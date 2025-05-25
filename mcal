@@ -155,7 +155,15 @@ create_event()
 		index=1
 		end_date=$((start_date + event_duration))
 
-		echo "${date} ${start_time:------}------ ${calendar}:${tags_formatted} [${title}]${index}${location} ${notes}" \
+		printf "%s %s------ %s:%s [%s]%s%s %s\n" \
+			"$date" \
+			"${start_time:------}" \
+			"$calendar" \
+			"$tags_formatted" \
+			"$title" \
+			"$index" \
+			"$location" \
+			"$notes" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date -lt $((end_date - day)) ]]; do
@@ -164,20 +172,42 @@ create_event()
 			start_date=$((start_date + day))
 			date=$(printf "%(%F %a)T" "$start_date")
 
-			echo "${date} ----------- ${calendar}:${tags_formatted} [${title}]${index}${location}" \
+			printf "%s ----------- %s:%s [%s]%s%s\n" \
+				"$date" \
+				"$calendar" \
+				"$tags_formatted" \
+				"$title" \
+				"$index" \
+				"$location" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
+
 		done
 
 		((index++))
 		date=$(printf "%(%F %a)T" "$end_date")
 
-		echo "${date} ------${end_time:------} ${calendar}:${tags_formatted} [${title}]${index}${location}" \
+		printf "%s ------%s %s:%s [%s]%s%s\n" \
+			"$date" \
+			"${end_time:------}" \
+			"$calendar" \
+			"$tags_formatted" \
+			"$title" \
+			"$index" \
+			"$location" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 	else
 
 		# Create single-day event
-		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags_formatted} [${title}]${location} ${notes}" \
+		printf "%s %s-%s %s:%s [%s]%s %s\n" \
+			"$date" \
+			"${start_time:------}" \
+			"${end_time:------}" \
+			"$calendar" \
+			"$tags_formatted" \
+			"$title" \
+			"$location" \
+			"$notes" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 	fi
@@ -201,7 +231,14 @@ birthdays()
 
 			[[ $age -gt 0 ]] && age_ordinal="$(echo $age | ordinal) "
 
-			echo "${bday_output} ----------- Birthdays: ${name}'s ${age_ordinal:-}birthday" >> "$data_birthdays"
+			# echo "${bday_output} ----------- Birthdays: ${name}'s ${age_ordinal:-}birthday" >> "$data_birthdays"
+
+			printf "%s ----------- Birthdays: %s's %sbirthday\n" \
+				"$bday_output" \
+				"$name" \
+				"${age_ordinal:-}" \
+				>> "$data_birthdays"
+
 		fi
 
 	done < "$template_birthdays"
