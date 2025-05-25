@@ -24,9 +24,11 @@ declare title
 declare location
 declare notes
 
-# Create list of events
-today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
-events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
+compile_events()
+{
+	today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
+	events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
+}
 
 repeating_event()
 {
@@ -334,10 +336,12 @@ week_view()
 case $1 in
 	"t")
 		# Show all events for current day
+		compile_events
 		echo "$events" | sort | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"m")
 		# Show all events for current month
+		compile_events
 		echo "$events" | sort | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
 		;;
 	"n")
@@ -350,23 +354,28 @@ case $1 in
 		;;
 	"r")
 		# Show all events from specified begin date to end date
+		compile_events
 		echo "$events" | sort \
 			| awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
 		;;
 	"wm")
 		# Show all events for current week beginning Monday
+		compile_events
 		week_view "V" "$2"
 		;;
 	"ws")
 		# Show all events for current week beginning Sunday
+		compile_events
 		week_view "U" "$2"
 		;;
 	"")
 		# Show all events
+		compile_events
 		echo "$events" | sort
 		;;
 	*)
 		# Show all events that match pattern
+		compile_events
 		echo "$events" | sort | grep --color=auto "${*}"
 		;;
 esac
