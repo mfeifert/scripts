@@ -61,8 +61,8 @@ repeating_event()
 
 	esac
 
-	read -rp "Until (date): " end_date
-	getdates_command+=" -e $end_date"
+	read -rp "Until (date): " end_repeat
+	getdates_command+=" -e $end_repeat"
 
 	mapfile -t start_dates < <($getdates_command)
 }
