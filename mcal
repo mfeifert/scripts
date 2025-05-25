@@ -12,7 +12,7 @@ template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 declare -r day=86400 # Number of seconds in a day
 
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
-cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
+events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
 repeating_event()
 {
@@ -308,18 +308,18 @@ week_view()
 	first=$(printf "%(%F)T" "$first")
 	last=$(printf "%(%F)T" "$last")
 
-	echo "$cal_events" | sort \
+	echo "$events" | sort \
 		| awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
 
 case $1 in
 	"t")
 		# Show all events for current day
-		echo "$cal_events" | sort | grep --color=auto "$(printf "%(%F)T" -1)"
+		echo "$events" | sort | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"m")
 		# Show all events for current month
-		echo "$cal_events" | sort | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
+		echo "$events" | sort | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
 		;;
 	"n")
 		# Add new event interactively
@@ -331,7 +331,7 @@ case $1 in
 		;;
 	"r")
 		# Show all events from specified begin date to end date
-		echo "$cal_events" | sort \
+		echo "$events" | sort \
 			| awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
 		;;
 	"wm")
@@ -344,10 +344,10 @@ case $1 in
 		;;
 	"")
 		# Show all events
-		echo "$cal_events" | sort
+		echo "$events" | sort
 		;;
 	*)
 		# Show all events that match pattern
-		echo "$cal_events" | sort | grep --color=auto "${*}"
+		echo "$events" | sort | grep --color=auto "${*}"
 		;;
 esac
