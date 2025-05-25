@@ -148,6 +148,7 @@ create_event()
 		index=1
 		end_date=$((start_date + event_duration))
 
+		# First day of multi-day event
 		printf "%s %s------ %s:%s [%s]%s%s %s\n" \
 			"$date" \
 			"${start_time:------}" \
@@ -165,6 +166,7 @@ create_event()
 			start_date=$((start_date + day))
 			date=$(printf "%(%F %a)T" "$start_date")
 
+			# Middle days of multi-day event
 			printf "%s ----------- %s:%s [%s]%s%s\n" \
 				"$date" \
 				"$calendar" \
@@ -179,6 +181,7 @@ create_event()
 		((index++))
 		date=$(printf "%(%F %a)T" "$end_date")
 
+		# Last day of multi-day event
 		printf "%s ------%s %s:%s [%s]%s%s\n" \
 			"$date" \
 			"${end_time:------}" \
@@ -237,29 +240,37 @@ birthdays()
 
 week_view()
 {
-	sm=$1
-	offset=$2
+	sm=$1     # Sunday or Monday
+	offset=$2 # Number of weeks forward or backward
 
+	# Week number
 	week=$(printf "%(%${sm})T" -1)
+
+	# Set current day as first day of the week
 	first=$(printf "%(%s)T" -1)
 
+	# Walk backward to find week boundary
 	while [[ $(printf "%(%${sm})T" "$first") == "$week" ]]; do
 		first=$((first - day))
 	done
 
+	# Set first and last days of week
 	first=$((first + day))
 	last=$((first + (day * 6)))
 
+	# Shift forward or backward by specified number of weeks
 	if [[ -n $offset ]]; then
 		offset=$((offset * day * 7))
 		first=$((first + offset))
 		last=$((last + offset))
 	fi
 
+	# Format first and last days of week for output
 	first=$(printf "%(%F)T" "$first")
 	last=$(printf "%(%F)T" "$last")
 
-	echo "$cal_events" | sort | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
+	echo "$cal_events" | sort \
+		| awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
 
 case $1 in
@@ -281,7 +292,8 @@ case $1 in
 		;;
 	"r")
 		# Show all events from specified begin date to end date
-		echo "$cal_events" | sort | awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
+		echo "$cal_events" | sort \
+			| awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
 		;;
 	"wm")
 		# Show all events for current week beginning Monday
