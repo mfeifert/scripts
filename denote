@@ -48,7 +48,7 @@ make_txt()
 	local front_matter
 
 	# Format date and tags for txt front matter
-	date=$(date --date="@$timestamp" +%F)
+	date=$(printf "%(%F)T" "$timestamp")
 	tags_txt=$(printf '%s  ' "${tags[@]}")
 
 	# Front matter template for txt
@@ -72,6 +72,7 @@ make_md()
 	local front_matter
 
 	# Format date and tags for markdown front matter
+	# `date` command used instead of `printf` to get a colon in the timezone (%:z)
 	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
 	if [[ -n $tags ]]; then
 		tags_md=$(printf '"%s", ' "${tags[@]}")
@@ -112,7 +113,7 @@ make_org()
 	local front_matter
 
 	# Format date and tags for org front matter
-	date=$(date --date="@$timestamp" +"%F %a %H:%M")
+	date=$(printf "%(%F %a %H:%M)T" "$timestamp")
 	if [[ -n $tags ]]; then
 		tags_org=":"
 		tags_org+=$(printf '%s:' "${tags[@]}")
@@ -153,7 +154,7 @@ tags=(${tags_string,,})
 timestamp=$(printf '%(%s)T')
 
 # Create ID from timestamp
-id=$(date --date="@$timestamp" +"%Y%m%dT%H%M%S")
+id=$(printf "%(%Y%m%dT%H%M%S)T" "$timestamp")
 
 # Generate filename and full filepath
 filename=$(make_filename)
