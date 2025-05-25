@@ -159,9 +159,11 @@ create_event()
 			| tee -a "$MCAL_DATA_DIR/$calendar"
 
 		while [[ $start_date -lt $((end_date - day)) ]]; do
+
 			((index++))
 			start_date=$((start_date + day))
 			date=$(printf "%(%F %a)T" "$start_date")
+
 			echo "${date} ----------- ${calendar}:${tags_formatted} [${title}]${index}${location}" \
 				| tee -a "$MCAL_DATA_DIR/$calendar"
 		done
@@ -177,8 +179,8 @@ create_event()
 		# Create single-day event
 		echo "${date} ${start_time:------}-${end_time:------} ${calendar}:${tags_formatted} [${title}]${location} ${notes}" \
 			| tee -a "$MCAL_DATA_DIR/$calendar"
-	fi
 
+	fi
 }
 
 birthdays()
