@@ -29,9 +29,11 @@ case $1 in
 	*)
 		# task-daily [pattern [comment]]
 		# Mark task complete and add comment
+		pattern=$1
 		description="${*:2}"
 		date=$(printf "%(%F)T" -1)
-		sed -i "/${date}.*$1/ s/\[ \]/[X]/" "$data_file_daily"
-		sed -i "/${date}.*$1/ s/$/${description}/" "$data_file_daily"
+
+		sed -i "/${date}.*${pattern}/ s/\[ \]/[X]/" "$data_file_daily"
+		sed -i "/${date}.*${pattern}/ s/$/${description}/" "$data_file_daily"
 		;;
 esac
