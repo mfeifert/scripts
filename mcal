@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
 
-# Display and modify calendar events stored in local text files.
+# mcal: Display and modify calendar events stored in local text files.
 
 [[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
 
+# File locations
 birthday_events="$MCAL_DATA_DIR/Birthdays"
 template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
-readonly day=86400 # Number of seconds in a day
+# Global variables
+declare -r day=86400 # Number of seconds in a day
+
 today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
 cal_events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
 
 repeating_event()
 {
-	getdates_command="getdates"
+	local getdates_command="getdates"
+	local mode
+	local interval
+	local unit
+	local mn
+	local weekday
+	local end_repeat
 
 	read -rp "Mode (r or m): " mode
 
@@ -137,7 +146,9 @@ enter_new_event()
 
 create_event()
 {
-	start_date=$1
+	local start_date=$1
+	local date
+	local index
 
 	date=$(printf "%(%F %a)T" "$start_date")
 
@@ -210,7 +221,7 @@ create_event()
 
 ordinal()
 {
-	num=$1
+	local num=$1
 
 	if [[ $((num % 100)) -ge 11 ]] && [[ $((num % 100)) -le 19 ]]; then
 		echo "${num}th"
@@ -227,6 +238,14 @@ ordinal()
 
 birthdays()
 {
+	local current_year
+	local name_in_events
+	local bday_month_day
+	local bday_output
+	local bday_year
+	local age
+	local age_ordinal
+
 	while IFS=$'\t' read -r bday_input name; do
 
 		# Check if name from line in template already has
@@ -257,8 +276,11 @@ birthdays()
 
 week_view()
 {
-	sm=$1     # Sunday or Monday
-	offset=$2 # Number of weeks forward or backward
+	local sm=$1     # Sunday or Monday
+	local offset=$2 # Number of weeks forward or backward
+	local week
+	local first
+	local last
 
 	# Week number
 	week=$(printf "%(%${sm})T" -1)
