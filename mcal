@@ -4,7 +4,7 @@
 
 [[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
 
-data_birthdays="$MCAL_DATA_DIR/Birthdays"
+birthday_events="$MCAL_DATA_DIR/Birthdays"
 template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
 readonly day=86400 # Number of seconds in a day
@@ -213,7 +213,7 @@ birthdays()
 		# Check if name from line in template already has
 		# a birthday calendar event for the current year.
 		# Create a new event only if one does not already exist.
-		name_in_events=$(grep "$(printf "%(%Y)T" -1).*${name}" "$data_birthdays")
+		name_in_events=$(grep "$(printf "%(%Y)T" -1).*${name}" "$birthday_events")
 
 		if [[ -z $name_in_events ]]; then
 
@@ -228,7 +228,7 @@ birthdays()
 				"$bday_output" \
 				"$name" \
 				"${age_ordinal:-}" \
-				>> "$data_birthdays"
+				>> "$birthday_events"
 
 		fi
 
