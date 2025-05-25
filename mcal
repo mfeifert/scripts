@@ -130,7 +130,6 @@ enter_new_event()
 	[[ $repeat == "y" ]] && repeating_event
 
 	# Create calendar event
-
 	for i in "${start_dates[@]}"; do
 		create_event "$i"
 	done
@@ -138,7 +137,7 @@ enter_new_event()
 
 create_event()
 {
-	start_date="$1"
+	start_date=$1
 
 	date=$(printf "%(%F %a)T" "$start_date")
 
@@ -209,6 +208,23 @@ create_event()
 	fi
 }
 
+ordinal()
+{
+	num=$1
+
+	if [[ $((num % 100)) -ge 11 ]] && [[ $((num % 100)) -le 19 ]]; then
+		echo "${num}th"
+	elif [[ $((num % 10)) == 1 ]]; then
+		echo "${num}st"
+	elif [[ $((num % 10)) == 2 ]]; then
+		echo "${num}nd"
+	elif [[ $((num % 10)) == 3 ]]; then
+		echo "${num}rd"
+	else
+		echo "${num}th"
+	fi
+}
+
 birthdays()
 {
 	while IFS=$'\t' read -r bday_input name; do
@@ -226,7 +242,7 @@ birthdays()
 			bday_year=$(date --date="$bday_input" +%Y)
 			age=$((current_year - bday_year))
 
-			[[ $age -gt 0 ]] && age_ordinal="$(echo $age | ordinal) "
+			[[ $age -gt 0 ]] && age_ordinal="$(ordinal $age) "
 
 			printf "%s ----------- Birthdays: %s's %sbirthday\n" \
 				"$bday_output" \
