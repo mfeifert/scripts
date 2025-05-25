@@ -17,7 +17,7 @@ declare -a start_dates
 declare start_time
 declare end_date
 declare end_time
-declare event_duration
+declare duration
 declare calendar
 declare tags_formatted
 declare title
@@ -116,7 +116,7 @@ enter_new_event()
 	end_date=$(date --date="${end_date:=@"${start_dates[0]}"}" +%s)
 
 	# Event duration
-	event_duration=$((end_date - "${start_dates[0]}"))
+	duration=$((end_date - "${start_dates[0]}"))
 
 	# End time
 	read -rp "End time: " end_time
@@ -173,11 +173,11 @@ create_event()
 
 	date=$(printf "%(%F %a)T" "$start_date")
 
-	if [[ $event_duration -gt $day ]]; then
+	if [[ $duration -gt $day ]]; then
 
 		# Create event spanning multiple days
 		index=1
-		end_date=$((start_date + event_duration))
+		end_date=$((start_date + duration))
 
 		# First day of multi-day event
 		printf "%s %s------ %s:%s [%s]%s%s %s\n" \
