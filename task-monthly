@@ -15,7 +15,7 @@ case $1 in
 		date=$(printf "%(%Y-%m)T" -1)
 		mapfile -t tasks < <(grep "$date" "$data_file_monthly")
 
-		if [[ -z $tasks ]]; then
+		if [[ -z ${tasks[*]} ]]; then
 			while IFS= read -r line; do
 				printf "%(%Y-%m)T--- --- [ ] %s\n" -1 "$line" >> "$data_file_monthly"
 			done < "$template_monthly"
@@ -31,6 +31,7 @@ case $1 in
 		# Mark complete task that matches pattern
 		pattern=$1
 		date=$(printf "%(%Y-%m)T" -1)
+
 		sed -i "/${date}.*${pattern}/ s/\[ \]/[X]/" "$data_file_monthly"
 		sed -i "/${date}.*${pattern}/ s/-- ---/$(printf "%(%d %a)T" -1)/" "$data_file_monthly"
 		;;

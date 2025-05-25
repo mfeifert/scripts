@@ -15,7 +15,7 @@ case $1 in
 		date=$(printf "%(%F)T" -1)
 		mapfile -t tasks < <(grep "$date" "$data_file_daily")
 
-		if [[ -z $tasks ]]; then
+		if [[ -z ${tasks[*]} ]]; then
 			while IFS= read -r line; do
 				printf "%(%F %a)T [ ] %s: \n" -1 "$line" >> "$data_file_daily"
 			done < "$template_daily"
