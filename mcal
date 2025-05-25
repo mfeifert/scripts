@@ -15,10 +15,10 @@ repeating_event()
 {
 	getdates_command="getdates"
 
-	read -rp "Mode (ref or monthly): " mode
+	read -rp "Mode (r or m): " mode
 
 	case $mode in
-		"ref")
+		"r")
 			getdates_command+=" r"
 
 			read -rp "Repeat every: " interval
@@ -37,7 +37,7 @@ repeating_event()
 			done
 			;;
 
-		"monthly")
+		"m")
 			getdates_command+=" m"
 
 			read -rp "Repeat every (number): " mn
