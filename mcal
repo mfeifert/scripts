@@ -10,8 +10,6 @@ declare birthday_events="$MCAL_DATA_DIR/Birthdays"
 declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
 # Global variables
-declare -r day=86400 # Number of seconds in a day
-declare -a start_dates
 declare start_time
 declare end_date
 declare end_time
@@ -170,6 +168,7 @@ enter_new_event()
 create_event()
 {
 	local start_date=$1
+	local -r day=86400 # Number of seconds in a day
 	local date
 	local index
 
@@ -298,8 +297,9 @@ birthdays()
 
 week_view()
 {
-	local sm=$1     # Sunday or Monday
-	local offset=$2 # Number of weeks forward or backward
+	local sm=$1        # Sunday or Monday
+	local offset=$2    # Number of weeks forward or backward
+	local -r day=86400 # Number of seconds in a day
 	local week
 	local first
 	local last
@@ -344,6 +344,7 @@ case $1 in
 		;;
 	"n")
 		# Add new event interactively
+		declare -a start_dates
 		enter_new_event
 		;;
 	"b")
