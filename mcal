@@ -327,13 +327,18 @@ week_view()
 }
 
 case $1 in
+	"b")
+		# Add new birthday events from template
+
+		# File locations
+		declare birthday_events="$MCAL_DATA_DIR/Birthdays"
+		declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
+
+		birthdays
+		;;
 	"e")
 		# Edit calendar files
 		(cd "$MCAL_DATA_DIR" && nvim -c FZF)
-		;;
-	"t")
-		# Show all events for current day
-		compile_events | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"m")
 		# Show all events for current month
@@ -344,18 +349,13 @@ case $1 in
 		declare -a start_dates
 		enter_new_event
 		;;
-	"b")
-		# Add new birthday events from template
-
-		# File locations
-		declare birthday_events="$MCAL_DATA_DIR/Birthdays"
-		declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
-
-		birthdays
-		;;
 	"r")
 		# Show all events from specified begin date to end date
 		compile_events | awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
+		;;
+	"t")
+		# Show all events for current day
+		compile_events | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"wm")
 		# Show all events for current week beginning Monday
