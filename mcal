@@ -6,8 +6,8 @@
 [[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
 
 # File locations
-birthday_events="$MCAL_DATA_DIR/Birthdays"
-template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
+declare birthday_events="$MCAL_DATA_DIR/Birthdays"
+declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
 # Global variables
 declare -r day=86400 # Number of seconds in a day
