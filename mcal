@@ -5,10 +5,6 @@
 # Edit calendar files
 [[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
 
-# File locations
-declare birthday_events="$MCAL_DATA_DIR/Birthdays"
-declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
-
 # Global variables
 declare start_time
 declare end_date
@@ -349,6 +345,11 @@ case $1 in
 		;;
 	"b")
 		# Add new birthday events from template
+
+		# File locations
+		declare birthday_events="$MCAL_DATA_DIR/Birthdays"
+		declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
+
 		birthdays
 		;;
 	"r")
