@@ -11,8 +11,6 @@ declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
 
 # Global variables
 declare -r day=86400 # Number of seconds in a day
-declare today
-declare events
 declare -a start_dates
 declare start_time
 declare end_date
@@ -26,8 +24,12 @@ declare notes
 
 compile_events()
 {
-	today=$(printf "%(%F %a %H:%M)T       === TODAY ===" -1)
-	events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} + && printf "%s\n" "$today")
+	local events
+
+	events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} +)
+	events+=$(printf "\n%(%F %a %H:%M)T       === TODAY ===" -1)
+
+	echo "$events" | sort
 }
 
 repeating_event()
@@ -328,20 +330,17 @@ week_view()
 	first=$(printf "%(%F)T" "$first")
 	last=$(printf "%(%F)T" "$last")
 
-	echo "$events" | sort \
-		| awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
+	compile_events | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
 
 case $1 in
 	"t")
 		# Show all events for current day
-		compile_events
-		echo "$events" | sort | grep --color=auto "$(printf "%(%F)T" -1)"
+		compile_events | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"m")
 		# Show all events for current month
-		compile_events
-		echo "$events" | sort | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
+		compile_events | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
 		;;
 	"n")
 		# Add new event interactively
@@ -353,28 +352,22 @@ case $1 in
 		;;
 	"r")
 		# Show all events from specified begin date to end date
-		compile_events
-		echo "$events" | sort \
-			| awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
+		compile_events | awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
 		;;
 	"wm")
 		# Show all events for current week beginning Monday
-		compile_events
 		week_view "V" "$2"
 		;;
 	"ws")
 		# Show all events for current week beginning Sunday
-		compile_events
 		week_view "U" "$2"
 		;;
 	"")
 		# Show all events
 		compile_events
-		echo "$events" | sort
 		;;
 	*)
 		# Show all events that match pattern
-		compile_events
-		echo "$events" | sort | grep --color=auto "${*}"
+		compile_events | grep --color=auto "${*}"
 		;;
 esac
