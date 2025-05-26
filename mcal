@@ -2,9 +2,6 @@
 
 # mcal: Display and modify calendar events stored in local text files.
 
-# Edit calendar files
-[[ $1 == "e" ]] && (cd "$MCAL_DATA_DIR" && nvim -c FZF) && exit
-
 # Global variables
 declare start_time
 declare end_date
@@ -330,6 +327,10 @@ week_view()
 }
 
 case $1 in
+	"e")
+		# Edit calendar files
+		(cd "$MCAL_DATA_DIR" && nvim -c FZF)
+		;;
 	"t")
 		# Show all events for current day
 		compile_events | grep --color=auto "$(printf "%(%F)T" -1)"
