@@ -140,12 +140,11 @@ create_event()
 	local start_date=$1
 	local -r day=86400 # Number of seconds in a day
 	local index=1
+	local end_date
 	local event
-	local multi_day
 
 	# Retrieve event information from event_info array
 	local start_time="${event_info[start_time]}"
-	local end_date
 	local end_time="${event_info[end_time]}"
 	local duration="${event_info[duration]}"
 	local calendar="${event_info[calendar]}"
@@ -155,9 +154,6 @@ create_event()
 	local notes="${event_info[notes]}"
 
 	end_date=$((start_date + duration))
-
-	# Event is multi-day if $multi_day > 0
-	multi_day=$((end_date - start_date))
 
 	while [[ $start_date -le $end_date ]]; do
 
@@ -182,7 +178,7 @@ create_event()
 		event+="${calendar}:${tags_formatted} [${title}]"
 
 		# Index: multi-day event only
-		[[ $multi_day -gt 0 ]] && event+="$index"
+		[[ $duration -gt 0 ]] && event+="$index"
 
 		# Location
 		event+=" $location "
