@@ -143,15 +143,16 @@ enter_new_event()
 	# Notes
 	read -rp "Notes: " notes
 
-	event[start_time]="$start_time"
-	event[end_date]="$end_date"
-	event[end_time]="$end_time"
-	event[duration]="$duration"
-	event[calendar]="$calendar"
-	event[tags_formatted]="$tags_formatted"
-	event[title]="$title"
-	event[location]="$location"
-	event[notes]="$notes"
+	# Store event information in event_info array
+	event_info[start_time]="$start_time"
+	event_info[end_date]="$end_date"
+	event_info[end_time]="$end_time"
+	event_info[duration]="$duration"
+	event_info[calendar]="$calendar"
+	event_info[tags_formatted]="$tags_formatted"
+	event_info[title]="$title"
+	event_info[location]="$location"
+	event_info[notes]="$notes"
 }
 
 create_event()
@@ -160,52 +161,53 @@ create_event()
 	local -r day=86400 # Number of seconds in a day
 	local date
 	local index=1
-	local event_output
+	local event
 
-	local start_time="${event[start_time]}"
-	local end_date="${event[end_date]}"
-	local end_time="${event[end_time]}"
-	local duration="${event[duration]}"
-	local calendar="${event[calendar]}"
-	local tags_formatted="${event[tags_formatted]}"
-	local title="${event[title]}"
-	local location="${event[location]}"
-	local notes="${event[notes]}"
+	# Retrieve event information from event_info array
+	local start_time="${event_info[start_time]}"
+	local end_date="${event_info[end_date]}"
+	local end_time="${event_info[end_time]}"
+	local duration="${event_info[duration]}"
+	local calendar="${event_info[calendar]}"
+	local tags_formatted="${event_info[tags_formatted]}"
+	local title="${event_info[title]}"
+	local location="${event_info[location]}"
+	local notes="${event_info[notes]}"
 
 	while [[ $start_date -le $end_date ]]; do
 
 		date=$(printf "%(%F %a)T" "$start_date")
 
 		# Date including weekday
-		event_output="$date "
+		event="$date "
 
 		# Start time: first day of event only
 		if [[ $index == 1 ]]; then
-			event_output+="${start_time}-"
+			event+="${start_time}-"
 		else
-			event_output+="------"
+			event+="------"
 		fi
 
 		# End time: last day of event only
 		if [[ $start_date == "$end_date" ]]; then
-			event_output+="$end_time "
+			event+="$end_time "
 		else
-			event_output+="----- "
+			event+="----- "
 		fi
 
 		# Calendar, tags, and title
-		event_output+="${calendar}:${tags_formatted} [${title}]"
+		event+="${calendar}:${tags_formatted} [${title}]"
 
 		# Index: multi-day event only
-		[[ $duration -gt $day ]] && event_output+="$index"
+		[[ $duration -gt $day ]] && event+="$index"
 
 		# Location
-		event_output+=" $location "
+		event+=" $location "
 
 		# Notes: first day of event only
-		[[ $index == 1 ]] && event_output+="$notes"
+		[[ $index == 1 ]] && event+="$notes"
 
-		echo "$event_output" | tee -a "$MCAL_DATA_DIR/$calendar"
+		echo "$event" | tee -a "$MCAL_DATA_DIR/$calendar"
 
 		start_date=$((start_date + day))
 		((index++))
@@ -353,7 +355,7 @@ case $1 in
 	"n")
 		# Add new event interactively
 		declare -a start_dates
-		declare -A event
+		declare -A event_info
 
 		# Prompt for calendar event information
 		enter_new_event
