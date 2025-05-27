@@ -2,16 +2,6 @@
 
 # mcal: Display and modify calendar events stored in local text files.
 
-declare start_time
-declare end_date
-declare end_time
-declare duration
-declare calendar
-declare tags_formatted
-declare title
-declare location
-declare notes
-
 compile_events()
 {
 	local events
@@ -91,6 +81,15 @@ enter_new_event()
 	local -l tags_input
 	local -a tags
 	local -a calendars
+	local start_time
+	local end_date
+	local end_time
+	local duration
+	local calendar
+	local tags_formatted
+	local title
+	local location
+	local notes
 
 	# Title
 	read -rp "Title: " title
@@ -147,14 +146,15 @@ enter_new_event()
 	# Notes
 	read -rp "Notes: " notes
 
-	# Repeating event
-	read -rp "Repeating event? (y/N): " repeat
-	[[ $repeat == "y" ]] && repeating_event
-
-	# Create calendar event
-	for i in "${start_dates[@]}"; do
-		create_event "$i"
-	done
+	event[start_time]="$start_time"
+	event[end_date]="$end_date"
+	event[end_time]="$end_time"
+	event[duration]="$duration"
+	event[calendar]="$calendar"
+	event[tags_formatted]="$tags_formatted"
+	event[title]="$title"
+	event[location]="$location"
+	event[notes]="$notes"
 }
 
 create_event()
@@ -163,6 +163,15 @@ create_event()
 	local -r day=86400 # Number of seconds in a day
 	local date
 	local index
+	local start_time="${event[start_time]}"
+	local end_date="${event[end_date]}"
+	local end_time="${event[end_time]}"
+	local duration="${event[duration]}"
+	local calendar="${event[calendar]}"
+	local tags_formatted="${event[tags_formatted]}"
+	local title="${event[title]}"
+	local location="${event[location]}"
+	local notes="${event[notes]}"
 
 	date=$(printf "%(%F %a)T" "$start_date")
 
@@ -346,8 +355,19 @@ case $1 in
 	"n")
 		# Add new event interactively
 		declare -a start_dates
+		declare -A event
 
+		# Prompt for calendar event information
 		enter_new_event
+
+		# Prompt for repeating event
+		read -rp "Repeating event? (y/N): " repeat
+		[[ $repeat == "y" ]] && repeating_event
+
+		# Create calendar event(s)
+		for i in "${start_dates[@]}"; do
+			create_event "$i"
+		done
 		;;
 	"r")
 		# Show all events from specified begin date to end date
