@@ -193,6 +193,7 @@ create_event()
 
 repeating_event()
 {
+	local PS3="> "
 	local getdates_command="getdates"
 	local mode
 	local interval
