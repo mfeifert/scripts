@@ -2,7 +2,6 @@
 
 # mcal: Display and modify calendar events stored in local text files.
 
-# Global variables
 declare start_time
 declare end_date
 declare end_time
@@ -347,6 +346,7 @@ case $1 in
 	"n")
 		# Add new event interactively
 		declare -a start_dates
+
 		enter_new_event
 		;;
 	"r")
@@ -359,11 +359,15 @@ case $1 in
 		;;
 	"wm")
 		# Show all events for current week beginning Monday
-		week_view "V" "$2"
+		declare offset="$2"
+
+		week_view "V" "$offset"
 		;;
 	"ws")
 		# Show all events for current week beginning Sunday
-		week_view "U" "$2"
+		declare offset="$2"
+
+		week_view "U" "$offset"
 		;;
 	"")
 		# Show all events
@@ -371,6 +375,8 @@ case $1 in
 		;;
 	*)
 		# Show all events that match pattern
-		compile_events | grep --color=auto "${*}"
+		declare pattern="${*}"
+
+		compile_events | grep --color=auto "$pattern"
 		;;
 esac
