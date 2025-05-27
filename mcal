@@ -149,6 +149,7 @@ create_event()
 	local location="${event_info[location]}"
 	local notes="${event_info[notes]}"
 
+	# Event is multi-day if $multi_day > 0
 	multi_day=$((end_date - start_date))
 
 	while [[ $start_date -le $end_date ]]; do
@@ -281,22 +282,25 @@ birthdays()
 	local age
 	local age_ordinal
 
+	# Operate on each line of the birthdays template file
 	while IFS=$'\t' read -r bday_input name; do
 
-		# Check if name from line in template already has
-		# a birthday calendar event for the current year.
-		# Create a new event only if one does not already exist.
+		# Check if name from line in template file has a corresponding
+		# birthday event for the current year in the calendar
 		current_year=$(printf "%(%Y)T" -1)
 		name_in_events=$(grep "${current_year}.*${name}" "$birthday_events")
 
+		# Create a new birthday event if one does not exist
 		if [[ -z $name_in_events ]]; then
 
-			bday_month_day=$(date --date="$bday_input" +"%m/%d")
-			bday_output=$(date --date="$bday_month_day" +"%F %a")
+			# Calculate age
 			bday_year=$(date --date="$bday_input" +%Y)
 			age=$((current_year - bday_year))
-
 			[[ $age -gt 0 ]] && age_ordinal="$(ordinal $age) "
+
+			# Prepare date for output
+			bday_month_day=$(date --date="$bday_input" +"%m/%d")
+			bday_output=$(date --date="$bday_month_day" +"%F %a")
 
 			printf "%s ----------- Birthdays: %s's %sbirthday\n" \
 				"$bday_output" \
@@ -312,10 +316,8 @@ birthdays()
 case $1 in
 	"b")
 		# Add new birthday events from template
-
-		# File locations
-		declare birthday_events="$MCAL_DATA_DIR/Birthdays"
 		declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
+		declare birthday_events="$MCAL_DATA_DIR/Birthdays"
 
 		birthdays
 		;;
@@ -332,10 +334,8 @@ case $1 in
 		declare -a start_dates
 		declare -A event_info
 
-		# Prompt for calendar event information
 		enter_new_event
 
-		# Create calendar event(s)
 		for i in "${start_dates[@]}"; do
 			create_event "$i"
 		done
