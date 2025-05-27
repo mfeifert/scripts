@@ -12,68 +12,42 @@ compile_events()
 	echo "$events" | sort
 }
 
-repeating_event()
+week_view()
 {
-	local getdates_command="getdates"
-	local mode
-	local interval
-	local unit
-	local mn
-	local weekday
-	local end_repeat
+	local sm=$1        # Sunday or Monday
+	local offset=$2    # Number of weeks forward or backward
+	local -r day=86400 # Number of seconds in a day
+	local week
+	local first
+	local last
 
-	read -rp "Mode (r or m): " mode
+	# Week number
+	week=$(printf "%(%${sm})T" -1)
 
-	case $mode in
-		"r")
-			# Reference date mode
-			getdates_command+=" r"
+	# Set current day as first day of the week
+	first=$(printf "%(%s)T" -1)
 
-			read -rp "Repeat every: " interval
-			getdates_command+=" -i $interval"
+	# Walk backward to find week boundary
+	while [[ $(printf "%(%${sm})T" "$first") == "$week" ]]; do
+		first=$((first - day))
+	done
 
-			select unit in "Days" "Weeks" "Weekday"; do
-				case $unit in
-					"Days")
-						getdates_command+=" -d"
-						;;
-					"Weeks")
-						getdates_command+=" -w"
-						;;
-				esac
-				break
-			done
-			;;
+	# Set first and last days of week
+	first=$((first + day))
+	last=$((first + (day * 6)))
 
-		"m")
-			# Monthly mode
-			getdates_command+=" m"
+	# Shift forward or backward by specified number of weeks
+	if [[ -n $offset ]]; then
+		offset=$((offset * day * 7))
+		first=$((first + offset))
+		last=$((last + offset))
+	fi
 
-			read -rp "Repeat every (number): " mn
+	# Format first and last days of week for output
+	first=$(printf "%(%F)T" "$first")
+	last=$(printf "%(%F)T" "$last")
 
-			select unit in "Day of month" "Weekday"; do
-				case $unit in
-					"Day of month")
-						getdates_command+=" -d -mn $mn"
-						;;
-					"Weekday")
-						select weekday in "Monday" "Tuesday" "Wednesday" \
-							"Thursday" "Friday" "Saturday" "Sunday"; do
-							getdates_command+=" -k ${weekday:0:3} -mn $mn"
-							break
-						done
-						;;
-				esac
-				break
-			done
-			;;
-
-	esac
-
-	read -rp "Until (date): " end_repeat
-	getdates_command+=" -e $end_repeat"
-
-	mapfile -t start_dates < <($getdates_command)
+	compile_events | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
 
 enter_new_event()
@@ -241,6 +215,70 @@ create_event()
 	fi
 }
 
+repeating_event()
+{
+	local getdates_command="getdates"
+	local mode
+	local interval
+	local unit
+	local mn
+	local weekday
+	local end_repeat
+
+	read -rp "Mode (r or m): " mode
+
+	case $mode in
+		"r")
+			# Reference date mode
+			getdates_command+=" r"
+
+			read -rp "Repeat every: " interval
+			getdates_command+=" -i $interval"
+
+			select unit in "Days" "Weeks" "Weekday"; do
+				case $unit in
+					"Days")
+						getdates_command+=" -d"
+						;;
+					"Weeks")
+						getdates_command+=" -w"
+						;;
+				esac
+				break
+			done
+			;;
+
+		"m")
+			# Monthly mode
+			getdates_command+=" m"
+
+			read -rp "Repeat every (number): " mn
+
+			select unit in "Day of month" "Weekday"; do
+				case $unit in
+					"Day of month")
+						getdates_command+=" -d -mn $mn"
+						;;
+					"Weekday")
+						select weekday in "Monday" "Tuesday" "Wednesday" \
+							"Thursday" "Friday" "Saturday" "Sunday"; do
+							getdates_command+=" -k ${weekday:0:3} -mn $mn"
+							break
+						done
+						;;
+				esac
+				break
+			done
+			;;
+
+	esac
+
+	read -rp "Until (date): " end_repeat
+	getdates_command+=" -e $end_repeat"
+
+	mapfile -t start_dates < <($getdates_command)
+}
+
 ordinal()
 {
 	local num=$1
@@ -294,44 +332,6 @@ birthdays()
 		fi
 
 	done < "$template_birthdays"
-}
-
-week_view()
-{
-	local sm=$1        # Sunday or Monday
-	local offset=$2    # Number of weeks forward or backward
-	local -r day=86400 # Number of seconds in a day
-	local week
-	local first
-	local last
-
-	# Week number
-	week=$(printf "%(%${sm})T" -1)
-
-	# Set current day as first day of the week
-	first=$(printf "%(%s)T" -1)
-
-	# Walk backward to find week boundary
-	while [[ $(printf "%(%${sm})T" "$first") == "$week" ]]; do
-		first=$((first - day))
-	done
-
-	# Set first and last days of week
-	first=$((first + day))
-	last=$((first + (day * 6)))
-
-	# Shift forward or backward by specified number of weeks
-	if [[ -n $offset ]]; then
-		offset=$((offset * day * 7))
-		first=$((first + offset))
-		last=$((last + offset))
-	fi
-
-	# Format first and last days of week for output
-	first=$(printf "%(%F)T" "$first")
-	last=$(printf "%(%F)T" "$last")
-
-	compile_events | awk -v begin="$first" -v end="$last" '$1 >= begin && $1 <= end'
 }
 
 case $1 in
