@@ -81,7 +81,6 @@ enter_new_event()
 	local start_time
 	local end_date
 	local end_time
-	local duration
 	local calendar
 	local tags_formatted
 	local title
@@ -102,9 +101,6 @@ enter_new_event()
 	# End date
 	read -rp "End date: " end_date
 	end_date=$(date --date="${end_date:="@${start_dates[0]}"}" +%s)
-
-	# Event duration
-	duration=$((end_date - "${start_dates[0]}"))
 
 	# End time
 	read -rp "End time: " end_time
@@ -151,7 +147,6 @@ enter_new_event()
 	event_info[start_time]="$start_time"
 	event_info[end_date]="$end_date"
 	event_info[end_time]="$end_time"
-	event_info[duration]="$duration"
 	event_info[calendar]="$calendar"
 	event_info[tags_formatted]="$tags_formatted"
 	event_info[title]="$title"
@@ -165,17 +160,19 @@ create_event()
 	local -r day=86400 # Number of seconds in a day
 	local index=1
 	local event
+	local multi_day
 
 	# Retrieve event information from event_info array
 	local start_time="${event_info[start_time]}"
 	local end_date="${event_info[end_date]}"
 	local end_time="${event_info[end_time]}"
-	local duration="${event_info[duration]}"
 	local calendar="${event_info[calendar]}"
 	local tags_formatted="${event_info[tags_formatted]}"
 	local title="${event_info[title]}"
 	local location="${event_info[location]}"
 	local notes="${event_info[notes]}"
+
+	multi_day=$((end_date - start_date))
 
 	while [[ $start_date -le $end_date ]]; do
 
@@ -200,7 +197,7 @@ create_event()
 		event+="${calendar}:${tags_formatted} [${title}]"
 
 		# Index: multi-day event only
-		[[ $duration -gt $day ]] && event+="$index"
+		[[ $multi_day -gt 0 ]] && event+="$index"
 
 		# Location
 		event+=" $location "
