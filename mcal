@@ -138,7 +138,7 @@ enter_new_event()
 
 	# Location
 	read -rp "Location: " location
-	[[ $location ]] && location=" <$location>"
+	[[ $location ]] && location="<$location>"
 
 	# Notes
 	read -rp "Notes: " notes
@@ -159,7 +159,9 @@ create_event()
 	local start_date=$1
 	local -r day=86400 # Number of seconds in a day
 	local date
-	local index
+	local index=1
+	local event_output
+
 	local start_time="${event[start_time]}"
 	local end_date="${event[end_date]}"
 	local end_time="${event[end_time]}"
@@ -170,72 +172,45 @@ create_event()
 	local location="${event[location]}"
 	local notes="${event[notes]}"
 
-	date=$(printf "%(%F %a)T" "$start_date")
+	while [[ $start_date -le $end_date ]]; do
 
-	if [[ $duration -gt $day ]]; then
+		date=$(printf "%(%F %a)T" "$start_date")
 
-		# First day of multi-day event
-		index=1
-		end_date=$((start_date + duration))
+		# Date including weekday
+		event_output="$date "
 
-		printf "%s %s------ %s:%s [%s]%s%s %s\n" \
-			"$date" \
-			"${start_time:------}" \
-			"$calendar" \
-			"$tags_formatted" \
-			"$title" \
-			"$index" \
-			"$location" \
-			"$notes" \
-			| tee -a "$MCAL_DATA_DIR/$calendar"
+		# Start time: first day of event only
+		if [[ $index == 1 ]]; then
+			event_output+="${start_time}-"
+		else
+			event_output+="------"
+		fi
 
-		# Middle days of multi-day event
-		while [[ $start_date -lt $((end_date - day)) ]]; do
+		# End time: last day of event only
+		if [[ $start_date == "$end_date" ]]; then
+			event_output+="$end_time "
+		else
+			event_output+="----- "
+		fi
 
-			((index++))
-			start_date=$((start_date + day))
-			date=$(printf "%(%F %a)T" "$start_date")
+		# Calendar, tags, and title
+		event_output+="${calendar}:${tags_formatted} [${title}]"
 
-			printf "%s ----------- %s:%s [%s]%s%s\n" \
-				"$date" \
-				"$calendar" \
-				"$tags_formatted" \
-				"$title" \
-				"$index" \
-				"$location" \
-				| tee -a "$MCAL_DATA_DIR/$calendar"
+		# Index: multi-day event only
+		[[ $duration -gt $day ]] && event_output+="$index"
 
-		done
+		# Location
+		event_output+=" $location "
 
-		# Last day of multi-day event
+		# Notes: first day of event only
+		[[ $index == 1 ]] && event_output+="$notes"
+
+		echo "$event_output" | tee -a "$MCAL_DATA_DIR/$calendar"
+
+		start_date=$((start_date + day))
 		((index++))
-		date=$(printf "%(%F %a)T" "$end_date")
 
-		printf "%s ------%s %s:%s [%s]%s%s\n" \
-			"$date" \
-			"${end_time:------}" \
-			"$calendar" \
-			"$tags_formatted" \
-			"$title" \
-			"$index" \
-			"$location" \
-			| tee -a "$MCAL_DATA_DIR/$calendar"
-
-	else
-
-		# Single-day event
-		printf "%s %s-%s %s:%s [%s]%s %s\n" \
-			"$date" \
-			"${start_time:------}" \
-			"${end_time:------}" \
-			"$calendar" \
-			"$tags_formatted" \
-			"$title" \
-			"$location" \
-			"$notes" \
-			| tee -a "$MCAL_DATA_DIR/$calendar"
-
-	fi
+	done
 }
 
 repeating_event()
