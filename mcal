@@ -116,9 +116,9 @@ enter_new_event()
 	# Notes
 	read -rp "Notes: " notes
 
-	# Repeating event
-	read -rp "Repeating event? (y/N): " repeat
-	[[ $repeat == "y" ]] && repeating_event
+	# Repeat
+	read -rp "Repeat (y/N): " repeat
+	[[ $repeat == "y" ]] && repeat
 
 	# Store event information in event_info array
 	event_info[start_time]="$start_time"
@@ -191,7 +191,7 @@ create_event()
 	done
 }
 
-repeating_event()
+repeat()
 {
 	local PS3="> "
 	local getdates_command="getdates"
