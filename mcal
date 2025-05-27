@@ -143,6 +143,10 @@ enter_new_event()
 	# Notes
 	read -rp "Notes: " notes
 
+	# Repeating event
+	read -rp "Repeating event? (y/N): " repeat
+	[[ $repeat == "y" ]] && repeating_event
+
 	# Store event information in event_info array
 	event_info[start_time]="$start_time"
 	event_info[end_date]="$end_date"
@@ -356,10 +360,6 @@ case $1 in
 
 		# Prompt for calendar event information
 		enter_new_event
-
-		# Prompt for repeating event
-		read -rp "Repeating event? (y/N): " repeat
-		[[ $repeat == "y" ]] && repeating_event
 
 		# Create calendar event(s)
 		for i in "${start_dates[@]}"; do
