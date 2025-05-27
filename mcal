@@ -14,16 +14,16 @@
 #
 # Commands:
 #
-# "b"  birthdays
-# "e"  edit
-# "m"  month
-# "n"  new
-# "r"  range
-# "t"  today
-# "wm" week Monday
-# "ws" week Sunday
-# ""   show events
-# *    show events + match pattern
+# "b"   birthdays
+# "e"   edit
+# "m"   month
+# "n"   new
+# "r"   range
+# "t"   today
+# "wm"  week Monday
+# "ws"  week Sunday
+# ""    show events
+# *     show events + match pattern
 
 compile_events()
 {
