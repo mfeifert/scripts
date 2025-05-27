@@ -180,14 +180,14 @@ create_event()
 
 		# Start time: first day of event only
 		if [[ $index == 1 ]]; then
-			event+=" ${start_time}-"
+			event+=" ${start_time:-"-----"}-"
 		else
 			event+=" ------"
 		fi
 
 		# End time: last day of event only
 		if [[ $start_date == "$end_date" ]]; then
-			event+="$end_time "
+			event+="${end_time:-"-----"} "
 		else
 			event+="----- "
 		fi
