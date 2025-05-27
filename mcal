@@ -58,6 +58,7 @@ enter_new_event()
 	local start_time
 	local end_date
 	local end_time
+	local duration
 	local calendar
 	local tags_formatted
 	local title
@@ -82,6 +83,9 @@ enter_new_event()
 	# End time
 	read -rp "End time: " end_time
 	[[ $end_time ]] && end_time=$(date --date="$end_time" +%R)
+
+	# Event duration
+	duration=$((end_date - "${start_dates[0]}"))
 
 	# Calendar
 	for file in "$MCAL_DATA_DIR"/*; do
@@ -122,8 +126,8 @@ enter_new_event()
 
 	# Store event information in event_info array
 	event_info[start_time]="$start_time"
-	event_info[end_date]="$end_date"
 	event_info[end_time]="$end_time"
+	event_info[duration]="$duration"
 	event_info[calendar]="$calendar"
 	event_info[tags_formatted]="$tags_formatted"
 	event_info[title]="$title"
@@ -141,13 +145,16 @@ create_event()
 
 	# Retrieve event information from event_info array
 	local start_time="${event_info[start_time]}"
-	local end_date="${event_info[end_date]}"
+	local end_date
 	local end_time="${event_info[end_time]}"
+	local duration="${event_info[duration]}"
 	local calendar="${event_info[calendar]}"
 	local tags_formatted="${event_info[tags_formatted]}"
 	local title="${event_info[title]}"
 	local location="${event_info[location]}"
 	local notes="${event_info[notes]}"
+
+	end_date=$((start_date + duration))
 
 	# Event is multi-day if $multi_day > 0
 	multi_day=$((end_date - start_date))
@@ -194,7 +201,7 @@ create_event()
 repeat()
 {
 	local PS3="> "
-	local getdates_command="getdates"
+	local getdates_command="getdates "
 	local mode
 	local interval
 	local unit
@@ -202,56 +209,52 @@ repeat()
 	local weekday
 	local end_repeat
 
-	read -rp "Mode (r or m): " mode
+	echo "Repeat:"
+	select unit in "Daily" "Weekly" "Monthly"; do
+		case $unit in
+			"Daily")
+				unit="days"
+				getdates_command+="r -d "
+				;;
+			"Weekly")
+				unit="weeks"
+				getdates_command+="r -w "
+				;;
+			"Monthly")
+				unit="months"
+				getdates_command+="m "
+				;;
+		esac
+		break
+	done
 
-	case $mode in
-		"r")
-			# Reference date mode
-			getdates_command+=" r"
+	read -rp "Repeat every _ ${unit}: " interval
+	getdates_command+="-i ${interval:=1} "
 
-			read -rp "Repeat every: " interval
-			getdates_command+=" -i $interval"
-
-			select unit in "Days" "Weeks" "Weekday"; do
-				case $unit in
-					"Days")
-						getdates_command+=" -d"
-						;;
-					"Weeks")
-						getdates_command+=" -w"
-						;;
-				esac
-				break
-			done
-			;;
-
-		"m")
-			# Monthly mode
-			getdates_command+=" m"
-
-			read -rp "Repeat every (number): " mn
-
-			select unit in "Day of month" "Weekday"; do
-				case $unit in
-					"Day of month")
-						getdates_command+=" -d -mn $mn"
-						;;
-					"Weekday")
-						select weekday in "Monday" "Tuesday" "Wednesday" \
-							"Thursday" "Friday" "Saturday" "Sunday"; do
-							getdates_command+=" -k ${weekday:0:3} -mn $mn"
-							break
-						done
-						;;
-				esac
-				break
-			done
-			;;
-
-	esac
+	if [[ $unit == "months" ]]; then
+		echo "On: "
+		select md in "Day of month" "Weekday"; do
+			break
+		done
+		case $md in
+			"Day of month")
+				read -rp "Day of month: " mn
+				getdates_command+="-d -mn ${mn} "
+				;;
+			"Weekday")
+				select weekday in "Monday" "Tuesday" "Wednesday" \
+					"Thursday" "Friday" "Saturday" "Sunday"; do
+					read -rp "Which ${weekday}? " mn
+					break
+				done
+				getdates_command+="-k ${weekday:0:3} -mn ${mn} "
+				;;
+		esac
+	fi
 
 	read -rp "Until (date): " end_repeat
-	getdates_command+=" -e $end_repeat"
+	end_repeat=$(date --date="$end_repeat" +%F)
+	getdates_command+="-e $end_repeat"
 
 	mapfile -t start_dates < <($getdates_command)
 }
