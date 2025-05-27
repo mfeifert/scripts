@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
 
 # mcal: Display and modify calendar events stored in local text files.
+#
+# Functions:
+#
+# compile_events()
+# week_view()
+# enter_new_event()
+# create_event()
+# repeating_event()
+# ordinal()
+# birthdays()
+#
+# Commands:
+#
+# "b"  birthdays
+# "e"  edit
+# "m"  month
+# "n"  new
+# "r"  range
+# "t"  today
+# "wm" week Monday
+# "ws" week Sunday
+# ""   show events
+# *    show events + match pattern
 
 compile_events()
 {
