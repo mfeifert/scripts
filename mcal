@@ -159,7 +159,6 @@ create_event()
 {
 	local start_date=$1
 	local -r day=86400 # Number of seconds in a day
-	local date
 	local index=1
 	local event
 
@@ -176,10 +175,8 @@ create_event()
 
 	while [[ $start_date -le $end_date ]]; do
 
-		date=$(printf "%(%F %a)T" "$start_date")
-
 		# Date including weekday
-		event="$date "
+		event=$(printf "%(%F %a)T" "$start_date")
 
 		# Start time: first day of event only
 		if [[ $index == 1 ]]; then
