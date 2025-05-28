@@ -53,8 +53,8 @@ week_view()
 enter_new_event()
 {
 	local -l tags_input
-	local -a tags calendars
-	# local -a calendar
+	local -a tags
+	local -a calendars
 	local start_time
 	local end_date
 	local end_time
