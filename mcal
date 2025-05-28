@@ -223,19 +223,19 @@ repeat()
 		break
 	done
 
-	read -rp "Repeat every _ ${unit}: " interval
+	read -rp "Repeat every # ${unit}: " interval
 	getdates_command+="-i ${interval:=1} "
 
 	if [[ $unit == "months" ]]; then
 
 		echo "On: "
-		select md in "Day of month" "Weekday"; do
+		select md in "Day" "Weekday"; do
 			break
 		done
 
 		case $md in
-			"Day of month")
-				read -rp "Day of month: " mn
+			"Day")
+				read -rp "Day: " mn
 				getdates_command+="-d -mn ${mn} "
 				;;
 			"Weekday")
@@ -250,7 +250,7 @@ repeat()
 
 	fi
 
-	read -rp "Until (date): " end_repeat
+	read -rp "Until: " end_repeat
 	end_repeat=$(date --date="$end_repeat" +%F)
 	getdates_command+="-e $end_repeat"
 
