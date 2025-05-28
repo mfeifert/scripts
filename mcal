@@ -240,7 +240,7 @@ repeat()
 			"Weekday")
 				select weekday in "Monday" "Tuesday" "Wednesday" \
 					"Thursday" "Friday" "Saturday" "Sunday"; do
-					read -rp "Which ${weekday}? " mn
+					read -rp "${weekday} #: " mn
 					break
 				done
 				getdates_command+="-k ${weekday:0:3} -mn ${mn} "
