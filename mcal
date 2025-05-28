@@ -53,8 +53,8 @@ week_view()
 enter_new_event()
 {
 	local -l tags_input
-	local -a tags
-	local -a calendars
+	local -a tags calendars
+	# local -a calendar
 	local start_time
 	local end_date
 	local end_time
@@ -198,9 +198,8 @@ repeat()
 {
 	local PS3="> "
 	local getdates_command="getdates "
-	local mode
-	local interval
 	local unit
+	local interval
 	local mn
 	local weekday
 	local end_repeat
@@ -228,10 +227,12 @@ repeat()
 	getdates_command+="-i ${interval:=1} "
 
 	if [[ $unit == "months" ]]; then
+
 		echo "On: "
 		select md in "Day of month" "Weekday"; do
 			break
 		done
+
 		case $md in
 			"Day of month")
 				read -rp "Day of month: " mn
@@ -246,6 +247,7 @@ repeat()
 				getdates_command+="-k ${weekday:0:3} -mn ${mn} "
 				;;
 		esac
+
 	fi
 
 	read -rp "Until (date): " end_repeat
