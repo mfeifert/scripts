@@ -200,6 +200,12 @@ repeat()
 	local weekday
 	local end_repeat
 
+	# Check if getdates command is installed
+	if ! command -v getdates > /dev/null 2>&1; then
+		echo "To create repeating events, install getdates (https://github.com/mfeifert/getdates)"
+		return
+	fi
+
 	echo "Repeat:"
 	select unit in "Daily" "Weekly" "Monthly"; do
 		case $unit in
@@ -335,13 +341,7 @@ case $1 in
 		enter_new_event
 
 		read -rp "Repeat (y/N): " repeat_event
-		if [[ ${repeat_event@L} == "y" ]]; then
-			if [[ -x $(command -v getdates) ]]; then
-				repeat
-			else
-				echo "To create repeating events, install getdates (https://github.com/mfeifert/getdates)"
-			fi
-		fi
+		[[ ${repeat_event@L} == "y" ]] && repeat
 
 		for i in "${start_dates[@]}"; do
 			create_event "$i"
@@ -369,11 +369,7 @@ case $1 in
 		;;
 	"z")
 		# Test repeat()
-		if [[ -x $(command -v getdates) ]]; then
-			repeat
-		else
-			echo "To create repeating events, install getdates (https://github.com/mfeifert/getdates)"
-		fi
+		repeat
 
 		for i in "${start_dates[@]}"; do
 			printf "%(%F %a)T\n" "$i"
