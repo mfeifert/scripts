@@ -362,6 +362,14 @@ case $1 in
 
 		week_view "U" "$offset"
 		;;
+	"z")
+		# Test repeat()
+		repeat
+
+		for i in "${start_dates[@]}"; do
+			printf "%(%F %a)T\n" "$i"
+		done
+		;;
 	"")
 		# Show all events
 		compile_events
