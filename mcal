@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# mcal: Display and modify calendar events stored in local text files.
+# mcal: Create and view calendar events stored in local text files.
 
 compile_events()
 {
