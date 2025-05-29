@@ -199,6 +199,7 @@ repeat()
 	local mn
 	local weekday
 	local end_repeat
+	local new_dates
 
 	# Check if getdates command is installed
 	if ! command -v getdates > /dev/null 2>&1; then
@@ -258,7 +259,6 @@ repeat()
 
 	mapfile -t new_dates < <($getdates_command)
 	start_dates+=("${new_dates[@]}")
-
 }
 
 ordinal()
