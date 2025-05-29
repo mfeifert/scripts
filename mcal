@@ -312,7 +312,7 @@ birthdays()
 				"$bday_output" \
 				"$name" \
 				"${age_ordinal:-}" \
-				>> "$birthday_events"
+				| tee -a "$birthday_events"
 
 		fi
 
