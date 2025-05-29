@@ -256,7 +256,9 @@ repeat()
 	end_repeat=$(date --date="$end_repeat" +%F)
 	getdates_command+="-e $end_repeat"
 
-	mapfile -t start_dates < <($getdates_command)
+	mapfile -t new_dates < <($getdates_command)
+	start_dates+=("${new_dates[@]}")
+
 }
 
 ordinal()
@@ -340,8 +342,14 @@ case $1 in
 
 		enter_new_event
 
-		read -rp "Repeat (y/N): " repeat_event
+		read -rp "Repeat [y/N]: " repeat_event
 		[[ ${repeat_event@L} == "y" ]] && repeat
+
+		read -rp "Repeat additional days [y/N] " repeat_additional
+		while [[ ${repeat_additional@L} == "y" ]]; do
+			repeat
+			read -rp "Repeat additional days [y/N] " repeat_additional
+		done
 
 		for i in "${start_dates[@]}"; do
 			create_event "$i"
@@ -370,6 +378,12 @@ case $1 in
 	"z")
 		# Test repeat()
 		repeat
+
+		read -rp "Repeat additional days [y/N] " repeat_additional
+		while [[ ${repeat_additional@L} == "y" ]]; do
+			repeat
+			read -rp "Repeat additional days [y/N] " repeat_additional
+		done
 
 		for i in "${start_dates[@]}"; do
 			printf "%(%F %a)T\n" "$i"
