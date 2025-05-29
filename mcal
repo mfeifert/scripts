@@ -67,6 +67,7 @@ enter_new_event()
 
 	# Title
 	read -rp "Title: " title
+	[[ -n $title ]] && title=" [${title}]"
 
 	# Start date
 	read -rp "Start date: " start_date
@@ -74,7 +75,7 @@ enter_new_event()
 
 	# Start time
 	read -rp "Start time: " start_time
-	[[ $start_time ]] && start_time=$(date --date="$start_time" +%R)
+	[[ -n $start_time ]] && start_time=$(date --date="$start_time" +%R)
 
 	# End date
 	read -rp "End date: " end_date
@@ -82,7 +83,7 @@ enter_new_event()
 
 	# End time
 	read -rp "End time: " end_time
-	[[ $end_time ]] && end_time=$(date --date="$end_time" +%R)
+	[[ -n $end_time ]] && end_time=$(date --date="$end_time" +%R)
 
 	# Event duration
 	duration=$((end_date - "${start_dates[0]}"))
@@ -115,10 +116,11 @@ enter_new_event()
 
 	# Location
 	read -rp "Location: " location
-	[[ $location ]] && location="<$location>"
+	[[ -n $location ]] && location=" <$location>"
 
 	# Notes
 	read -rp "Notes: " notes
+	[[ -n $notes ]] && notes=" $notes"
 
 	# Store event information in event_info array
 	event_info[start_time]="$start_time"
@@ -171,13 +173,13 @@ create_event()
 		fi
 
 		# Calendar, tags, and title
-		event+="${calendar}:${tags_formatted} [${title}]"
+		event+="${calendar}:${tags_formatted}${title}"
 
 		# Index: multi-day event only
 		[[ $duration -gt 0 ]] && event+="$index"
 
 		# Location
-		event+=" $location "
+		event+="$location"
 
 		# Notes: first day of event only
 		[[ $index == 1 ]] && event+="$notes"
