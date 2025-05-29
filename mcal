@@ -343,13 +343,17 @@ case $1 in
 		enter_new_event
 
 		read -rp "Repeat [y/N]: " repeat_event
-		[[ ${repeat_event@L} == "y" ]] && repeat
+		if [[ ${repeat_event@L} == "y" ]]; then
 
-		read -rp "Repeat additional days [y/N] " repeat_additional
-		while [[ ${repeat_additional@L} == "y" ]]; do
 			repeat
+
 			read -rp "Repeat additional days [y/N] " repeat_additional
-		done
+			while [[ ${repeat_additional@L} == "y" ]]; do
+				repeat
+				read -rp "Repeat additional days [y/N] " repeat_additional
+			done
+
+		fi
 
 		for i in "${start_dates[@]}"; do
 			create_event "$i"
