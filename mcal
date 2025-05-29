@@ -341,13 +341,14 @@ case $1 in
 		# Add new event interactively
 		declare -a start_dates
 		declare -A event_info
+		declare repeat_event
 
 		enter_new_event
 
 		read -rp "Repeat [y/N]: " repeat_event
 		while [[ ${repeat_event@L} == "y" ]]; do
 			repeat
-			read -rp "Repeat additional days [y/N] " repeat_event
+			read -rp "Repeat additional [y/N] " repeat_event
 		done
 
 		for i in "${start_dates[@]}"; do
@@ -376,12 +377,14 @@ case $1 in
 		;;
 	"z")
 		# Test repeat()
+		declare repeat_event
+
 		repeat
 
-		read -rp "Repeat additional days [y/N] " repeat_additional
-		while [[ ${repeat_additional@L} == "y" ]]; do
+		read -rp "Repeat additional [y/N] " repeat_event
+		while [[ ${repeat_event@L} == "y" ]]; do
 			repeat
-			read -rp "Repeat additional days [y/N] " repeat_additional
+			read -rp "Repeat additional [y/N] " repeat_event
 		done
 
 		for i in "${start_dates[@]}"; do
