@@ -28,9 +28,9 @@ make_filename()
 	filename+="--${title// /-}"
 
 	# Tags: replace spaces with "_"
-	local tag
 	if [[ -n $tags ]]; then
 		filename+="_"
+		local tag
 		for tag in "${tags[@]}"; do
 			filename+="_${tag}"
 		done
