@@ -20,13 +20,6 @@ export GUM_FILTER_MATCH_FOREGROUND="9"
 export GUM_INPUT_CURSOR_FOREGROUND=""
 export GUM_WRITE_CURSOR_FOREGROUND=""
 
-# ANSI colors
-if [[ -t 1 ]]; then
-	bold=$(tput bold)
-	accent=$(tput setaf 1)
-	reset=$(tput sgr0)
-fi
-
 function new_entry()
 {
 	local date description location exercise wgt_type_default \
@@ -117,9 +110,18 @@ function print_report()
 {
 	local date="$1"
 	local data_file="$2"
-	local width=61
 	local weekday
-	weekday="$(date --date="$date" +%A)"
+	local width=61
+	local bold accent reset
+
+	# ANSI colors
+	if [[ -t 1 ]]; then
+		bold=$(tput bold)
+		accent=$(tput setaf 1)
+		reset=$(tput sgr0)
+	fi
+
+	weekday=$(date --date="$date" +%A)
 
 	# Header: description, location, date
 	awk \
