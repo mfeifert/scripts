@@ -7,21 +7,23 @@ data_file="$STR_DATA_DIR/str_data.tsv"
 # Edit data files
 [[ $1 == "e" ]] && (cd "$STR_DATA_DIR" && nvim -c FZF) && exit
 
-# Gum options
-export GUM_FILTER_PLACEHOLDER=""
-export GUM_INPUT_PLACEHOLDER=""
-
-# Gum colors
-export GUM_FILTER_HEADER_FOREGROUND="240"
-export GUM_FILTER_INDICATOR_FOREGROUND="9"
-export GUM_FILTER_MATCH_FOREGROUND="9"
-export GUM_INPUT_CURSOR_FOREGROUND=""
-export GUM_WRITE_CURSOR_FOREGROUND=""
-
 function new_entry()
 {
-	local date description location exercise wgt_type_default \
-		wgt_type reps lbs notes weekday
+	# Gum options
+	export GUM_FILTER_PLACEHOLDER=""
+	export GUM_INPUT_PLACEHOLDER=""
+
+	# Gum colors
+	export GUM_FILTER_HEADER_FOREGROUND="240"
+	export GUM_FILTER_INDICATOR_FOREGROUND="9"
+	export GUM_FILTER_MATCH_FOREGROUND="9"
+	export GUM_INPUT_CURSOR_FOREGROUND=""
+	export GUM_WRITE_CURSOR_FOREGROUND=""
+
+	local date weekday description location
+	local exercise wgt_type_default wgt_type reps lbs
+	local notes
+
 	clear && echo "" > "$tmp_file"
 	# Print blank sheet
 	str 2000-01-01
