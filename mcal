@@ -230,6 +230,7 @@ repeat()
 	if [[ $unit == "months" ]]; then
 
 		echo "On: "
+		local md
 		select md in "Day" "Weekday"; do
 			break
 		done
