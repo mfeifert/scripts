@@ -189,7 +189,7 @@ esac
 
 # Request confirmation for creating and editing file
 declare -l choice
-read -rp "Create and edit file? (Y/n): " choice
+read -rp "Create and edit file [Y/n] " choice
 
 if [[ ${choice:-"y"} == "y" ]]; then
 
