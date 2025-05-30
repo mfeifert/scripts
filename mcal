@@ -5,7 +5,6 @@
 compile_events()
 {
 	local events
-
 	events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} +)
 	events+=$(printf "\n%(%F %a %H:%M)T       === TODAY ===" -1)
 
@@ -17,14 +16,13 @@ week_view()
 	local sm=$1        # Sunday or Monday
 	local offset=$2    # Number of weeks forward or backward
 	local -r day=86400 # Number of seconds in a day
-	local week
-	local first
-	local last
 
 	# Week number
+	local week
 	week=$(printf "%(%${sm})T" -1)
 
 	# Set current day as first day of the week
+	local first
 	first=$(printf "%(%s)T" -1)
 
 	# Walk backward to find week boundary
@@ -33,6 +31,7 @@ week_view()
 	done
 
 	# Set first and last days of week
+	local last
 	first=$((first + day))
 	last=$((first + (day * 6)))
 
@@ -52,47 +51,43 @@ week_view()
 
 enter_new_event()
 {
-	local -l tags_input
-	local -a tags
-	local -a calendars
-	local start_time
-	local end_date
-	local end_time
-	local duration
-	local calendar
-	local tags_formatted
-	local title
-	local location
-	local notes
-
 	# Title
+	local title
 	read -rp "Title: " title
 	[[ -n $title ]] && title=" [${title}]"
 
 	# Start date
+	local start_date
+	declare -ag start_dates
 	read -rp "Start date: " start_date
 	start_dates=("$(date --date="${start_date} 12 am" +%s)")
 
 	# Start time
+	local start_time
 	read -rp "Start time: " start_time
 	[[ -n $start_time ]] && start_time=$(date --date="$start_time" +%R)
 
 	# End date
+	local end_date
 	read -rp "End date: " end_date
 	end_date=$(date --date="${end_date:="@${start_dates[0]}"}" +%s)
 
 	# End time
+	local end_time
 	read -rp "End time: " end_time
 	[[ -n $end_time ]] && end_time=$(date --date="$end_time" +%R)
 
 	# Event duration
+	local duration
 	duration=$((end_date - "${start_dates[0]}"))
 
 	# Calendar
+	local -a calendars
 	for file in "$MCAL_DATA_DIR"/*; do
 		[[ -f $file ]] && calendars+=("${file##*/}")
 	done
 
+	local calendar
 	calendar=$(gum filter \
 		--height=10 \
 		--placeholder="" \
@@ -105,9 +100,13 @@ enter_new_event()
 	echo "Calendar: $calendar"
 
 	# Tags
+	local -l tags_input
 	read -rp "Tags: " tags_input
+
+	local -a tags
 	read -ra tags <<< "$tags_input"
 
+	local tags_formatted
 	if [[ -n ${tags[*]} ]]; then
 		for tag in "${tags[@]}"; do
 			tags_formatted+="${tag}:"
@@ -115,13 +114,16 @@ enter_new_event()
 	fi
 
 	# Location
+	local location
 	read -rp "Location: " location
 	[[ -n $location ]] && location=" <$location>"
 
 	# Notes
+	local notes
 	read -rp "Notes: " notes
 	[[ -n $notes ]] && notes=" $notes"
 
+	declare -Ag event_info
 	event_info[start_time]="$start_time"
 	event_info[end_time]="$end_time"
 	event_info[duration]="$duration"
@@ -137,7 +139,6 @@ create_event()
 	local start_date=$1
 	local -r day=86400 # Number of seconds in a day
 	local index=1
-	local end_date
 	local event
 
 	local start_time="${event_info[start_time]}"
@@ -149,6 +150,7 @@ create_event()
 	local location="${event_info[location]}"
 	local notes="${event_info[notes]}"
 
+	local end_date
 	end_date=$((start_date + duration))
 
 	while [[ $start_date -le $end_date ]]; do
@@ -194,12 +196,6 @@ repeat()
 {
 	local PS3="> "
 	local getdates_command="getdates "
-	local unit
-	local interval
-	local mn
-	local weekday
-	local end_repeat
-	local new_dates
 
 	# Check if getdates command is installed
 	if ! command -v getdates > /dev/null 2>&1; then
@@ -208,6 +204,7 @@ repeat()
 	fi
 
 	echo "Repeat:"
+	local unit
 	select unit in "Daily" "Weekly" "Monthly"; do
 		case $unit in
 			"Daily")
@@ -226,6 +223,7 @@ repeat()
 		break
 	done
 
+	local interval
 	read -rp "Repeat every # ${unit}: " interval
 	getdates_command+="-i ${interval:=1} "
 
@@ -236,12 +234,14 @@ repeat()
 			break
 		done
 
+		local mn
 		case $md in
 			"Day")
 				read -rp "Day: " mn
 				getdates_command+="-d -mn ${mn} "
 				;;
 			"Weekday")
+				local weekday
 				select weekday in "Monday" "Tuesday" "Wednesday" \
 					"Thursday" "Friday" "Saturday" "Sunday"; do
 					read -rp "${weekday} #: " mn
@@ -253,10 +253,12 @@ repeat()
 
 	fi
 
+	local end_repeat
 	read -rp "Until: " end_repeat
 	end_repeat=$(date --date="$end_repeat" +%F)
 	getdates_command+="-e $end_repeat"
 
+	local -a new_dates
 	mapfile -t new_dates < <($getdates_command)
 	start_dates+=("${new_dates[@]}")
 }
@@ -280,18 +282,12 @@ ordinal()
 
 birthdays()
 {
-	local current_year
-	local name_in_events
-	local bday_month_day
-	local bday_output
-	local bday_year
-	local age
-	local age_ordinal
-
+	local bday_input name
 	while IFS=$'\t' read -r bday_input name; do
 
 		# Check if name from line in template file has a corresponding
 		# birthday event for the current year in the calendar
+		local current_year name_in_events
 		current_year=$(printf "%(%Y)T" -1)
 		name_in_events=$(grep "${current_year}.*${name}" "$birthday_events")
 
@@ -299,11 +295,13 @@ birthdays()
 		if [[ -z $name_in_events ]]; then
 
 			# Calculate age
+			local bday_year age age_ordinal
 			bday_year=$(date --date="$bday_input" +%Y)
 			age=$((current_year - bday_year))
 			[[ $age -gt 0 ]] && age_ordinal="$(ordinal $age) "
 
 			# Format date for output
+			local bday_month_day bday_output
 			bday_month_day=$(date --date="$bday_input" +"%m/%d")
 			bday_output=$(date --date="$bday_month_day" +"%F %a")
 
@@ -336,12 +334,10 @@ case $1 in
 		;;
 	"n")
 		# Add new event interactively
-		declare -a start_dates
-		declare -A event_info
-		declare repeat_event
 
 		enter_new_event
 
+		declare repeat_event
 		read -rp "Repeat [y/N]: " repeat_event
 		while [[ ${repeat_event@L} == "y" ]]; do
 			repeat
@@ -374,10 +370,9 @@ case $1 in
 		;;
 	"z")
 		# Test repeat()
-		declare repeat_event
-
 		repeat
 
+		declare repeat_event
 		read -rp "Repeat additional [y/N] " repeat_event
 		while [[ ${repeat_event@L} == "y" ]]; do
 			repeat
