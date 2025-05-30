@@ -7,19 +7,8 @@ data_file="$STR_DATA_DIR/str_data.tsv"
 # Edit data files
 [[ $1 == "e" ]] && (cd "$STR_DATA_DIR" && nvim -c FZF) && exit
 
-function new_entry()
+new_entry()
 {
-	# Gum options
-	export GUM_FILTER_PLACEHOLDER=""
-	export GUM_INPUT_PLACEHOLDER=""
-
-	# Gum colors
-	export GUM_FILTER_HEADER_FOREGROUND="240"
-	export GUM_FILTER_INDICATOR_FOREGROUND="9"
-	export GUM_FILTER_MATCH_FOREGROUND="9"
-	export GUM_INPUT_CURSOR_FOREGROUND=""
-	export GUM_WRITE_CURSOR_FOREGROUND=""
-
 	local date weekday description location
 	local exercise wgt_type_default wgt_type reps lbs
 	local notes
@@ -106,7 +95,7 @@ function new_entry()
 	cat "$tmp_file" >> "$data_file"
 }
 
-function print_report()
+print_report()
 {
 	local date="$1"
 	local data_file="$2"
@@ -151,18 +140,28 @@ function print_report()
 
 case $1 in
 	"n")
-		# enter new workout interactively
+		# Enter new workout interactively
+		# Gum options
+		export GUM_FILTER_PLACEHOLDER=""
+		export GUM_INPUT_PLACEHOLDER=""
+		# Gum colors
+		export GUM_FILTER_HEADER_FOREGROUND="240"
+		export GUM_FILTER_INDICATOR_FOREGROUND="9"
+		export GUM_FILTER_MATCH_FOREGROUND="9"
+		export GUM_INPUT_CURSOR_FOREGROUND=""
+		export GUM_WRITE_CURSOR_FOREGROUND=""
+
 		tmp_file="$(mktemp)"
 		trap 'rm -f $tmp_file' EXIT
 
 		new_entry
 		;;
 	"t")
-		# print report for today
+		# Print report for today
 		print_report "$(printf "%(%F)T" -1)" "$data_file"
 		;;
 	"")
-		# select from list of dates and print report
+		# Select from list of dates and print report
 		date=$(awk -F "\t" '$2 == "header" {printf "%s %s\n", $1, $3}' "$data_file" \
 			| sort --unique --reverse \
 			| gum filter --no-fuzzy \
@@ -170,7 +169,7 @@ case $1 in
 		[[ $date ]] && print_report "$date" "$data_file"
 		;;
 	*)
-		# print report for date specified at command line
+		# Print report for date specified at command line
 		print_report "$1" "$data_file"
 		;;
 esac
