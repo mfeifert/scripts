@@ -145,7 +145,10 @@ function print_report()
 	grep -P "${date}\tnotes" "$data_file" \
 		| cut --fields=3 \
 		| fmt --width="$width" \
-		| awk -v bold="$bold" -v reset="$reset" -f str-notes.awk
+		| awk \
+			-v bold="$bold" \
+			-v reset="$reset" \
+			-f str-notes.awk
 }
 
 case $1 in
