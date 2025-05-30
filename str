@@ -17,26 +17,25 @@ export GUM_WRITE_CURSOR_FOREGROUND=""
 
 new_entry()
 {
-	local date weekday description location
-	local exercise wgt_type_default wgt_type reps lbs
-	local notes
-
 	clear && echo "" > "$tmp_file"
 
 	# Print blank sheet
 	str "2000-01-01"
 
 	# Date
+	local date
 	date=$(gum input --header="  Date" --value="$(printf "%(%F)T" -1)")
 	echo -n -e "${date}\theader\t" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
 	# Description
+	local description
 	description=$(gum input --header="  Description")
 	echo -n -e "${description}\t" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
 	# Location
+	local location
 	location=$(gum input --header="  Location")
 	echo "$location" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
@@ -44,6 +43,7 @@ new_entry()
 	while true; do
 
 		# Exercise
+		local exercise
 		exercise=$(awk -F "\t" '$2 == "exercise" {print $3}' "$data_file" \
 			| sort --unique \
 			| gum filter \
@@ -57,10 +57,12 @@ new_entry()
 		clear && print_report "$date" "$tmp_file"
 
 		# Weight type
+		local wgt_type_default
 		wgt_type_default=$(tac "$data_file" \
 			| grep --max-count=1 "$exercise" \
 			| cut --fields=4)
 
+		local wgt_type
 		wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' "$data_file" \
 			| sort --unique \
 			| gum filter \
@@ -73,6 +75,7 @@ new_entry()
 		clear && print_report "$date" "$tmp_file"
 
 		local set_number=1
+		local reps
 		local lbs=""
 		while true; do
 
@@ -103,6 +106,7 @@ new_entry()
 	# Notes
 	clear && print_report "$date" "$tmp_file"
 
+	local notes
 	notes=$(gum write \
 		--width=63 \
 		--no-show-help \
@@ -119,17 +123,17 @@ print_report()
 {
 	local date="$1"
 	local data_file="$2"
-	local weekday
 	local width=61
-	local bold accent reset
 
 	# ANSI colors
 	if [[ -t 1 ]]; then
+		local bold accent reset
 		bold=$(tput bold)
 		accent=$(tput setaf 1)
 		reset=$(tput sgr0)
 	fi
 
+	local weekday
 	weekday=$(date --date="$date" +%A)
 
 	# Header: description, location, date
