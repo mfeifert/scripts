@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Display workout log sheets for data stored in local text files.
+# Create and view workout log sheets for data stored in local text files.
 
 data_file="$STR_DATA_DIR/str_data.tsv"
 
