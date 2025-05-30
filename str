@@ -4,6 +4,17 @@
 
 data_file="$STR_DATA_DIR/str_data.tsv"
 
+# Gum options
+export GUM_FILTER_PLACEHOLDER=""
+export GUM_INPUT_PLACEHOLDER=""
+
+# Gum colors
+export GUM_FILTER_HEADER_FOREGROUND="240"
+export GUM_FILTER_INDICATOR_FOREGROUND="9"
+export GUM_FILTER_MATCH_FOREGROUND="9"
+export GUM_INPUT_CURSOR_FOREGROUND=""
+export GUM_WRITE_CURSOR_FOREGROUND=""
+
 new_entry()
 {
 	local date weekday description location
@@ -154,16 +165,6 @@ case $1 in
 		;;
 	"n")
 		# Enter new workout interactively
-		# Gum options
-		export GUM_FILTER_PLACEHOLDER=""
-		export GUM_INPUT_PLACEHOLDER=""
-		# Gum colors
-		export GUM_FILTER_HEADER_FOREGROUND="240"
-		export GUM_FILTER_INDICATOR_FOREGROUND="9"
-		export GUM_FILTER_MATCH_FOREGROUND="9"
-		export GUM_INPUT_CURSOR_FOREGROUND=""
-		export GUM_WRITE_CURSOR_FOREGROUND=""
-
 		tmp_file="$(mktemp)"
 		trap 'rm -f $tmp_file' EXIT
 
