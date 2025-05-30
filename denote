@@ -10,7 +10,7 @@
 # not provide the more advanced features of the original, such as
 # modifying properties of existing files or creating links.
 
-notes_dir="$NOTES_DIR"
+declare notes_dir="$NOTES_DIR"
 
 make_filename()
 {
@@ -43,15 +43,13 @@ make_filename()
 
 make_txt()
 {
-	local date
-	local tags_txt
-	local front_matter
-
 	# Format date and tags for txt front matter
+	local date tags_txt
 	date=$(printf "%(%F)T" "$timestamp")
 	tags_txt=$(printf '%s  ' "${tags[@]}")
 
 	# Front matter template for txt
+	local front_matter
 	front_matter=$(
 		cat << EOF
 title:      ${title}
@@ -67,12 +65,9 @@ EOF
 
 make_md()
 {
-	local date
-	local tags_md
-	local front_matter
-
 	# Format date and tags for markdown front matter
 	# `date` command used instead of `printf` to get a colon in the timezone (%:z)
+	local date tags_md
 	date=$(date --date="@$timestamp" +"%FT%H:%M:%S%:z")
 	if [[ -n $tags ]]; then
 		tags_md=$(printf '"%s", ' "${tags[@]}")
@@ -80,6 +75,7 @@ make_md()
 	fi
 
 	# Front matter template for markdown-yaml
+	local front_matter
 	[[ $1 == "yaml" ]] && front_matter=$(
 		cat << EOF
 ---
@@ -108,11 +104,8 @@ EOF
 
 make_org()
 {
-	local date
-	local tags_org
-	local front_matter
-
 	# Format date and tags for org front matter
+	local date tags_org
 	date=$(printf "%(%F %a %H:%M)T" "$timestamp")
 	if [[ -n $tags ]]; then
 		tags_org=":"
@@ -120,6 +113,7 @@ make_org()
 	fi
 
 	# Front matter template for org
+	local front_matter
 	front_matter=$(
 		cat << EOF
 #+title:      ${title}
@@ -133,34 +127,42 @@ EOF
 }
 
 # Select file type
-filetypes=("txt" "md-yaml" "md-toml" "org")
-PS3="> "
+declare PS3="> "
+declare -a filetypes=("txt" "md-yaml" "md-toml" "org")
 select item in "${filetypes[@]}"; do
 	filetype="$item"
 	break
 done
 
 # Enter signature
+declare signature
 read -rp "Signature: " signature
 
 # Enter title
+declare title
 read -rp "Title: " title
 
 # Enter tags separated by spaces and convert to lowercase
+declare tags_input
+declare -a tags
 read -rp "Tags: " tags_input
 read -ra tags <<< "${tags_input,,}"
 
 # Generate timestamp for id and front matter date
+declare -i timestamp
 timestamp=$(printf '%(%s)T')
 
 # Create ID from timestamp
+declare id
 id=$(printf "%(%Y%m%dT%H%M%S)T" "$timestamp")
 
 # Generate filename and full filepath
+declare filename filepath
 filename=$(make_filename)
 filepath="${notes_dir}/${filename}"
 
 # Show completed front matter and filename
+declare filetype
 case $filetype in
 	"txt")
 		echo
@@ -185,6 +187,7 @@ case $filetype in
 esac
 
 # Request confirmation for creating and editing file
+declare choice
 read -rp "Create and edit file? (Y/n): " choice
 
 if [[ ${choice:-"y"} == "y" || $choice == "Y" ]]; then
