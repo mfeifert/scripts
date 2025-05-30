@@ -29,6 +29,7 @@ get_episode()
 		echo "No unwatched episodes"
 		return
 	fi
+
 	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
