@@ -122,7 +122,6 @@ enter_new_event()
 	read -rp "Notes: " notes
 	[[ -n $notes ]] && notes=" $notes"
 
-	# Store event information in event_info array
 	event_info[start_time]="$start_time"
 	event_info[end_time]="$end_time"
 	event_info[duration]="$duration"
@@ -141,7 +140,6 @@ create_event()
 	local end_date
 	local event
 
-	# Retrieve event information from event_info array
 	local start_time="${event_info[start_time]}"
 	local end_time="${event_info[end_time]}"
 	local duration="${event_info[duration]}"
@@ -290,7 +288,6 @@ birthdays()
 	local age
 	local age_ordinal
 
-	# Operate on each line of the birthdays template file
 	while IFS=$'\t' read -r bday_input name; do
 
 		# Check if name from line in template file has a corresponding
@@ -306,7 +303,7 @@ birthdays()
 			age=$((current_year - bday_year))
 			[[ $age -gt 0 ]] && age_ordinal="$(ordinal $age) "
 
-			# Prepare date for output
+			# Format date for output
 			bday_month_day=$(date --date="$bday_input" +"%m/%d")
 			bday_output=$(date --date="$bday_month_day" +"%F %a")
 
@@ -334,7 +331,7 @@ case $1 in
 		(cd "$MCAL_DATA_DIR" && nvim -c FZF)
 		;;
 	"m")
-		# Show all events for current month
+		# View all events for current month
 		compile_events | grep --color=auto "$(printf "%(%Y-%m)T" -1)"
 		;;
 	"n")
@@ -356,21 +353,21 @@ case $1 in
 		done
 		;;
 	"r")
-		# Show all events from specified begin date to end date
+		# View all events from specified begin date to end date
 		compile_events | awk -v begin="$2" -v end="$3" '$1 >= begin && $1 <= end'
 		;;
 	"t")
-		# Show all events for current day
+		# View all events for current day
 		compile_events | grep --color=auto "$(printf "%(%F)T" -1)"
 		;;
 	"wm")
-		# Show all events for current week beginning Monday
+		# View all events for current week beginning Monday
 		declare offset="$2"
 
 		week_view "V" "$offset"
 		;;
 	"ws")
-		# Show all events for current week beginning Sunday
+		# View all events for current week beginning Sunday
 		declare offset="$2"
 
 		week_view "U" "$offset"
@@ -392,11 +389,11 @@ case $1 in
 		done
 		;;
 	"")
-		# Show all events
+		# View all events
 		compile_events
 		;;
 	*)
-		# Show all events that match pattern
+		# View all events that match pattern
 		declare pattern="${*}"
 
 		compile_events | grep --color=auto "$pattern"
