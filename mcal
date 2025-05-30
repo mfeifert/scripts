@@ -13,12 +13,12 @@ compile_events()
 
 week_view()
 {
-	local sm=$1        # Sunday or Monday
-	local offset=$2    # Number of weeks forward or backward
-	local -r day=86400 # Number of seconds in a day
+	local sm=$1         # Sunday or Monday
+	local -i offset=$2  # Number of weeks forward or backward
+	local -ir day=86400 # Number of seconds in a day
 
 	# Week number
-	local week
+	local -i week
 	week=$(printf "%(%${sm})T" -1)
 
 	# Set current day as first day of the week
@@ -78,7 +78,7 @@ enter_new_event()
 	[[ -n $end_time ]] && end_time=$(date --date="$end_time" +%R)
 
 	# Event duration
-	local duration
+	local -i duration
 	duration=$((end_date - "${start_dates[0]}"))
 
 	# Calendar
@@ -136,21 +136,21 @@ enter_new_event()
 
 create_event()
 {
-	local start_date=$1
-	local -r day=86400 # Number of seconds in a day
-	local index=1
+	local -i start_date=$1
+	local -ir day=86400 # Number of seconds in a day
+	local -i index=1
 	local event
 
 	local start_time="${event_info[start_time]}"
 	local end_time="${event_info[end_time]}"
-	local duration="${event_info[duration]}"
+	local -i duration="${event_info[duration]}"
 	local calendar="${event_info[calendar]}"
 	local tags_formatted="${event_info[tags_formatted]}"
 	local title="${event_info[title]}"
 	local location="${event_info[location]}"
 	local notes="${event_info[notes]}"
 
-	local end_date
+	local -i end_date
 	end_date=$((start_date + duration))
 
 	while [[ $start_date -le $end_date ]]; do
@@ -223,7 +223,7 @@ repeat()
 		break
 	done
 
-	local interval
+	local -i interval
 	read -rp "Repeat every # ${unit}: " interval
 	getdates_command+="-i ${interval:=1} "
 
@@ -234,7 +234,7 @@ repeat()
 			break
 		done
 
-		local mn
+		local -i mn
 		case $md in
 			"Day")
 				read -rp "Day: " mn
@@ -265,7 +265,7 @@ repeat()
 
 ordinal()
 {
-	local num=$1
+	local -i num=$1
 
 	if [[ $((num % 100)) -ge 11 ]] && [[ $((num % 100)) -le 19 ]]; then
 		echo "${num}th"
@@ -287,7 +287,8 @@ birthdays()
 
 		# Check if name from line in template file has a corresponding
 		# birthday event for the current year in the calendar
-		local current_year name_in_events
+		local -i current_year
+		local name_in_events
 		current_year=$(printf "%(%Y)T" -1)
 		name_in_events=$(grep "${current_year}.*${name}" "$birthday_events")
 
@@ -295,7 +296,8 @@ birthdays()
 		if [[ -z $name_in_events ]]; then
 
 			# Calculate age
-			local bday_year age age_ordinal
+			local -i bday_year age
+			local age_ordinal
 			bday_year=$(date --date="$bday_input" +%Y)
 			age=$((current_year - bday_year))
 			[[ $age -gt 0 ]] && age_ordinal="$(ordinal $age) "
@@ -358,13 +360,13 @@ case $1 in
 		;;
 	"wm")
 		# View all events for current week beginning Monday
-		declare offset="$2"
+		declare -i offset="$2"
 
 		week_view "V" "$offset"
 		;;
 	"ws")
 		# View all events for current week beginning Sunday
-		declare offset="$2"
+		declare -i offset="$2"
 
 		week_view "U" "$offset"
 		;;
