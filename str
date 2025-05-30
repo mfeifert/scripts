@@ -4,9 +4,6 @@
 
 data_file="$STR_DATA_DIR/str_data.tsv"
 
-# Edit data files
-[[ $1 == "e" ]] && (cd "$STR_DATA_DIR" && nvim -c FZF) && exit
-
 new_entry()
 {
 	local date weekday description location
@@ -139,6 +136,10 @@ print_report()
 }
 
 case $1 in
+	"e")
+		# Edit data files
+		(cd "$STR_DATA_DIR" && nvim -c FZF)
+		;;
 	"n")
 		# Enter new workout interactively
 		# Gum options
