@@ -12,7 +12,7 @@ new_entry()
 
 	clear && echo "" > "$tmp_file"
 	# Print blank sheet
-	str 2000-01-01
+	str "2000-01-01"
 
 	# Date
 	date=$(gum input --header="  Date" --value="$(printf "%(%F)T" -1)")
