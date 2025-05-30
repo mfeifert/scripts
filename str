@@ -25,10 +25,6 @@ if [[ -t 1 ]]; then
 	bold=$(tput bold)
 	accent=$(tput setaf 1)
 	reset=$(tput sgr0)
-else
-	bold=""
-	accent=""
-	reset=""
 fi
 
 function new_entry()
