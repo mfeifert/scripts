@@ -11,6 +11,7 @@ new_entry()
 	local notes
 
 	clear && echo "" > "$tmp_file"
+
 	# Print blank sheet
 	str "2000-01-01"
 
@@ -38,7 +39,9 @@ new_entry()
 				--height=15 \
 				--no-strict \
 				--header="  Exercise")
-		[[ $exercise ]] || break
+
+		[[ -z $exercise ]] && break
+
 		echo -n -e "${date}\texercise\t${exercise}\t" >> "$tmp_file"
 		clear && print_report "$date" "$tmp_file"
 
@@ -46,6 +49,7 @@ new_entry()
 		wgt_type_default=$(tac "$data_file" \
 			| grep --max-count=1 "$exercise" \
 			| cut --fields=4)
+
 		wgt_type=$(awk -F "\t" '$2 == "exercise" {print $4}' "$data_file" \
 			| sort --unique \
 			| gum filter \
@@ -53,6 +57,7 @@ new_entry()
 				--no-strict \
 				--header="  Weight type" \
 				--value="$wgt_type_default")
+
 		echo -n -e "${wgt_type}\t" >> "$tmp_file"
 		clear && print_report "$date" "$tmp_file"
 
@@ -62,7 +67,9 @@ new_entry()
 
 			# Reps
 			reps=$(gum input --header="  ${exercise} set ${set_number} reps" --value="$reps")
-			[[ $reps ]] || break
+
+			[[ -z $reps ]] && break
+
 			echo -n -e "${reps}\t" >> "$tmp_file"
 			clear && print_report "$date" "$tmp_file"
 
@@ -71,22 +78,27 @@ new_entry()
 				|| lbs=$(gum input \
 					--header="  ${exercise} set ${set_number} lbs" \
 					--value="$lbs")
+
 			echo -n -e "${lbs}\t" >> "$tmp_file"
 			clear && print_report "$date" "$tmp_file"
 
 			((set_number++))
+
 		done
+
 		echo "" >> "$tmp_file"
 	done
 
 	# Notes
 	clear && print_report "$date" "$tmp_file"
+
 	notes=$(gum write \
 		--width=63 \
 		--no-show-help \
 		--header="  Notes" \
 		--placeholder="")
-	[[ $notes ]] && echo -e "${date}\tnotes\t${notes}" >> "$tmp_file"
+
+	[[ -n $notes ]] && echo -e "${date}\tnotes\t${notes}" >> "$tmp_file"
 	clear && print_report "$date" "$tmp_file"
 
 	cat "$tmp_file" >> "$data_file"
