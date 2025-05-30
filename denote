@@ -15,19 +15,20 @@ declare notes_dir="$NOTES_DIR"
 make_filename()
 {
 	# ID
-	local filename+="$id"
+	local filename="$id"
 
 	# Signature: convert signature to lowercase and replace spaces with "="
 	if [[ -n $signature ]]; then
-		local sig="${signature,,}"
+		local -l sig="$signature"
 		filename+="==${sig// /=}"
 	fi
 
 	# Title: convert title to lowercase and replace spaces with "-"
-	local title=${title,,}
+	local -l title="$title"
 	filename+="--${title// /-}"
 
 	# Tags: replace spaces with "_"
+	local tag
 	if [[ -n $tags ]]; then
 		filename+="_"
 		for tag in "${tags[@]}"; do
@@ -143,10 +144,10 @@ declare title
 read -rp "Title: " title
 
 # Enter tags separated by spaces and convert to lowercase
-declare tags_input
+declare -l tags_input
 declare -a tags
 read -rp "Tags: " tags_input
-read -ra tags <<< "${tags_input,,}"
+read -ra tags <<< "$tags_input"
 
 # Generate timestamp for id and front matter date
 declare -i timestamp
@@ -187,10 +188,10 @@ case $filetype in
 esac
 
 # Request confirmation for creating and editing file
-declare choice
+declare -l choice
 read -rp "Create and edit file? (Y/n): " choice
 
-if [[ ${choice:-"y"} == "y" || $choice == "Y" ]]; then
+if [[ ${choice:-"y"} == "y" ]]; then
 
 	# Create file containing front matter
 	case $filetype in
