@@ -15,7 +15,7 @@ week_view()
 {
 	local sm=$1         # Sunday or Monday
 	local -i offset=$2  # Number of weeks forward or backward
-	local -ir day=86400 # Number of seconds in a day
+	local -ir day=86400 # Seconds per day
 
 	# Week number
 	local -i week
@@ -42,7 +42,6 @@ week_view()
 		last=$((last + offset))
 	fi
 
-	# Format first and last days of week for output
 	first=$(printf "%(%F)T" "$first")
 	last=$(printf "%(%F)T" "$last")
 
@@ -137,9 +136,6 @@ enter_new_event()
 create_event()
 {
 	local -i start_date=$1
-	local -ir day=86400 # Number of seconds in a day
-	local -i index=1
-	local event
 
 	local start_time="${event_info[start_time]}"
 	local end_time="${event_info[end_time]}"
@@ -153,9 +149,13 @@ create_event()
 	local -i end_date
 	end_date=$((start_date + duration))
 
+	local -i index=1
+	local -ir day=86400 # Seconds per day
+
 	while [[ $start_date -le $end_date ]]; do
 
 		# Date including weekday
+		local event
 		event=$(printf "%(%F %a)T" "$start_date")
 
 		# Start time: first day of event only
@@ -197,7 +197,6 @@ repeat()
 	local PS3="> "
 	local getdates_command="getdates "
 
-	# Check if getdates command is installed
 	if ! command -v getdates > /dev/null 2>&1; then
 		echo "To create repeating events, install getdates (https://github.com/mfeifert/getdates)"
 		return
