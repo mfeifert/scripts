@@ -337,7 +337,6 @@ case $1 in
 		;;
 	"n")
 		# Add new event interactively
-
 		enter_new_event
 
 		declare repeat_event
