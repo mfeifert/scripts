@@ -106,7 +106,7 @@ done < "$SHOWS_CSV"
 
 set -o pipefail
 
-# Show main menu
+# Main menu
 echo
 while true; do
 	export COLUMNS=1
