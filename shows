@@ -10,7 +10,9 @@
 
 get_episode()
 {
-	case $1 in
+	declare -gi episode_num=$1
+
+	case $episode_num in
 		"next")
 			episode_num=$(sqlite3 \
 				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
@@ -21,7 +23,7 @@ get_episode()
 			;;
 		*)
 			episode_num=$(sqlite3 \
-				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $1")
+				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $episode_num")
 			;;
 	esac
 
@@ -30,6 +32,7 @@ get_episode()
 		return
 	fi
 
+	declare -g episode_title
 	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 
@@ -50,6 +53,7 @@ actions()
 	echo
 
 	while true; do
+		local action
 		read -rp "${title}> " action
 		echo
 		case $action in
@@ -66,6 +70,7 @@ actions()
 				echo
 				;;
 			4)
+				declare -i episode
 				read -rp "Episode: " episode
 				get_episode "$episode"
 				echo
@@ -75,9 +80,9 @@ actions()
 				echo
 				;;
 			p)
-				episode_title_formatted=${episode_title//[![:word:]]/}
+				declare episode_filename
 				episode_filename=$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f 2> /dev/null \
-					| fzf -i -1 -f "$episode_title_formatted" \
+					| fzf -i -1 -f "${episode_title//[![:word:]]/}" \
 					| head -n 1)
 				[[ $? != 0 ]] && echo -e "Media not found\n" && continue
 				xdg-open "$episode_filename" 2> /dev/null
@@ -94,9 +99,9 @@ actions()
 
 # Get data from csv file
 while IFS=',' read -r table title show_media_dir; do
-	tables+=("$table")
-	titles+=("$title")
-	show_media_dirs+=("$show_media_dir")
+	declare -a tables+=("$table")
+	declare -a titles+=("$title")
+	declare -a show_media_dirs+=("$show_media_dir")
 done < "$SHOWS_CSV"
 
 set -o pipefail
@@ -106,11 +111,13 @@ echo
 while true; do
 	export COLUMNS=1
 	PS3=$'\n'"> "
+	declare item
 	select item in "${titles[@]}"; do
+		declare -i index
 		index=$((REPLY - 1))
-		table=${tables[$index]}
-		title=$item
-		show_media_dir=${show_media_dirs[$index]}
+		declare table=${tables[$index]}
+		declare title=$item
+		declare show_media_dir=${show_media_dirs[$index]}
 		break
 	done
 	actions
