@@ -84,7 +84,9 @@ actions()
 				episode_filename=$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f 2> /dev/null \
 					| fzf -i -1 -f "${episode_title//[![:word:]]/}" \
 					| head -n 1)
+
 				[[ $? != 0 ]] && echo -e "Media not found\n" && continue
+
 				xdg-open "$episode_filename" 2> /dev/null
 				;;
 			w)
@@ -109,8 +111,10 @@ set -o pipefail
 # Main menu
 echo
 while true; do
+
 	export COLUMNS=1
-	PS3=$'\n'"> "
+	export PS3=$'\n'"> "
+
 	declare item
 	select item in "${titles[@]}"; do
 		declare -i index
@@ -120,5 +124,7 @@ while true; do
 		declare show_media_dir=${show_media_dirs[$index]}
 		break
 	done
+
 	actions
+
 done
