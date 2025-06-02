@@ -100,14 +100,14 @@ actions()
 	done
 }
 
+set -o pipefail
+
 # Get data from csv file
 while IFS=',' read -r table title show_media_dir; do
 	declare -a tables+=("$table")
 	declare -a titles+=("$title")
 	declare -a show_media_dirs+=("$show_media_dir")
 done < "$SHOWS_CSV"
-
-set -o pipefail
 
 # Main menu
 echo
@@ -118,8 +118,7 @@ while true; do
 
 	declare item
 	select item in "${titles[@]}"; do
-		declare -i index
-		index=$((REPLY - 1))
+		declare -i index=$((REPLY - 1))
 		declare table=${tables[$index]}
 		declare title=$item
 		declare show_media_dir=${show_media_dirs[$index]}
