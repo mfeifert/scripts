@@ -10,9 +10,10 @@
 
 get_episode()
 {
-	declare -gi episode_num=$1
+	local choice=$1
 
-	case $episode_num in
+	declare -gi episode_num
+	case $choice in
 		"next")
 			episode_num=$(sqlite3 \
 				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
@@ -23,7 +24,7 @@ get_episode()
 			;;
 		*)
 			episode_num=$(sqlite3 \
-				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $episode_num")
+				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $choice")
 			;;
 	esac
 
