@@ -38,8 +38,8 @@ get_episode()
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 	echo
 
-	[[ $show_media_dir ]] && echo "p. Play episode"
-	[[ $episode_num ]] && echo "w. Mark episode $episode_num as watched"
+	[[ -n $series_media_dir ]] && echo "p. Play episode"
+	[[ -n $episode_num ]] && echo "w. Mark episode $episode_num as watched"
 }
 
 actions()
@@ -55,7 +55,7 @@ actions()
 
 	while true; do
 		local action
-		read -rp "${title}> " action
+		read -rp "${series_title}> " action
 		echo
 		case $action in
 			1)
@@ -82,7 +82,7 @@ actions()
 				;;
 			p)
 				local episode_filename
-				episode_filename=$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f 2> /dev/null \
+				episode_filename=$(find "$SHOWS_MEDIA_DIR/$series_media_dir" -type f 2> /dev/null \
 					| fzf -i -1 -f "${episode_title//[![:word:]]/}" \
 					| head -n 1)
 
@@ -103,10 +103,10 @@ actions()
 set -o pipefail
 
 # Get data from csv file
-while IFS=',' read -r table title show_media_dir; do
-	declare -a tables+=("$table")
-	declare -a titles+=("$title")
-	declare -a show_media_dirs+=("$show_media_dir")
+while IFS=',' read -r tab ser dir; do
+	declare -a tables+=("$tab")
+	declare -a series_titles+=("$ser")
+	declare -a series_media_dirs+=("$dir")
 done < "$SHOWS_CSV"
 
 # Main menu
@@ -117,11 +117,11 @@ while true; do
 	export PS3=$'\n'"> "
 
 	declare item
-	select item in "${titles[@]}"; do
+	select item in "${series_titles[@]}"; do
 		declare -i index=$((REPLY - 1))
 		declare table=${tables[$index]}
-		declare title=$item
-		declare show_media_dir=${show_media_dirs[$index]}
+		declare series_title=$item
+		declare series_media_dir=${series_media_dirs[$index]}
 		break
 	done
 
