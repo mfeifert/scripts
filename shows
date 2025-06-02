@@ -36,8 +36,8 @@ get_episode()
 	declare -g episode_title
 	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
-
 	echo
+
 	[[ $show_media_dir ]] && echo "p. Play episode"
 	[[ $episode_num ]] && echo "w. Mark episode $episode_num as watched"
 }
@@ -71,7 +71,7 @@ actions()
 				echo
 				;;
 			4)
-				declare -i episode
+				local -i episode
 				read -rp "Episode: " episode
 				get_episode "$episode"
 				echo
@@ -81,7 +81,7 @@ actions()
 				echo
 				;;
 			p)
-				declare episode_filename
+				local episode_filename
 				episode_filename=$(find "$SHOWS_MEDIA_DIR/$show_media_dir" -type f 2> /dev/null \
 					| fzf -i -1 -f "${episode_title//[![:word:]]/}" \
 					| head -n 1)
