@@ -102,29 +102,34 @@ actions()
 
 set -o pipefail
 
-# Get data from csv file
-while IFS=',' read -r tab ser dir; do
-	declare -a tables+=("$tab")
-	declare -a series_titles+=("$ser")
-	declare -a series_media_dirs+=("$dir")
-done < "$SHOWS_CSV"
+main_menu()
+{
+	# Get data from csv file
+	while IFS=',' read -r tab ser dir; do
+		local -a tables+=("$tab")
+		local -a series_titles+=("$ser")
+		local -a series_media_dirs+=("$dir")
+	done < "$SHOWS_CSV"
 
-# Main menu
-echo
-while true; do
+	# Main menu
+	echo
+	while true; do
 
-	export COLUMNS=1
-	export PS3=$'\n'"> "
+		export COLUMNS=1
+		export PS3=$'\n'"> "
 
-	declare item
-	select item in "${series_titles[@]}"; do
-		declare -i index=$((REPLY - 1))
-		declare table=${tables[$index]}
-		declare series_title=$item
-		declare series_media_dir=${series_media_dirs[$index]}
-		break
+		local item
+		select item in "${series_titles[@]}"; do
+			local -i index=$((REPLY - 1))
+			declare table=${tables[$index]}
+			declare series_title=$item
+			declare series_media_dir=${series_media_dirs[$index]}
+			break
+		done
+
+		actions
+
 	done
+}
 
-	actions
-
-done
+main_menu
