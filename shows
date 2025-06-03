@@ -104,14 +104,12 @@ set -o pipefail
 
 main_menu()
 {
-	# Get data from csv file
 	while IFS=',' read -r tab ser dir; do
 		local -a tables+=("$tab")
 		local -a series_titles+=("$ser")
 		local -a series_media_dirs+=("$dir")
 	done < "$SHOWS_CSV"
 
-	# Main menu
 	echo
 	while true; do
 
