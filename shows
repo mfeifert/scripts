@@ -100,8 +100,6 @@ series_menu()
 	done
 }
 
-set -o pipefail
-
 main_menu()
 {
 	while IFS=',' read -r tab ser dir; do
@@ -129,5 +127,7 @@ main_menu()
 
 	done
 }
+
+set -o pipefail
 
 main_menu
