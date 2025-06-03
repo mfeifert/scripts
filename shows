@@ -42,7 +42,7 @@ get_episode()
 	[[ -n $episode_num ]] && echo "w. Mark episode $episode_num as watched"
 }
 
-actions()
+series_menu()
 {
 	echo
 	echo "1) List episodes"
@@ -127,7 +127,7 @@ main_menu()
 			break
 		done
 
-		actions
+		series_menu
 
 	done
 }
