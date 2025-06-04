@@ -128,7 +128,7 @@ EOF
 }
 
 # Select file type
-declare PS3="> "
+export PS3="> "
 declare -a filetypes=("txt" "md-yaml" "md-toml" "org")
 select item in "${filetypes[@]}"; do
 	filetype="$item"
