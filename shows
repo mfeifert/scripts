@@ -41,6 +41,7 @@ series_menu()
 	local table=$1
 	local series_title=$2
 	local series_media_dir=$3
+	local -i episode_num
 
 	echo
 	echo "1) List episodes"
@@ -61,7 +62,6 @@ series_menu()
 				echo
 				;;
 			2)
-				local -i episode_num
 				episode_num=$(get_episode "next" "$table")
 
 				if [[ $episode_num != 0 ]]; then
@@ -73,7 +73,6 @@ series_menu()
 				fi
 				;;
 			3)
-				local -i episode_num
 				episode_num=$(get_episode "random" "$table")
 
 				if [[ $episode_num != 0 ]]; then
@@ -85,7 +84,6 @@ series_menu()
 				fi
 				;;
 			4)
-				local -i episode_num
 				read -rp "Episode: " episode_num
 				episode_menu "$table" "$series_media_dir" "$episode_num"
 				echo
