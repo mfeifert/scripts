@@ -29,8 +29,6 @@ episode_menu()
 	local series_media_dir=$2
 	local -i episode_num=$3
 
-	declare -g g_episode_title
-	g_episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
 	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE NumOverall == $episode_num"
 	echo
 
@@ -97,9 +95,12 @@ series_menu()
 				echo
 				;;
 			p)
+				local episode_title
+				episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
+
 				local episode_filename
 				episode_filename=$(find "$SHOWS_MEDIA_DIR/$series_media_dir" -type f 2> /dev/null \
-					| fzf -i -1 -f "${g_episode_title//[![:word:]]/}" \
+					| fzf -i -1 -f "${episode_title//[![:word:]]/}" \
 					| head -n 1)
 
 				[[ $? != 0 ]] && echo -e "Media not found\n" && continue
