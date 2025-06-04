@@ -11,6 +11,8 @@
 get_episode()
 {
 	local choice=$1
+	local table=$2
+	local series_media_dir=$3
 
 	declare -gi episode_num
 	case $choice in
@@ -44,6 +46,10 @@ get_episode()
 
 series_menu()
 {
+	local table=$1
+	local series_title=$2
+	local series_media_dir=$3
+
 	echo
 	echo "1) List episodes"
 	echo "2) Next episode"
@@ -63,17 +69,17 @@ series_menu()
 				echo
 				;;
 			2)
-				get_episode "next"
+				get_episode "next" "$table" "$series_media_dir"
 				echo
 				;;
 			3)
-				get_episode "random"
+				get_episode "random" "$table" "$series_media_dir"
 				echo
 				;;
 			4)
 				local -i episode
 				read -rp "Episode: " episode
-				get_episode "$episode"
+				get_episode "$episode" "$table" "$series_media_dir"
 				echo
 				;;
 			a)
@@ -117,13 +123,13 @@ main_menu()
 		local item
 		select item in "${series_titles[@]}"; do
 			local -i index=$((REPLY - 1))
-			declare table=${tables[$index]}
-			declare series_title=$item
-			declare series_media_dir=${series_media_dirs[$index]}
+			local table=${tables[$index]}
+			local series_title=$item
+			local series_media_dir=${series_media_dirs[$index]}
 			break
 		done
 
-		series_menu
+		series_menu "$table" "$series_title" "$series_media_dir"
 
 	done
 }
