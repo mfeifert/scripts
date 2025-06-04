@@ -98,7 +98,7 @@ series_menu()
 
 				local episode_filename
 				episode_filename=$(find "$SHOWS_MEDIA_DIR/$series_media_dir" -type f 2> /dev/null \
-					| fzf -i -1 -f "${episode_title//[![:word:]]/}" \
+					| fzf --ignore-case --select-1 --filter "${episode_title//[![:word:]]/}" \
 					| head -n 1)
 
 				[[ $? != 0 ]] && echo -e "Media not found\n" && continue
