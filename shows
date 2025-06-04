@@ -12,28 +12,22 @@ get_episode()
 {
 	local choice=$1
 	local table=$2
-	local series_media_dir=$3
 
-	declare -gi episode_num
 	case $choice in
 		"next")
-			episode_num=$(sqlite3 \
-				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1")
+			sqlite3 "$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1"
 			;;
 		"random")
-			episode_num=$(sqlite3 \
-				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1")
-			;;
-		*)
-			episode_num=$(sqlite3 \
-				"$SHOWS_DB" "SELECT NumOverall FROM $table WHERE NumOverall == $choice")
+			sqlite3 "$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1"
 			;;
 	esac
+}
 
-	if [[ -z $episode_num ]]; then
-		echo "No unwatched episodes"
-		return
-	fi
+episode_menu()
+{
+	local table=$1
+	local series_media_dir=$2
+	local -i episode_num=$3
 
 	declare -g episode_title
 	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE NumOverall == $episode_num")
@@ -69,17 +63,31 @@ series_menu()
 				echo
 				;;
 			2)
-				get_episode "next" "$table" "$series_media_dir"
-				echo
+				local -i episode_num
+				episode_num=$(get_episode "next" "$table")
+				if [[ $episode_num != 0 ]]; then
+					episode_menu "$table" "$series_media_dir" "$episode_num"
+					echo
+				else
+					echo "No unwatched episodes"
+					echo
+				fi
 				;;
 			3)
-				get_episode "random" "$table" "$series_media_dir"
-				echo
+				local -i episode_num
+				episode_num=$(get_episode "random" "$table")
+				if [[ $episode_num != 0 ]]; then
+					episode_menu "$table" "$series_media_dir" "$episode_num"
+					echo
+				else
+					echo "No unwatched episodes"
+					echo
+				fi
 				;;
 			4)
-				local -i episode
-				read -rp "Episode: " episode
-				get_episode "$episode" "$table" "$series_media_dir"
+				local -i episode_num
+				read -rp "Episode: " episode_num
+				episode_menu "$table" "$series_media_dir" "$episode_num"
 				echo
 				;;
 			a)
