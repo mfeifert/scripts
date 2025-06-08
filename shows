@@ -101,7 +101,10 @@ series_menu()
 					| fzf --ignore-case --select-1 --filter "${episode_title//[![:word:]]/}" \
 					| head -n 1)
 
-				[[ $? != 0 ]] && echo -e "Media not found\n" && continue
+				if [[ -z $episode_filename ]]; then
+					echo -e "Media not found\n"
+					continue
+				fi
 
 				xdg-open "$episode_filename" 2> /dev/null
 				;;
