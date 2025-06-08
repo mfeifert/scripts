@@ -10,7 +10,10 @@
 # not provide the more advanced features of the original, such as
 # modifying properties of existing files or creating links.
 
-declare notes_dir="$NOTES_DIR"
+# Environment variable:
+# NOTES_DIR - Base directory where notes are stored
+
+declare notes_dir
 
 make_filename()
 {
@@ -160,7 +163,7 @@ id=$(printf "%(%Y%m%dT%H%M%S)T" "$timestamp")
 # Generate filename and full filepath
 declare filename filepath
 filename=$(make_filename)
-filepath="${notes_dir}/${filename}"
+filepath="${notes_dir:="$NOTES_DIR"}/${filename}"
 
 # Show completed front matter and filename
 declare filetype
