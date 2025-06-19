@@ -4,8 +4,16 @@
 
 compile_events()
 {
+	local archive=$1
+
 	local events
 	events=$(find "$MCAL_DATA_DIR" -maxdepth 1 -type f -exec cat {} +)
+
+	if [[ $archive == "archive" ]]; then
+		events+=$'\n'
+		events+=$(find "$MCAL_DATA_DIR/archive" -maxdepth 1 -type f -exec cat {} +)
+	fi
+
 	events+=$(printf "\n%(%F %a %H:%M)T       === TODAY ===" -1)
 
 	echo "$events" | sort
@@ -319,6 +327,10 @@ birthdays()
 }
 
 case $1 in
+	"a")
+		# View all events including archived events
+		compile_events "archive"
+		;;
 	"b")
 		# Add new birthday events from template
 		declare template_birthdays="$MCAL_DATA_DIR/templates/template_birthdays"
