@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 # Create denote notes interactively.
-# Based on "denote" Emacs package by Protesilaos Stavrou.
-# https://protesilaos.com/
+# Based on "denote" Emacs package.
 # https://github.com/protesilaos/denote
 
 # This script creates new notes with exactly the same filename
