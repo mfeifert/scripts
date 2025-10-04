@@ -114,6 +114,9 @@ series_menu()
 			m)
 				break
 				;;
+			q)
+				exit 0
+				;;
 		esac
 	done
 }
@@ -140,6 +143,10 @@ main_menu()
 			local series_media_dir=${series_media_dirs[$index]}
 			break
 		done
+
+		if [[ $REPLY == "q" ]]; then
+			exit 0
+		fi
 
 		series_menu "$table" "$series_title" "$series_media_dir"
 
