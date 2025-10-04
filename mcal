@@ -29,7 +29,7 @@ week_view()
 	local -i week
 	week=$(printf "%(%${sm})T" -1)
 
-	# Set current day as first day of the week
+	# Start at the current day
 	local first
 	first=$(printf "%(%s)T" -1)
 
