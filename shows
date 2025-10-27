@@ -4,9 +4,9 @@
 # and track which episodes have been watched.
 
 # Environment variables:
-# SHOWS_DB        - Path of sqlite database containing information on show episodes
-# SHOWS_CSV       - Path of csv file used for creating main menu
-# SHOWS_MEDIA_DIR - Path of base directory where media files are found
+declare SHOWS_DB="$DATA_DIR/shows/shows.db" # Path of sqlite database containing information on show episodes
+declare SHOWS_CSV="$DATA_DIR/shows/shows.csv" # Path of csv file used for creating main menu
+# SHOWS_MEDIA_DIR # Path of base directory where media files are found
 
 get_episode()
 {

@@ -2,7 +2,7 @@
 
 # Search and open bookmarks stored in local text files.
 
-bookmarks_file="$BKMK_DATA_DIR/bookmarks.tsv"
+bookmarks_file="$DATA_DIR/bkmk/bookmarks.tsv"
 
 case $1 in
 	"e")

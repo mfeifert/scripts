@@ -2,6 +2,8 @@
 
 # mcal: Create and view calendar events stored in local text files.
 
+declare MCAL_DATA_DIR="$DATA_DIR/mcal"
+
 compile_events()
 {
 	local archive=$1

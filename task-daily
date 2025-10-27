@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-data_file_daily="$TASK_DATA_DIR/data_daily"
-template_daily="$TASK_DATA_DIR/template_daily"
+data_file_daily="$DATA_DIR/task/data_daily"
+template_daily="$DATA_DIR/task/template_daily"
 
 case $1 in
 	"a")

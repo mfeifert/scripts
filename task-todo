@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-data_file_todo="$TASK_DATA_DIR/data_todo"
+data_file_todo="$DATA_DIR/task/data_todo"
 
 case $1 in
 	"n")

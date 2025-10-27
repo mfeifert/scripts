@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-data_file_monthly="$TASK_DATA_DIR/data_monthly"
-template_monthly="$TASK_DATA_DIR/template_monthly"
+data_file_monthly="$DATA_DIR/task/data_monthly"
+template_monthly="$DATA_DIR/task/template_monthly"
 
 case $1 in
 	"a")
