@@ -6,6 +6,7 @@ data_file="$STR_DATA_DIR/str_data.tsv"
 
 # Gum options
 export GUM_FILTER_PLACEHOLDER=""
+export GUM_FILTER_SHOW_HELP="no"
 export GUM_INPUT_PLACEHOLDER=""
 
 # Gum colors
