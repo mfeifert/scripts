@@ -2,7 +2,7 @@
 
 # Create and view workout log sheets for data stored in local text files.
 
-data_file="$STR_DATA_DIR/str_data.tsv"
+data_file="$DATA_DIR/str/str_data.tsv"
 
 # Gum options
 export GUM_FILTER_PLACEHOLDER=""
