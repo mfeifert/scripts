@@ -2,7 +2,7 @@
 
 # Insert records including details of fuel refills into database.
 
-db="$DB_DIR/auto.db"
+db="$HOME/Documents/auto/auto.db"
 table="fuel"
 
 read -rp "Total price: " amount
