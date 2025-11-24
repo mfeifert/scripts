@@ -2,7 +2,8 @@
 
 # Search and open bookmarks stored in local text files.
 
-bookmarks_file="$DATA_DIR/bkmk/bookmarks.tsv"
+# $DATA_DIR not compatible with GNOME keyboard shortcuts
+bookmarks_file="$HOME/Documents/data/bkmk/bookmarks.tsv"
 
 case $1 in
 	"e")
