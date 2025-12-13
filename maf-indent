@@ -10,4 +10,11 @@ indent \
 	-bls \
 	-nce \
 	-sar \
-	"$1"
+	"$@"
+
+# Force blank lines after the declarations
+# Put braces on line after if, etc
+# Indent braces n spaces
+# Put braces on the line after struct declaration lines
+# Do not cudde } and else
+# Put braces after the { and before the } in initializers
