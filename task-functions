@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+task() {
+	if [[ $1 == "e" ]]; then
+		(cd "$DATA_DIR/task" && f)
+	else
+		clear
+		task-dashboard
+		echo
+	fi
+}
+
+tt() {
+	task-todo "$@"
+	task
+}
+
+td() {
+	task-daily "$@"
+	[[ $1 != "a" ]] && task
+}
+
+tm() {
+	task-monthly "$@"
+	[[ $1 != "a" ]] && task
+}
