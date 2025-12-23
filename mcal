@@ -234,9 +234,13 @@ repeat()
 
 	local -i interval
 	read -rp "Repeat every # ${unit}: " interval
-	getdates_command+="-i ${interval:=1} "
+	if [[ $unit == "days" || $unit == "weeks" ]]; then
+		getdates_command+="${interval:=1} "
+	fi
 
 	if [[ $unit == "months" ]]; then
+
+		getdates_command+="-i ${interval:=1} "
 
 		echo "On: "
 		local md
@@ -244,20 +248,21 @@ repeat()
 			break
 		done
 
-		local -i mn
 		case $md in
 			"Day")
-				read -rp "Day: " mn
-				getdates_command+="-d -mn ${mn} "
+				local -i day
+				read -rp "Day: " day
+				getdates_command+="-d ${day} "
 				;;
 			"Weekday")
+				local -i kn
 				local weekday
 				select weekday in "Monday" "Tuesday" "Wednesday" \
 					"Thursday" "Friday" "Saturday" "Sunday"; do
-					read -rp "${weekday} #: " mn
+					read -rp "${weekday} #: " kn
 					break
 				done
-				getdates_command+="-k ${weekday:0:3} -mn ${mn} "
+				getdates_command+="-k ${weekday:0:3} -kn ${kn} "
 				;;
 		esac
 
