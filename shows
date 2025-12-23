@@ -15,10 +15,10 @@ get_episode()
 
 	case $choice in
 		"next")
-			sqlite3 "$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY NumOverall LIMIT 1"
+			sqlite3 "$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchDate IS NULL ORDER BY NumOverall LIMIT 1"
 			;;
 		"random")
-			sqlite3 "$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchedDate IS NULL ORDER BY random() LIMIT 1"
+			sqlite3 "$SHOWS_DB" "SELECT NumOverall FROM $table WHERE WatchDate IS NULL ORDER BY random() LIMIT 1"
 			;;
 	esac
 }
@@ -109,7 +109,7 @@ series_menu()
 				xdg-open "$episode_filename" 2> /dev/null
 				;;
 			w)
-				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchedDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
+				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchDate = date('now', 'localtime') WHERE NumOverall = $episode_num"
 				;;
 			m)
 				break
