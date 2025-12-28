@@ -2,14 +2,17 @@
 
 # Run `git status --short` on select git repositories
 
-git --git-dir="${HOME}"/vc/dotfiles/ --work-tree="${HOME}" status --short --ahead-behind
+git --git-dir="${HOME}"/vc/dotfiles/ \
+    --work-tree="${HOME}" \
+    -c color.status=always \
+    status --short --branch \
+| sed "s|^|dotfiles\t|"
 
 mapfile -t dirs < "${HOME}/Documents/data/gits/gits-dirs" 
 
 for dir in "${dirs[@]}"; do
-	# echo $dir
 	git -C "${HOME}/${dir}" \
 	    -c color.status=always \
-	     status --short --ahead-behind \
-	| sed "s|^|${dir}: |"
+	     status --short --branch \
+	| sed "s|^|${dir}\t|"
 done
