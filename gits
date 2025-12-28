@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Run `git status --short` on select git repositories
+
+git --git-dir="${HOME}"/vc/dotfiles/ --work-tree="${HOME}" status --short
+
+mapfile -t dirs < "${HOME}/Documents/data/gits/gits-dirs" 
+
+for dir in "${dirs[@]}"; do
+	git -C "${HOME}/${dir}"    \
+	    -c color.status=always \
+	     status --short        \
+	| sed "s|^|${dir}: |"
+done
