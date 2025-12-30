@@ -4,20 +4,27 @@
 
 # $DATA_DIR not compatible with GNOME keyboard shortcuts
 bookmarks_file="$HOME/Documents/data/bkmk/bookmarks.tsv"
+bookmarks_yt_file="$HOME/Documents/data/bkmk/bookmarks-yt.tsv"
+
+if [[ $2 == "y" ]]; then
+	file="$bookmarks_yt_file"
+else
+	file="$bookmarks_file"
+fi
 
 case $1 in
 	"e")
-		(nvim "$bookmarks_file" +)
+		(nvim "$file" +)
 		;;
 	"n")
-		(nvim "$bookmarks_file" + +"normal o" +"normal pa	" +"startinsert!")
+		(nvim "$file" + +"normal o" +"normal pa	" +"startinsert!")
 		;;
-	"")
-		bookmark_number="$(awk -F "\t" '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' "$bookmarks_file" \
+	"o")
+		bookmark_number="$(awk -F "\t" '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' "$file" \
 			| nl \
 			| fzf --exact --style=full --no-preview \
 			| cut --fields=1)"
-		url=$(cat -n "$bookmarks_file" | grep ^"$bookmark_number" | cut --fields=2)
+		url=$(cat -n "$file" | grep ^"$bookmark_number" | cut --fields=2)
 		[[ -z $bookmark_number ]] || firefox --new-tab "$url"
 		;;
 esac
