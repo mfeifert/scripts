@@ -5,15 +5,39 @@
 # "hledger_auto" is a separate executable script used to print a report
 # on auto-related finances.
 
-declare AUTO_DB="$HOME/Documents/auto/auto.db"
+declare auto_db="$HOME/Documents/auto/auto.db"
 
-miles=$(sqlite3 -column "$AUTO_DB" "select Miles from fuel order by Date desc limit 1;")
-total=$(hledger_auto | awk 'END {print $1}')
-dpm=$(echo "scale=2; $total / $miles" | bc -l)
-mpd=$(echo "scale=2; $miles / $total" | bc -l | awk '{printf "%.2f", $0}')
+case $1 in
+	"fuel")
+		table="fuel"
 
-hledger_auto
-echo "        $miles    Miles"
-echo "--------------------"
-echo "            $dpm USD per Mile"
-echo "            $mpd Miles per USD"
+		if [[ $2 == "n" ]]; then
+			read -rp "Total price: " amount
+			read -rp "Price per gallon: " ppg
+			read -rp "Gallons: " gallons
+			read -rp "Miles per gallon: " mpg
+			read -rp "Odometer: " miles
+
+			sqlite3 "$auto_db" "INSERT INTO $table VALUES (date('now', 'localtime'), $amount, $ppg, $gallons, $mpg, $miles);"
+		fi
+
+		sqlite3 -box "$auto_db" "SELECT * FROM $table ORDER BY Date DESC LIMIT 12;"
+		;;
+	"service")
+		table="service"
+		sqlite3 -box "$auto_db" "SELECT * FROM $table ORDER BY Date;"
+		;;
+	*)
+		miles=$(sqlite3 -column "$auto_db" "select Miles from fuel order by Date desc limit 1;")
+		total=$(hledger_auto | awk 'END {print $1}')
+		dpm=$(echo "scale=2; $total / $miles" | bc -l)
+		mpd=$(echo "scale=2; $miles / $total" | bc -l | awk '{printf "%.2f", $0}')
+
+		hledger_auto
+		echo "        $miles    Miles"
+		echo "--------------------"
+		echo "            $dpm USD per Mile"
+		echo "            $mpd Miles per USD"
+		;;
+esac
+
