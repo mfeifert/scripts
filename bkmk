@@ -14,7 +14,7 @@ fi
 
 case $1 in
 	"e")
-		(nvim "$file" +)
+		(nvim -c "set ts=60" -c "set nowrap" "$file" +)
 		;;
 	"n")
 		(nvim "$file" + +"normal o" +"normal pa	" +"startinsert!")
