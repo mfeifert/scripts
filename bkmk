@@ -14,10 +14,10 @@ fi
 
 case $1 in
 	"e")
-		(nvim -c "set ts=60" -c "set nowrap" "$file" +)
+		(nvim "$file" + "+set ts=60" "+set nowrap")
 		;;
 	"n")
-		(nvim "$file" + +"normal o" +"normal pa	" +"startinsert!")
+		(nvim "$file" + "+normal o" "+normal pa	" "+startinsert!")
 		;;
 	"o")
 		bookmark_number="$(awk -F "\t" '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' "$file" \
