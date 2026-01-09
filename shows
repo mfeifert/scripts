@@ -15,10 +15,10 @@ get_episode()
 
 	case $choice in
 		"next")
-			sqlite3 "$SHOWS_DB" "SELECT E FROM $table WHERE WatchDate IS NULL ORDER BY E LIMIT 1"
+			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY E LIMIT 1"
 			;;
 		"random")
-			sqlite3 "$SHOWS_DB" "SELECT E FROM $table WHERE WatchDate IS NULL ORDER BY random() LIMIT 1"
+			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY random() LIMIT 1"
 			;;
 	esac
 }
@@ -29,7 +29,7 @@ episode_menu()
 	local series_media_dir=$2
 	local -i episode_num=$3
 
-	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE E == $episode_num"
+	sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE N == $episode_num"
 	echo
 
 	[[ -n $series_media_dir ]] && echo "p. Play episode"
@@ -94,7 +94,7 @@ series_menu()
 				;;
 			p)
 				local episode_title
-				episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE E == $episode_num")
+				episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE N == $episode_num")
 
 				local episode_filename
 				episode_filename=$(find "$SHOWS_MEDIA_DIR/$series_media_dir" -type f 2> /dev/null \
@@ -109,7 +109,7 @@ series_menu()
 				xdg-open "$episode_filename" 2> /dev/null
 				;;
 			w)
-				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchDate = date('now', 'localtime') WHERE E = $episode_num"
+				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchDate = date('now', 'localtime') WHERE N = $episode_num"
 				;;
 			m)
 				break
