@@ -15,7 +15,7 @@ get_episode()
 
 	case $choice in
 		"next")
-			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY E LIMIT 1"
+			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY N LIMIT 1"
 			;;
 		"random")
 			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY random() LIMIT 1"
