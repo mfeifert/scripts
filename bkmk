@@ -5,6 +5,7 @@
 # $DATA_DIR not compatible with GNOME keyboard shortcuts
 bookmarks_file="$HOME/Documents/data/bkmk/bookmarks.tsv"
 bookmarks_yt_file="$HOME/Documents/data/bkmk/bookmarks-yt.tsv"
+channels_file="$HOME/Documents/data/bkmk/channels"
 
 if [[ $2 == "y" ]]; then
 	file="$bookmarks_yt_file"
@@ -13,6 +14,11 @@ else
 fi
 
 case $1 in
+	"c")
+		while IFS= read -r url; do
+			firefox --new-tab "$url"
+		done < "$channels_file"
+		;;
 	"e")
 		(nvim "$file" + "+set ts=60" "+set nowrap")
 		;;
