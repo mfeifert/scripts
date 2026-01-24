@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Call bkmk command from desktop keyboard shortcut
+
+command="$HOME/vc/scripts/bkmk"
+command+=" $1"
+[[ -n $2 ]] && command+=" $2"
+
+ghostty --config-default-files=false \
+        --config-file="$XDG_CONFIG_HOME/ghostty/config-bkmk" \
+        --command="$command"
