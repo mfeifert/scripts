@@ -15,12 +15,20 @@ get_episode()
 
 	case $choice in
 		"next")
-			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY N LIMIT 1"
+			episode_num=$(sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY N LIMIT 1")
 			;;
 		"random")
-			sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY random() LIMIT 1"
+			episode_num=$(sqlite3 "$SHOWS_DB" "SELECT N FROM $table WHERE WatchDate IS NULL ORDER BY random() LIMIT 1")
 			;;
 	esac
+
+	if [[ $episode_num != 0 ]]; then
+		episode_menu "$table" "$series_media_dir" "$episode_num"
+		echo
+	else
+		echo "No unwatched episodes"
+		echo
+	fi
 }
 
 episode_menu()
@@ -34,32 +42,6 @@ episode_menu()
 
 	[[ -n $series_media_dir ]] && echo "p. Play episode"
 	[[ -n $episode_num ]] && echo "w. Mark episode $episode_num as watched"
-}
-
-next_episode()
-{
-	episode_num=$(get_episode "next" "$table")
-
-	if [[ $episode_num != 0 ]]; then
-		episode_menu "$table" "$series_media_dir" "$episode_num"
-		echo
-	else
-		echo "No unwatched episodes"
-		echo
-	fi
-}
-
-random_episode()
-{
-	episode_num=$(get_episode "random" "$table")
-
-	if [[ $episode_num != 0 ]]; then
-		episode_menu "$table" "$series_media_dir" "$episode_num"
-		echo
-	else
-		echo "No unwatched episodes"
-		echo
-	fi
 }
 
 play_episode()
@@ -107,12 +89,10 @@ series_menu()
 				echo
 				;;
 			n)
-				next_episode
-				# get_episode "next"
+				get_episode "next" "$table"
 				;;
 			r)
-				random_episode
-				# get_episode "random"
+				get_episode "random" "$table"
 				;;
 			a)
 				sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
