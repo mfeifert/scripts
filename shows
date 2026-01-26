@@ -36,6 +36,50 @@ episode_menu()
 	[[ -n $episode_num ]] && echo "w. Mark episode $episode_num as watched"
 }
 
+next_episode()
+{
+	episode_num=$(get_episode "next" "$table")
+
+	if [[ $episode_num != 0 ]]; then
+		episode_menu "$table" "$series_media_dir" "$episode_num"
+		echo
+	else
+		echo "No unwatched episodes"
+		echo
+	fi
+}
+
+random_episode()
+{
+	episode_num=$(get_episode "random" "$table")
+
+	if [[ $episode_num != 0 ]]; then
+		episode_menu "$table" "$series_media_dir" "$episode_num"
+		echo
+	else
+		echo "No unwatched episodes"
+		echo
+	fi
+}
+
+play_episode()
+{
+	local episode_title
+	episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE N == $episode_num")
+
+	local episode_filename
+	episode_filename=$(find "$SHOWS_MEDIA_DIR/$series_media_dir" -type f 2> /dev/null \
+		| fzf --ignore-case --select-1 --filter "${episode_title//[![:word:]]/}" \
+		| head -n 1)
+
+	if [[ -z $episode_filename ]]; then
+		echo -e "Media not found\n"
+		return
+	fi
+
+	xdg-open "$episode_filename" 2> /dev/null
+}
+
 series_menu()
 {
 	local table=$1
@@ -44,12 +88,13 @@ series_menu()
 	local -i episode_num
 
 	echo
-	echo "1) List episodes"
-	echo "2) Next episode"
-	echo "3) Random episode"
-	echo "4) Select episode"
+	echo "l) List episodes"
+	echo "n) Next episode"
+	echo "r) Random episode"
 	[[ $table == "xfiles" ]] && echo "a) List mythology arc"
+	echo "#) Select episode"
 	echo "m) Main menu"
+	echo "q) Quit"
 	echo
 
 	while true; do
@@ -57,56 +102,24 @@ series_menu()
 		read -rp "${series_title}> " action
 		echo
 		case $action in
-			1)
+			l)
 				sqlite3 "$SHOWS_DB" -box "SELECT * from $table"
 				echo
 				;;
-			2)
-				episode_num=$(get_episode "next" "$table")
-
-				if [[ $episode_num != 0 ]]; then
-					episode_menu "$table" "$series_media_dir" "$episode_num"
-					echo
-				else
-					echo "No unwatched episodes"
-					echo
-				fi
+			n)
+				next_episode
+				# get_episode "next"
 				;;
-			3)
-				episode_num=$(get_episode "random" "$table")
-
-				if [[ $episode_num != 0 ]]; then
-					episode_menu "$table" "$series_media_dir" "$episode_num"
-					echo
-				else
-					echo "No unwatched episodes"
-					echo
-				fi
-				;;
-			4)
-				read -rp "Episode: " episode_num
-				episode_menu "$table" "$series_media_dir" "$episode_num"
-				echo
+			r)
+				random_episode
+				# get_episode "random"
 				;;
 			a)
 				sqlite3 "$SHOWS_DB" -box "SELECT * FROM $table WHERE Mytharc IS NOT NULL"
 				echo
 				;;
 			p)
-				local episode_title
-				episode_title=$(sqlite3 "$SHOWS_DB" "SELECT Title FROM $table WHERE N == $episode_num")
-
-				local episode_filename
-				episode_filename=$(find "$SHOWS_MEDIA_DIR/$series_media_dir" -type f 2> /dev/null \
-					| fzf --ignore-case --select-1 --filter "${episode_title//[![:word:]]/}" \
-					| head -n 1)
-
-				if [[ -z $episode_filename ]]; then
-					echo -e "Media not found\n"
-					continue
-				fi
-
-				xdg-open "$episode_filename" 2> /dev/null
+				play_episode
 				;;
 			w)
 				sqlite3 "$SHOWS_DB" "UPDATE $table SET WatchDate = date('now', 'localtime') WHERE N = $episode_num"
@@ -116,6 +129,11 @@ series_menu()
 				;;
 			q)
 				exit 0
+				;;
+			*)
+				episode_num="$action"
+				episode_menu "$table" "$series_media_dir" "$episode_num"
+				echo
 				;;
 		esac
 	done
