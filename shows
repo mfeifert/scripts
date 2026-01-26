@@ -73,7 +73,7 @@ series_menu()
 	echo "l) List episodes"
 	echo "n) Next episode"
 	echo "r) Random episode"
-	[[ $table == "xfiles" ]] && echo "a) List mythology arc"
+	[[ $table == "the_x_files" ]] && echo "a) List mythology arc"
 	echo "#) Select episode"
 	echo "m) Main menu"
 	echo "q) Quit"
