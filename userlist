@@ -1,24 +1,10 @@
 #!/usr/bin/env bash
 
-# Print the contents of /etc/passwd in a more readable, column-aligned format.
-# The column command shipped with macOS lacks the "-t" table features,
-# so awk is used instead.
+# Print the contents of /etc/passwd in a column-aligned format.
 
-case $(uname -s) in
-	"Darwin")
-		sed '/^#/d' /etc/passwd |
-			awk -F: 'BEGIN \
-    {printf "%-24s %6s %6s %2s %-48s %-30s %-20s\n", "USERNAME", "UID", "GID", "", "DESCRIPTION", "HOME", "LOGIN-SHELL"}; \
-    {printf "%-24s %6s %6s %2s %-48s %-30s %-20s\n", $1, $3, $4, "", $5, $6, $7, $8};'
-		;;
-	"Linux")
-		column -t -s ":" \
-			-N USERNAME,PW,UID,GID,DESCRIPTION,HOME,LOGIN-SHELL \
-			-H PW \
-			-R UID,GID \
-			/etc/passwd
-		;;
-	*)
-		echo "Unknown system type"
-		;;
-esac
+column --separator ":" \
+       --table \
+       -N USERNAME,PW,UID,GID,DESCRIPTION,HOME,LOGIN-SHELL \
+       -H PW \
+       -R UID,GID \
+       /etc/passwd
