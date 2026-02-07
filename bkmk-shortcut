@@ -7,5 +7,5 @@ command+=" $1"
 [[ -n $2 ]] && command+=" $2"
 
 ghostty --config-default-files=false \
-        --config-file="$XDG_CONFIG_HOME/ghostty/config-bkmk" \
+        --config-file="$HOME/.config/ghostty/config-bkmk" \
         --command="$command"
