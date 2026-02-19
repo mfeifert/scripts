@@ -2,7 +2,8 @@
 
 # Create and view workout log sheets for data stored in local text files.
 
-data_file="$DATA_DIR/str/str_data.tsv"
+data_dir="$DATA_DIR/str"
+data_file="${data_dir}/str_data.tsv"
 
 # Gum options
 export GUM_FILTER_PLACEHOLDER=""
@@ -166,7 +167,7 @@ print_report()
 case $1 in
 	"e")
 		# Edit data files
-		(cd "$STR_DATA_DIR" && nvim -c FZF)
+		(cd "$data_dir" && nvim -c FZF)
 		;;
 	"n")
 		# Enter new workout interactively
