@@ -5,7 +5,7 @@
 git --git-dir="${HOME}"/vc/dotfiles/ \
     --work-tree="${HOME}" \
     -c color.status=always \
-    status --short --branch \
+    status --short --branch --ahead-behind \
 | sed "s|^|dotfiles\t|"
 
 mapfile -t dirs < "${HOME}/Documents/data/gits/gits-dirs" 
@@ -13,6 +13,6 @@ mapfile -t dirs < "${HOME}/Documents/data/gits/gits-dirs"
 for dir in "${dirs[@]}"; do
 	git -C "${HOME}/${dir}" \
 	    -c color.status=always \
-	     status --short --branch \
+	    status --short --branch \
 	| sed "s|^|${dir}\t|"
 done
