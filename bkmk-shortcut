@@ -8,4 +8,5 @@ command+=" $1"
 
 ghostty --config-default-files=false \
         --config-file="$HOME/.config/ghostty/config-bkmk" \
+	--title="bkmk" \
         --command="$command"
