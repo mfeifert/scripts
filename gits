@@ -8,7 +8,7 @@ git --git-dir="${HOME}"/vc/dotfiles/ \
     status --short --branch --ahead-behind \
 | sed "s|^|dotfiles\t|"
 
-mapfile -t dirs < "${HOME}/Documents/data/gits/gits-dirs" 
+mapfile -t dirs < "${HOME}/nfs/docs/data/gits/gits-dirs" 
 
 for dir in "${dirs[@]}"; do
 	git -C "${HOME}/${dir}" \

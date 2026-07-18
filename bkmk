@@ -3,9 +3,9 @@
 # Search and open bookmarks stored in local text files.
 
 # $DATA_DIR not compatible with GNOME keyboard shortcuts
-bookmarks_file="$HOME/Documents/data/bkmk/bookmarks.tsv"
-bookmarks_yt_file="$HOME/Documents/data/bkmk/bookmarks-yt.tsv"
-channels_file="$HOME/Documents/data/bkmk/channels"
+bookmarks_file="$HOME/Documents/bkmk/bookmarks.tsv"
+bookmarks_yt_file="$HOME/Documents/bkmk/bookmarks-yt.tsv"
+channels_file="$HOME/Documents/bkmk/channels"
 
 if [[ $2 == "y" ]]; then
 	file="$bookmarks_yt_file"

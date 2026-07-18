@@ -4,7 +4,8 @@
 # and track which episodes have been watched.
 
 # Environment variables:
-declare SHOWS_DB="$DATA_DIR/shows/shows.db" # Path of sqlite database containing information on show episodes
+#declare SHOWS_DB="$DATA_DIR/shows/shows.db" # Path of sqlite database containing information on show episodes
+declare SHOWS_DB="$HOME/Documents/db/shows.db" # Path of sqlite database containing information on show episodes
 if [[ $1 == "a" ]]; then
 	declare SHOWS_CSV="$DATA_DIR/shows/shows-archive.csv" # Path of csv file used for creating main menu
 else

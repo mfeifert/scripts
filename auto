@@ -5,7 +5,7 @@
 # "hledger_auto" is a separate executable script used to print a report
 # on auto-related finances.
 
-declare auto_db="$HOME/Documents/auto/auto.db"
+declare auto_db="$HOME/Documents/db/auto.db"
 
 case $1 in
 	"fuel")
