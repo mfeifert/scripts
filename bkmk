@@ -3,21 +3,22 @@
 # Search and open bookmarks stored in local text files.
 
 # $DATA_DIR not compatible with GNOME keyboard shortcuts
-bookmarks_file="$HOME/Documents/bkmk/bookmarks.tsv"
-bookmarks_yt_file="$HOME/Documents/bkmk/bookmarks-yt.tsv"
-channels_file="$HOME/Documents/bkmk/channels"
+bkmk_dir="$HOME/Documents/docs/data/bkmk"
+bkmk_file="$bkmk_dir/bookmarks.tsv"
+bkmk_yt_file="$bkmk_dir/bookmarks-yt.tsv"
+bkmk_channels_file="$bkmk_dir/channels"
 
 if [[ $2 == "y" ]]; then
-	file="$bookmarks_yt_file"
+	file="$bkmk_yt_file"
 else
-	file="$bookmarks_file"
+	file="$bkmk_file"
 fi
 
 case $1 in
 	"c")
 		while IFS= read -r url; do
 			firefox --new-tab "$url"
-		done < "$channels_file"
+		done < "$bkmk_channels_file"
 		;;
 	"e")
 		(nvim "$file" + "+set ts=60" "+set nowrap")
