@@ -3,7 +3,7 @@
 # Search and open bookmarks stored in local text files.
 
 # $DATA_DIR not compatible with GNOME keyboard shortcuts
-bkmk_dir="$HOME/Documents/docs/data/bkmk"
+bkmk_dir="$HOME/docs/data/bkmk"
 bkmk_file="$bkmk_dir/bookmarks.tsv"
 bkmk_yt_file="$bkmk_dir/bookmarks-yt.tsv"
 bkmk_channels_file="$bkmk_dir/channels"
