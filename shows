@@ -5,7 +5,7 @@
 
 # Environment variables:
 # SHOWS_MEDIA_DIR # Path of base directory where media files are found
-declare SHOWS_DATA_DIR="$HOME/Documents/docs/data/shows"
+declare SHOWS_DATA_DIR="$HOME/docs/data/shows"
 declare SHOWS_DB="$SHOWS_DATA_DIR/shows.db" # Path of sqlite database containing information on show episodes
 if [[ $1 == "a" ]]; then
 	declare SHOWS_CSV="$SHOWS_DATA_DIR/shows-archive.csv" # Path of csv file used for creating main menu
