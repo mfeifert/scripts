@@ -3,15 +3,17 @@
 # Transfer local files to network share
 
 SHARE="/mnt/storage_share"
-SOURCE="$HOME/Documents/docs"
-DEST="$SHARE/docs"
+# SOURCE="$HOME/Documents/docs"
+# DEST="$SHARE/docs"
 
 if ! mountpoint -q "$SHARE"; then
 	echo "Error: NFS mount point not available." >&2
 	exit 1
 fi
 
-rsync -rt "$SOURCE/auto" "$DEST"
-rsync -rt "$SOURCE/data/bkmk" "$DEST/data"
-rsync -rt "$SOURCE/data/shows" "$DEST/data"
-rsync -rt "$SOURCE/ods" "$DEST"
+# rsync -rt "$SOURCE/auto" "$DEST"
+# rsync -rt "$SOURCE/data/bkmk" "$DEST/data"
+# rsync -rt "$SOURCE/data/shows" "$DEST/data"
+# rsync -rt "$SOURCE/ods" "$DEST"
+
+rsync -rt "$HOME/docs" "$SHARE/docs"
