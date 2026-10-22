@@ -27,7 +27,7 @@ case $1 in
 		(nvim "$file" + "+normal o" "+normal pa	" "+startinsert!")
 		;;
 	"o")
-		bookmark_number="$(awk -F "\t" '{printf "%-54.52s %-66s %-30s %s\n", $1, $2, $3, $4}' "$file" \
+		bookmark_number="$(awk -F "\t" '{printf "%-54.52s %-70s %-30s %s\n", $1, $2, $3, $4}' "$file" \
 			| nl \
 			| fzf --exact --style=full --no-preview \
 			| cut --fields=1)"
