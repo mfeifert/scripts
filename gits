@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 # Run `git status --short` on select git repositories
+# To set up remote tracking on bare repository, run these commands:
+# dot config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+# dot fetch
+# dot branch -u origin/main main
 
 git --git-dir="${HOME}"/vc/dotfiles/ \
     --work-tree="${HOME}" \
